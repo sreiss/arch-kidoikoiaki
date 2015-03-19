@@ -296,3 +296,7 @@ blockquote {
   margin-bottom: 26px;
 }
 
+.dialog-add {
+  min-width: 33%;
+  height: auto;
+}
