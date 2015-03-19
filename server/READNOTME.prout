@@ -13,11 +13,7 @@ Donc j'ai crée un .bat ".init.bat" qui permet de :
 Pour que ca marche, il faut bien sur que les chemin correspondent bien.
 De plus j'ai rajouter une commande dans git_bash => "mm" (fichier dispo dans le dossier "startserver") qui permet : 
     - de clear la console git bash
-    - de lancer la page web localhost:3000
     - et de démarrer le serveur
-    
-Dans cette ordre (le fait de démarrer le serveur est bloquant donc je ne peux pas d'abord démarrer le serveur puis lancé la page web)
-Donc du coup 7 fois sur 10, la page web fait un "no found" mais il suffit de réactualiser =).
 
 Donc du coup si tout les chemins sont bons + ajout de "mm" dans git/bin/ alors il vous suffit de cliquer sur 
 
