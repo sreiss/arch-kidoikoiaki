@@ -14,7 +14,7 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
       .when('/', {
         templateUrl: 'app/main/main.html'
       })
-      .when('/depenses',{
+      .when('/transactions',{
         templateUrl:'components/transaction/transaction.html',
         controller: 'TransCtrl'
       })
