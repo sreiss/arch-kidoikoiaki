@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose')
 var Schema = mongoose.Schema;
 
 // db connect
@@ -32,6 +33,11 @@ var basicParticipantModel = Schema({
   , prt_share: {type: Number, min: 0}
 });
 
+var basicCategorieModel = Schema({
+    ctg_name : String
+  , ctg_description : String
+});
+
 var basicTransactionModel = Schema({
     trs_uri: String
   , trs_description: String
@@ -42,19 +48,18 @@ var basicTransactionModel = Schema({
        ,trs_share : {type: Number, min: 0}
   }] 
   , trs_creation_date: String
+  , trs_categorie : [{ type: Schema.Types.ObjectId, ref: 'kid_categorie' }]
 });
 
-var basicCategorieModel = Schema({
-    ctg_name = String
-  , ctg_description = String
-});
 // Set our collection
-var sheetModel = mongoose.model('kid_sheet', basicSheetModel);
-var participantModel = mongoose.model('kid_participant', basicParticipantModel);
-var transactionModel = mongoose.model('kid_transaction', basicTransactionModel);
+var sheetModel =  mongoose.model('kid_sheet', basicSheetModel);
+var participantModel =  mongoose.model('kid_participant', basicParticipantModel);
+var categorieModel =  mongoose.model('kid_categorie', basicCategorieModel);
+var transactionModel =  mongoose.model('kid_transaction', basicTransactionModel);
 
 //set the route
 var rRacine = require('./routes/racine');
+var rCategorie = require('./routes/categorie');
 var rSheet = require('./routes/sheet');
 var rParticipant = require('./routes/participant');
 var rTransaction = require('./routes/transaction');
@@ -81,12 +86,8 @@ app.use(function(req,res,next){
     next();
 });
 
-// app.use('/', rSheet);
-// app.use('/create', rSheet);
-// app.use('/sheet/:randomid/participants', rParticipant);
-// app.use('/sheet/:randomid/func-add-participant', rParticipant);
-
 app.use('/', rRacine);
+app.use('/sheet/', rCategorie);
 app.use('/sheet/', rSheet);
 app.use('/sheet/', rParticipant);
 app.use('/sheet/', rTransaction);
