@@ -1,0 +1,12 @@
+Sur cette version du kid on se contente de : 
+    - arriver sur la page principal
+    - crée un new kid
+    - ajouter une personne (nom, description, prix) a ce kid
+    - si l'utilisateur fais une url du style "locahost:3000/sheet/ton_rep_il_mange_des_bananes" ca marche aussi (du coup le user peut crée son url, mais a ses risque et périls)
+    - entierment responsiv (mdr)
+    
+Prochaine version : 
+    - suppression d'une row
+    - faut voir la colonne "depense" je sais plus ce que c'est
+    - integre le retour données en json (pour que brian puisse adapter a angular)
+    - intégration de firework.js, pour que quand l'utilisateur clique sur un bouton on a un feu d'artifice

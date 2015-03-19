@@ -1,0 +1,1 @@
+"..\..\..\..\..\Program Files\MongoDB 2.6 Standard\bin\mongod" --dbpath "..\..\..\..\..\..\Users\lfaviere\Desktop\kidoikoiaki\data"

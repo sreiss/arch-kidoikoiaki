@@ -1,0 +1,30 @@
+extends layout
+
+block content
+    table
+        tr
+            th id
+            th fname
+            th lname
+            th email
+            th share
+            th supprimer ?
+        
+        each row, i in participants
+            tr 
+                td= row.prt_id
+                td= row.prt_fname
+                td= row.prt_lname
+                td= row.prt_email
+                td= row.prt_share
+                td
+                    a(href='/sheet/#{uri}/deleteuser/'+row.prt_id) suppr
+                
+
+
+    h1 Ajoutez un mec
+    form#formAddUser(name="adduser",method="post",action="/sheet/#{uri}/adduser")
+        input#inputUserName(type="text", placeholder="username", name="username")
+        input#inputUserName(type="text", placeholder="descritpion", name="description")
+        input#inputUserName(type="text", placeholder="prix", name="price")
+        button#btnSubmit(type="submit") submit
