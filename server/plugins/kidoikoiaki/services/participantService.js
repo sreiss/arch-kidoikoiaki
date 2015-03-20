@@ -55,11 +55,11 @@ module.exports = function(Participant, qService) {
         },
 
         /** Get participant. */
-        getParticipant: function(participantId)
+        getParticipant: function(sheetReference, participantId)
         {
             var deferred = qService.defer();
 
-            Participant.findOne({_id: participantId}).exec(function (err, participant)
+            Participant.findOne({_id: participantId, prt_uri: sheetReference}).exec(function (err, participant)
             {
                 if(err)
                 {
@@ -78,11 +78,11 @@ module.exports = function(Participant, qService) {
         },
 
         /** Get all participants. */
-        getParticipants: function()
+        getParticipants: function(sheetReference)
         {
             var deferred = qService.defer();
 
-            Participant.find().exec(function (err, participants)
+            Participant.find({prt_uri: sheetReference}).exec(function (err, participants)
             {
                 if(err)
                 {

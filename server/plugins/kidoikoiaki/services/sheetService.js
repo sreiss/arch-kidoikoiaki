@@ -51,10 +51,10 @@ module.exports = function(Sheet, participantService, qService) {
         },
 
         /** Get participant. */
-        getParticipant: function(participantId, callback)
+        getParticipant: function(sheetReference, participantId, callback)
         {
             // Get participant.
-            participantService.getParticipant(participantId).then(function(participant)
+            participantService.getParticipant(sheetReference, participantId).then(function(participant)
             {
                 callback(null, participant);
             },
@@ -65,10 +65,10 @@ module.exports = function(Sheet, participantService, qService) {
         },
 
         /** Get participants. */
-        getParticipants: function(callback)
+        getParticipants: function(sheetReference, callback)
         {
             // Get participant.
-            participantService.getParticipants().then(function(participants)
+            participantService.getParticipants(sheetReference).then(function(participants)
             {
                 callback(null, participants);
             },
