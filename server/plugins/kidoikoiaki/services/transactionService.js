@@ -17,7 +17,6 @@ module.exports = function(Transaction, qService) {
             transaction.trs_description = transactionData.trs_description;
             transaction.trs_amount = transactionData.trs_amount;
             transaction.trs_contributor = transactionData.trs_contributor;
-            transaction.trs_creation_date = transactionData.trs_creation_date;
             transaction.trs_beneficiaries = [];
             transaction.trs_category = transactionData.trs_category;
 

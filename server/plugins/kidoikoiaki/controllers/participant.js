@@ -5,6 +5,10 @@
  * @copyright ArchTailors 2015
  */
 
+var ArchSaveError = GLOBAL.ArchSaveError;
+var ArchDeleteError = GLOBAL.ArchDeleteError;
+var ArchFindError = GLOBAL.ArchFindError;
+
 module.exports = function(participantService) {
     return {
         /** Save participant. */
@@ -13,22 +17,15 @@ module.exports = function(participantService) {
             // Get participant data.
             var participantData = req.body;
 
-            if(participantData)
+            // Saving participant.
+            participantService.saveParticipant(participantData).then(function(participant)
             {
-                // Saving participant.
-                participantService.saveParticipant(participantData).then(function(participant)
-                {
-                    res.status(200).json({"count" : 1, "data" : participant});
-                },
-                function(err)
-                {
-                    throw({"message" : err.message, "type" : "ParticipantController", "status" : 400});
-                });
-            }
-            else
+                res.status(200).json({"count" : 1, "data" : participant});
+            },
+            function(err)
             {
-                throw({"message" : "Missing parameters.", "type" : "ParticipantController", "status" : 400});
-            }
+                throw new ArchSaveError(err.message);
+            });
         },
 
         /** Delete participant. */
@@ -37,22 +34,15 @@ module.exports = function(participantService) {
             // Get participantId.
             var participantId = req.params.participantId;
 
-            if(participantId)
+            // Saving participant.
+            participantService.deleteParticipant(participantId).then(function(participant)
             {
-                // Saving participant.
-                participantService.deleteParticipant(participantId).then(function(participant)
-                {
-                    res.status(200).json({"count" : 1, "data" : participant});
-                },
-                function(err)
-                {
-                    throw({"message" : err.message, "type" : "ParticipantController", "status" : 400});
-                });
-            }
-            else
+                res.status(200).json({"count" : 1, "data" : participant});
+            },
+            function(err)
             {
-                throw({"message" : "Missing parameters.", "type" : "ParticipantController", "status" : 400});
-            }
+                throw new ArchDeleteError(err.message);
+            });
         },
 
         /** Get participant. */
@@ -61,22 +51,15 @@ module.exports = function(participantService) {
             // Get participantId.
             var participantId = req.params.participantId;
 
-            if(participantId)
+            // Get participant.
+            participantService.getParticipant(participantId).then(function(participant)
             {
-                // Get participant.
-                participantService.getParticipant(participantId).then(function(participant)
-                {
-                    res.status(200).json({"count" : 1, "data" : participant});
-                },
-                function(err)
-                {
-                    throw({"message" : err.message, "type" : "ParticipantController", "status" : 400});
-                });
-            }
-            else
+                res.status(200).json({"count" : 1, "data" : participant});
+            },
+            function(err)
             {
-                throw({"message" : "Missing parameters.", "type" : "ParticipantController", "status" : 400});
-            }
+                throw new ArchFindError(err.message);
+            });
         }
     };
 };

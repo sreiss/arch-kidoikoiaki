@@ -42,13 +42,14 @@ module.exports = function(Sheet, participantService, qService) {
                 {
                     deferred.reject(err);
                 }
-
-                if(sheet == null)
+                else if(sheet == null)
                 {
                     deferred.reject(new Error('No sheet matching [SHE_DATA_REFERENCE] : ' + sheetReference + "."));
                 }
-
-                deferred.resolve(sheet);
+                else
+                {
+                    deferred.resolve(sheet);
+                }
             });
 
             return deferred.promise;

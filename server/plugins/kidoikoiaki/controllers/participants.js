@@ -5,7 +5,10 @@
  * @copyright ArchTailors 2015
  */
 
-module.exports = function(participantsService) {
+var ArchFindError = GLOBAL.ArchFindError;
+
+module.exports = function(participantsService)
+{
     return {
         /** Get participants. */
         getParticipants: function(req, res)
@@ -13,22 +16,15 @@ module.exports = function(participantsService) {
             // Get sheetId.
             var sheetId = req.params.sheetId;
 
-            if(sheetId)
+            // Get participant.
+            participantsService.getParticipants(sheetId).then(function(participants)
             {
-                // Get participant.
-                participantsService.getParticipants(sheetId).then(function(participants)
-                {
-                    res.status(200).json({"count" : participants.length, "data" : participants});
-                },
-                function(err)
-                {
-                    throw({"message" : err.message, "type" : "ParticipantsController", "status" : 400});
-                });
-            }
-            else
+                res.status(200).json({"count" : participants.length, "data" : participants});
+            },
+            function(err)
             {
-                throw({"message" : "Missing parameters.", "type" : "ParticipantsController", "status" : 400});
-            }
+                throw new ArchFindError(err.message);
+            });
         }
     };
 };

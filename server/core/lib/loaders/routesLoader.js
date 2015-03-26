@@ -69,7 +69,6 @@ exports.init = function(done) {
                 routeRequire.apply(this, args);
                 expressApp.use('/' + pluginName + '/' + routeName, router);
             } catch (err) {
-                console.log(err);
                 console.error('No controller attached to ' + routeName + ' route in ' + pluginName + ' plugin');
             }
         }
@@ -86,30 +85,16 @@ exports.init = function(done) {
     // will print stacktrace
     if (expressApp.get('env') === 'development') {
         expressApp.use(function (err, req, res, next) {
-            res.status(err.status || 500);
-
-            res.json({
-                "error" : {
-                    "message": err.message,
-                    "type": err.type,
-                    "code": err.status
-                }
-            });
+            res.status(err.status || 500)
+                .send(err);
         });
     }
 
     // production error handler
     // no stacktraces leaked to user
     expressApp.use(function (err, req, res, next) {
-        res.status(err.status || 500);
-
-        res.json({
-            "error" : {
-                "message": err.message,
-                "type": err.type,
-                "code": err.status
-            }
-        });
+        res.status(err.status || 500)
+            .send(err);
     });
 
     return done();

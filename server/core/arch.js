@@ -5,6 +5,7 @@ var path = require('path'),
     expressApp = require(path.join(__dirname, 'lib', 'expressApp')),
     server = require(path.join(__dirname, 'lib', 'server')),
     controllersLoader = require(path.join(__dirname, 'lib', 'loaders', 'controllersLoader')),
+    errorsLoader = require(path.join(__dirname, 'lib', 'loaders', 'errorsLoader')),
     routesLoader = require(path.join(__dirname, 'lib', 'loaders', 'routesLoader')),
     modelsLoader = require(path.join(__dirname, 'lib', 'loaders', 'modelsLoader')),
     middlewaresLoader = require(path.join(__dirname, 'lib', 'loaders', 'middlewaresLoader')),
@@ -30,10 +31,10 @@ exports.attach = function(opts) {
     app.use(server);
     app.use(modelsLoader);
     app.use(servicesLoader);
+    app.use(errorsLoader);
     app.use(middlewaresLoader);
     app.use(controllersLoader);
     app.use(routesLoader);
-    //app.use(pluginsLoader);
 };
 
 exports.init = function(done) {

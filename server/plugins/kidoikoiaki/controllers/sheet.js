@@ -5,7 +5,11 @@
  * @copyright ArchTailors 2015
  */
 
-module.exports = function(sheetService) {
+var ArchSaveError = GLOBAL.ArchSaveError;
+var ArchFindError = GLOBAL.ArchFindError;
+
+module.exports = function(sheetService)
+{
     return {
         /** Save sheet. */
         saveSheet: function(req, res)
@@ -13,22 +17,15 @@ module.exports = function(sheetService) {
             // Get sheetData.
             var sheetData = req.body;
 
-            if(sheetData)
+            // Saving sheet.
+            sheetService.saveSheet(sheetData).then(function(sheet)
             {
-                // Saving sheet.
-                sheetService.saveSheet(sheetData).then(function(sheet)
-                {
-                    res.status(200).json({"count" : 1, "data" : sheet});
-                },
-                function(err)
-                {
-                    throw({"message" : err.message, "type" : "SheetController", "status" : 400});
-                });
-            }
-            else
+                res.status(200).json({"count" : 1, "data" : sheet});
+            },
+            function(err)
             {
-                throw({"message" : "Missing parameters.", "type" : "SheetController", "status" : 400});
-            }
+                throw new ArchSaveError(err.message);
+            });
         },
 
         /** Get sheet. */
@@ -37,22 +34,15 @@ module.exports = function(sheetService) {
             // Get sheetReference.
             var sheetReference = req.params.sheetReference;
 
-            if(sheetReference)
+            // Get sheet.
+            sheetService.getSheet(sheetReference).then(function(sheet)
             {
-                // Get sheet.
-                sheetService.getSheet(sheetReference).then(function(sheet)
-                {
-                    res.status(200).json({"count" : 1, "data" : sheet});
-                },
-                function(err)
-                {
-                    throw({"message" : err.message, "type" : "SheetController", "status" : 400});
-                });
-            }
-            else
+                res.status(200).json({"count" : 1, "data" : sheet});
+            },
+            function(err)
             {
-                throw({"message" : "Missing parameters.", "type" : "SheetController", "status" : 400});
-            }
+                throw new ArchFindError(err.message);
+            });
         }
     };
 };
