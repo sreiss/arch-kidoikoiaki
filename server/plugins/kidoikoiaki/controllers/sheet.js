@@ -10,31 +10,28 @@ module.exports = function(sheetService) {
         /** Save sheet. */
         saveSheet: function(req, res)
         {
-            // Get sheetReference.
-            var sheetReference = req.body.sheetReference;
+            // Get sheetData.
+            var sheetData = req.body;
 
-            if(sheetReference)
+            if(sheetData)
             {
                 // Saving sheet.
-                sheetService.saveSheet(sheetReference, function (err, result)
+                sheetService.saveSheet(sheetData).then(function(sheet)
                 {
-                    if(err)
-                    {
-                        res.status(500).json({"message": "An error occurred while saving sheet.", "data": err.message});
-                    }
-                    else
-                    {
-                        res.status(200).json({"message": "Sheet saved successfully.", "data": result});
-                    }
+                    res.status(200).json({"count" : 1, "data" : sheet});
+                },
+                function(err)
+                {
+                    throw({"message" : err.message, "type" : "SheetController", "status" : 400});
                 });
             }
             else
             {
-                res.status(500).json({"message": "Missing parameters.", "data": false});
+                throw({"message" : "Missing parameters.", "type" : "SheetController", "status" : 400});
             }
         },
 
-        /** Get sheet.. */
+        /** Get sheet. */
         getSheet: function(req, res)
         {
             // Get sheetReference.
@@ -45,83 +42,16 @@ module.exports = function(sheetService) {
                 // Get sheet.
                 sheetService.getSheet(sheetReference).then(function(sheet)
                 {
-                    res.status(200).json({"message" : "Sheet found successfully.", "data" : sheet});
+                    res.status(200).json({"count" : 1, "data" : sheet});
                 },
                 function(err)
                 {
-                    res.status(500).json({"message" : "An error occurred while founding sheet.", "data" : err.message});
+                    throw({"message" : err.message, "type" : "SheetController", "status" : 400});
                 });
             }
             else
             {
-                res.status(500).json({"message": "Missing parameters.", "data": false});
-            }
-        },
-
-        /** Save participant. */
-        saveParticipant: function(req, res)
-        {
-            // Get participant data.
-            var participant = req.body;
-
-            if(participant)
-            {
-                // Saving participant.
-                sheetService.saveParticipant(participant, function (err, result)
-                {
-                    if(err)
-                    {
-                        res.status(500).json({"message": "An error occurred while saving participant.", "data": err.message});
-                    }
-                    else
-                    {
-                        res.status(200).json("prout");
-                        //res.status(200).json({"message": "Participant saved successfully.", "data": result});
-                    }
-                });
-            }
-            else
-            {
-                res.status(500).json({"message": "Missing parameters.", "data": false});
-            }
-        },
-
-        /** Get participant(s). */
-        getParticipant: function(req, res)
-        {
-            // Get participantId.
-            var participantId = req.params.participantId;
-            var sheetReference = req.params.sheetReference;
-
-            if(participantId)
-            {
-                // Get participant.
-                sheetService.getParticipant(sheetReference, participantId, function(err, result)
-                {
-                    if(err)
-                    {
-                        res.status(500).json({"message" : "An error occurred while founding participant.", "data" : err.message});
-                    }
-                    else
-                    {
-                        res.status(200).json({"message": "Participant found successfully.", "data": result});
-                    }
-                });
-            }
-            else
-            {
-                // Get all participants.
-                sheetService.getParticipants(sheetReference, function(err, result)
-                {
-                    if(err)
-                    {
-                        res.status(500).json({"message" : "An error occurred while founding participants.", "data" : err.message});
-                    }
-                    else
-                    {
-                        res.status(200).json({"message" : "Participants found successfully.", "data" : result});
-                    }
-                });
+                throw({"message" : "Missing parameters.", "type" : "SheetController", "status" : 400});
             }
         }
     };

@@ -8,23 +8,27 @@
 module.exports = function(Sheet, participantService, qService) {
     return {
         /** Save sheet. */
-        saveSheet: function(sheetReference, callback)
+        saveSheet: function(sheetData, callback)
         {
-            var sheet = new Sheet();
+            var deferred = qService.defer();
 
-            // Assign data.
-            sheet.she_data_reference = sheetReference;
+            var sheet = new Sheet();
+            sheet.she_reference = sheetData.she_reference;
 
             // Saving sheet.
-            sheet.save(function(err, sheet)
+            sheet.save(function(err)
             {
                 if(err)
                 {
-                    callback(err, null);
+                    deferred.reject(err);
                 }
-
-                callback(null, sheet);
+                else
+                {
+                    deferred.resolve(sheet);
+                }
             });
+
+            return deferred.promise;
         },
 
         /** Get sheet. */
@@ -41,55 +45,13 @@ module.exports = function(Sheet, participantService, qService) {
 
                 if(sheet == null)
                 {
-                    deferred.reject(new Error('No sheet matching [SHEET_REFERENCE] : ' + sheetReference + "."));
+                    deferred.reject(new Error('No sheet matching [SHE_DATA_REFERENCE] : ' + sheetReference + "."));
                 }
 
                 deferred.resolve(sheet);
             });
 
             return deferred.promise;
-        },
-
-        /** Save participant. */
-        saveParticipant: function(participantData, callback)
-        {
-            // Save participant.
-            participantService.saveParticipant(participantData, callback).then(function(participant)
-            {
-                callback(null, participant);
-            },
-            function(err)
-            {
-                callback(err, null);
-            });
-        },
-
-        /** Get participant. */
-        getParticipant: function(sheetReference, participantId, callback)
-        {
-            // Get participant.
-            participantService.getParticipant(sheetReference, participantId).then(function(participant)
-            {
-                callback(null, participant);
-            },
-            function(err)
-            {
-                callback(err, null);
-            });
-        },
-
-        /** Get participants. */
-        getParticipants: function(sheetReference, callback)
-        {
-            // Get participant.
-            participantService.getParticipants(sheetReference).then(function(participants)
-            {
-                callback(null, participants);
-            },
-            function(err)
-            {
-                callback(err, null);
-            });
         }
     };
 };

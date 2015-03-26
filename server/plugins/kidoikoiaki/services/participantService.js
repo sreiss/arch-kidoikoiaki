@@ -8,13 +8,12 @@
 module.exports = function(Participant, qService) {
     return {
         /** Save participant. */
-        saveParticipant: function(participantData, callback)
+        saveParticipant: function(participantData)
         {
             var deferred = qService.defer();
-            var participant = new Participant();
 
-            // Assign data.
-            participant.prt_uri = participantData.prt_uri;
+            var participant = new Participant();
+            participant.prt_sheet = participantData.prt_sheet;
             participant.prt_fname = participantData.prt_fname;
             participant.prt_lname = participantData.prt_lname;
             participant.prt_email = participantData.prt_email;
@@ -24,11 +23,15 @@ module.exports = function(Participant, qService) {
             {
                 if(err)
                 {
-                    callback(err, null);
+                    deferred.reject(err);
                 }
-
-                callback(null, participant);
+                else
+                {
+                    deferred.resolve(participant);
+                }
             });
+
+            return deferred.promise;
         },
 
         /** Delete participant. */
@@ -36,65 +39,44 @@ module.exports = function(Participant, qService) {
         {
             var deferred = qService.defer();
 
-            Participant.findOneAndRemove({participantId: participantId}, function(err, participant)
+            Participant.findOneAndRemove({_id: participantId}, function(err, participant)
             {
                 if(err)
                 {
                     deferred.reject(err);
                 }
-
-                if (participant == null)
+                else if(participant == null)
                 {
                     deferred.reject(new Error('No participant matching [PARTICIPANT_ID] : ' + participantId + "."));
                 }
-
-                deferred.resolve(participant);
+                else
+                {
+                    deferred.resolve(participant);
+                }
             });
 
             return deferred.promise;
         },
 
         /** Get participant. */
-        getParticipant: function(sheetReference, participantId)
+        getParticipant: function(participantId)
         {
             var deferred = qService.defer();
 
-            Participant.findOne({_id: participantId, prt_uri: sheetReference}).exec(function (err, participant)
+            Participant.findOne({_id: participantId}).exec(function (err, participant)
             {
                 if(err)
                 {
                     deferred.reject(err);
                 }
-
-                if (participant == null)
+                else if(participant == null)
                 {
                     deferred.reject(new Error('No participant matching [PARTICIPANT_ID] : ' + participantId + "."));
                 }
-
-                deferred.resolve(participant);
-            });
-
-            return deferred.promise;
-        },
-
-        /** Get all participants. */
-        getParticipants: function(sheetReference)
-        {
-            var deferred = qService.defer();
-
-            Participant.find({prt_uri: sheetReference}).exec(function (err, participants)
-            {
-                if(err)
+                else
                 {
-                    deferred.reject(err);
+                    deferred.resolve(participant);
                 }
-
-                if (participants.length == 0)
-                {
-                    deferred.reject(new Error('No participants found.'));
-                }
-
-                deferred.resolve(participants);
             });
 
             return deferred.promise;

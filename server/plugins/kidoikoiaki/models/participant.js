@@ -8,7 +8,7 @@
 module.exports = function(Types) {
     return {
         schema: {
-            prt_uri: {type: String, required: true},
+            prt_sheet: { type: Types.ObjectId, ref: 'Sheet', required: true},
             prt_fname: {type: String, required: true},
             prt_lname: {type: String, required: true},
             prt_email: {type: String, required: true},

@@ -87,9 +87,13 @@ exports.init = function(done) {
     if (expressApp.get('env') === 'development') {
         expressApp.use(function (err, req, res, next) {
             res.status(err.status || 500);
-            res.render('error', {
-                message: err.message,
-                error: err
+
+            res.json({
+                "error" : {
+                    "message": err.message,
+                    "type": err.type,
+                    "code": err.status
+                }
             });
         });
     }
@@ -98,9 +102,13 @@ exports.init = function(done) {
     // no stacktraces leaked to user
     expressApp.use(function (err, req, res, next) {
         res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: {}
+
+        res.json({
+            "error" : {
+                "message": err.message,
+                "type": err.type,
+                "code": err.status
+            }
         });
     });
 
