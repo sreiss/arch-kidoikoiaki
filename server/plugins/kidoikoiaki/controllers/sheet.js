@@ -61,7 +61,7 @@ module.exports = function(sheetService) {
         /** Save participant. */
         saveParticipant: function(req, res)
         {
-            // Get sheetReference.
+            // Get participant data.
             var participant = req.body;
 
             if(participant)
@@ -75,7 +75,8 @@ module.exports = function(sheetService) {
                     }
                     else
                     {
-                        res.status(200).json({"message": "Participant saved successfully.", "data": result});
+                        res.status(200).json("prout");
+                        //res.status(200).json({"message": "Participant saved successfully.", "data": result});
                     }
                 });
             }

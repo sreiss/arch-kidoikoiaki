@@ -50,6 +50,20 @@ module.exports = function(Sheet, participantService, qService) {
             return deferred.promise;
         },
 
+        /** Save participant. */
+        saveParticipant: function(participantData, callback)
+        {
+            // Save participant.
+            participantService.saveParticipant(participantData, callback).then(function(participant)
+            {
+                callback(null, participant);
+            },
+            function(err)
+            {
+                callback(err, null);
+            });
+        },
+
         /** Get participant. */
         getParticipant: function(sheetReference, participantId, callback)
         {
