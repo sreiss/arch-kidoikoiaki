@@ -21,11 +21,11 @@ module.exports = function(categoryService)
             // Saving category.
             categoryService.saveCategory(categoryData).then(function(category)
             {
-                res.status(200).json({"count" : 1, "data" : category});
+                res.status(200).json({"count" : (category ? 1 : 0), "data" : category});
             },
             function(err)
             {
-                throw new ArchSaveError(err.message);
+                res.status(500).json({"error" : new ArchSaveError(err.message)});
             });
         },
 
@@ -38,11 +38,11 @@ module.exports = function(categoryService)
             // Saving category.
             categoryService.deleteCategory(categoryId).then(function(category)
             {
-                res.status(200).json({"count" : 1, "data" : category});
+                res.status(200).json({"count" : (category ? 1 : 0), "data" : category});
             },
             function(err)
             {
-                throw new ArchDeleteError(err.message);
+                res.status(500).json({"error" : new ArchDeleteError(err.message)});
             });
         },
 
@@ -55,11 +55,11 @@ module.exports = function(categoryService)
             // Get category.
             categoryService.getCategory(categoryId).then(function (category)
             {
-                res.status(200).json({"count": 1, "data": category});
+                res.status(200).json({"count": (category ? 1 : 0), "data": category});
             },
             function (err)
             {
-                throw new ArchFindError(err.message);
+                res.status(500).json({"error" : new ArchFindError(err.message)});
             });
         },
 
@@ -73,7 +73,7 @@ module.exports = function(categoryService)
             },
             function(err)
             {
-                throw new ArchFindError(err.message);
+                res.status(500).json({"error" : new ArchFindError(err.message)});
             });
         }
     };

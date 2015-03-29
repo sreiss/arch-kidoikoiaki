@@ -22,7 +22,7 @@ module.exports = function(transactionsService) {
             },
             function(err)
             {
-                throw({"message" : err.message, "type" : "TransactionsController", "status" : 400});
+                res.status(500).json({"error" : new ArchFindError(err.message)});
             });
         }
     };

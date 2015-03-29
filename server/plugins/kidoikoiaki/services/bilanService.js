@@ -5,10 +5,10 @@
  * @copyright ArchTailors 2015
  */
 
-module.exports = function(Sheet, participantService, qService) {
+module.exports = function(Debt, qService) {
     return {
-        /** Save sheet. */
-        saveSheet: function(sheetData)
+        /** Generate bilan. */
+        generateBilan: function(sheetData)
         {
             var deferred = qService.defer();
 
@@ -31,12 +31,12 @@ module.exports = function(Sheet, participantService, qService) {
             return deferred.promise;
         },
 
-        /** Get sheet. */
-        getSheet: function(sheetReference)
+        /** Get bilan. */
+        getBilan: function(sheetId)
         {
             var deferred = qService.defer();
 
-            Sheet.findOne({she_reference: sheetReference}).exec(function (err, sheet)
+            Debt.find({dbt_sheet: sheetId}).exec(function (err, debts)
             {
                 if(err)
                 {
@@ -44,7 +44,7 @@ module.exports = function(Sheet, participantService, qService) {
                 }
                 else
                 {
-                    deferred.resolve(sheet);
+                    deferred.resolve(debts);
                 }
             });
 

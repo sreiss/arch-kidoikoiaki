@@ -51,7 +51,7 @@ module.exports = function(Transaction, qService) {
                 {
                     deferred.reject(err);
                 }
-                else if(transaction == null)
+                else if(!transaction)
                 {
                     deferred.reject(new Error('No transaction matching [TRANSACTION_ID] : ' + transactionId + "."));
                 }
@@ -74,10 +74,6 @@ module.exports = function(Transaction, qService) {
                 if(err)
                 {
                     deferred.reject(err);
-                }
-                else if(!transaction)
-                {
-                    deferred.reject(new Error('No transaction matching [TRANSACTION_ID] : ' + transactionId + "."));
                 }
                 else
                 {

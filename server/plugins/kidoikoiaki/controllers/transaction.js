@@ -20,11 +20,11 @@ module.exports = function(transactionService) {
             // Saving transaction.
             transactionService.saveTransaction(transactionData).then(function(transaction)
             {
-                res.status(200).json({"count" : 1, "data" : transaction});
+                res.status(200).json({"count" : (transaction ? 1 : 0), "data" : transaction});
             },
             function(err)
             {
-                throw new ArchSaveError(err.message);
+                res.status(500).json({"error" : new ArchSaveError(err.message)});
             });
         },
 
@@ -37,11 +37,11 @@ module.exports = function(transactionService) {
             // Saving transaction.
             transactionService.deleteTransaction(transactionId).then(function(transaction)
             {
-                res.status(200).json({"count" : 1, "data" : transaction});
+                res.status(200).json({"count" : (transaction ? 1 : 0), "data" : transaction});
             },
             function(err)
             {
-                throw new ArchDeleteError(err.message);
+                res.status(500).json({"error" : new ArchDeleteError(err.message)});
             });
         },
 
@@ -54,11 +54,11 @@ module.exports = function(transactionService) {
             // Get transaction.
             transactionService.getTransaction(transactionId).then(function(transaction)
             {
-                res.status(200).json({"count" : 1, "data" : transaction});
+                res.status(200).json({"count" : (transaction ? 1 : 0), "data" : transaction});
             },
             function(err)
             {
-                throw new ArchFindError(err.message);
+                res.status(500).json({"error" : new ArchFindError(err.message)});
             });
         }
     };
