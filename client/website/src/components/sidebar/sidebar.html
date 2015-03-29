@@ -1,14 +1,14 @@
 <md-list>
   <md-item class="side-list">
-    <a href="#/participants">
-    <md-button class="side-list">
-      <md-icon class="fa fa-users"></md-icon>
-      Participants
-    </md-button>
-      </a>
+    <a ui-sref="sheet.participants">
+      <md-button class="side-list">
+        <md-icon class="fa fa-users"></md-icon>
+        Participants
+      </md-button>
+    </a>
   </md-item>
   <md-item class="side-list">
-    <a href="#/transactions">
+    <a ui-sref="sheet.transactions">
       <md-button class="side-list">
         <md-icon class="fa fa-exchange"></md-icon>
         Dépenses
@@ -16,11 +16,19 @@
     </a>
   </md-item>
   <md-item class="side-list">
-    <a href="#/">
-    <md-button class="side-list">
-      <md-icon class="fa fa-pie-chart"></md-icon>
-      Bilan
-    </md-button>
-      </a>
+    <a ui-sref="sheet.categories" uis>
+      <md-button class="side-list">
+        <md-icon class="fa fa-folder"></md-icon>
+        Catégories
+      </md-button>
+    </a>
+  </md-item>
+  <md-item class="side-list">
+    <a ui-sref="sheet.bilan">
+      <md-button class="side-list">
+        <md-icon class="fa fa-pie-chart"></md-icon>
+        Bilan
+      </md-button>
+    </a>
   </md-item>
 </md-list>

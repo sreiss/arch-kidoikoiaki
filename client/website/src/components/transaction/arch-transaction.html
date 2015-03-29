@@ -1,0 +1,30 @@
+<h1>Dépenses </h1>
+<md-button class="md-accent md-raised" ui-sref="sheet.transactionNew">
+  Nouvelle dépense
+</md-button>
+<ul class="collection">
+  <li class="collection-item" ng-repeat="transaction in transactions.data">
+    <div>
+      <div layout="row">
+        <div flex="70">
+          {{transaction.trs_contributor}} à payé {{transaction.trs_amount | currency:'€'}} €
+        </div>
+        <div flex>
+          <span class="pull-right">Le : {{transaction.trs_creation_date | date:'dd/MM/yyyy'}}</span>
+        </div>
+      </div>
+      <blockquote>
+        {{transaction.trs_description}} dans {{transaction.trs_category}}
+        <footer>Bénéficiaires :
+          <span ng-repeat="beneficary in transaction.trs_beneficiaries">{{beneficary}}</span>
+        </footer>
+        <span class="pull-right"><a href="#">
+          <md-icon class="fa fa-pencil-square-o"></md-icon>
+        </a>
+        <a href="#">
+          <md-icon class="fa fa-trash"></md-icon>
+        </a></span>
+      </blockquote>
+    </div>
+  </li>
+</ul>

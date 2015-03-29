@@ -36,7 +36,7 @@ module.exports = function(Sheet, participantService, qService) {
         {
             var deferred = qService.defer();
 
-            Sheet.findOne({she_data_reference: sheetReference}).exec(function (err, sheet)
+            Sheet.findOne({she_reference: sheetReference}).exec(function (err, sheet)
             {
                 if(err)
                 {
@@ -44,7 +44,7 @@ module.exports = function(Sheet, participantService, qService) {
                 }
                 else if(sheet == null)
                 {
-                    deferred.reject(new Error('No sheet matching [SHE_DATA_REFERENCE] : ' + sheetReference + "."));
+                    deferred.reject(new Error('No sheet matching [SHE__REFERENCE] : ' + sheetReference + "."));
                 }
                 else
                 {

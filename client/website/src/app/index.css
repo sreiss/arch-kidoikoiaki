@@ -300,3 +300,6 @@ blockquote {
   min-width: 33%;
   height: auto;
 }
+.table-participants{
+  margin-top: 20px;
+}

@@ -1,4 +1,4 @@
-# arch-kidoikoiaki
+﻿# arch-kidoikoiaki
 
 ## Server
 
@@ -12,11 +12,11 @@
 
 * Participants
   * POST /kidoikoiaki/participant : ajout d'un participant à la sheet
-   * prt_sheet : identifiant unique de la sheet
-   * prt_fname : prénom du participant
-   * prt_lname : nom du participant
-   * prt_email : adresse e-mail du participant
-   * prt_share : part de base du participant
+    * prt_sheet : identifiant unique de la sheet
+    * prt_fname : prénom du participant
+    * prt_lname : nom du participant
+    * prt_email : adresse e-mail du participant
+    * prt_share : part de base du participant
   * DELETE /kidoikoiaki/participant/:prt_id : supression du participant
    * prt_id : identifiant unique du participant
   * GET /kidoikoiaki/participant/:prt_id : récupération des informations du participant
