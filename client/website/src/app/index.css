@@ -303,3 +303,7 @@ blockquote {
 .table-participants{
   margin-top: 20px;
 }
+
+.md-button{
+  margin-bottom: 5px;
+}

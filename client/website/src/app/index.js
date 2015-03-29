@@ -56,12 +56,12 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
         controller: "archCategoriesController"
       })
       .state('sheet.categoryNew', {
-        url: "/categorie/new",
-        templateUrl: "components/category/arch-category.html",
+        url: "/category/new",
+        templateUrl: "components/category/arch-category-new.html",
         controller: "archCategoryNewController"
       })
       .state('sheet.categoryEdit', {
-        url: "/categorie/:idCategory/edit",
+        url: "/category/:idCategory/edit",
         templateUrl: "components/category/arch-category.html",
         controller: "archCategoryEditController"
       });

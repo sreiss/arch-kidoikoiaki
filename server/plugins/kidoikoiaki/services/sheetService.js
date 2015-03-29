@@ -42,13 +42,10 @@ module.exports = function(Sheet, participantService, qService) {
                 {
                     deferred.reject(err);
                 }
-<<<<<<< HEAD
                 else if(sheet == null)
                 {
                     deferred.reject(new Error('No sheet matching [SHE__REFERENCE] : ' + sheetReference + "."));
                 }
-=======
->>>>>>> origin/master
                 else
                 {
                     deferred.resolve(sheet);

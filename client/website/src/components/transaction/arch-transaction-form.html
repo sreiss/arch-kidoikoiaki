@@ -1,59 +1,50 @@
 <div layout="row">
-  <div>
+  <div class="md-padding">
     <md-content class="md-padding">
       <h3>Dépense</h3>
       <div layout="row">
         <md-icon class="fa fa-user"></md-icon>
-        <md-select ng-model="someVal" placeholder="Qui ?" flex="1" class="select-add">
-          <md-option value="1">One</md-option>
-          <md-option value="2">Two</md-option>
+        <md-select ng-model="transaction.trs_contributor" placeholder="Qui ?" flex="1" class="select-add">
+          <md-option ng-repeat="participant in participants.data" value="{{participant._id}}">{{participant.prt_lname}}</md-option>
         </md-select>
       </div>
       <div layout="row">
         <md-icon class="fa fa-info-circle"></md-icon>
         <md-input-container md-no-float>
           <label>Quoi ?</label>
-          <input type="text">
+          <input ng-model="transaction.trs_description" type="text">
         </md-input-container>
       </div>
       <div layout="row">
         <md-icon class="fa fa-money"></md-icon>
         <md-input-container>
           <label>Combien ?</label>
-          <input type="number">
+          <input type="number" ng-model="transaction.trs_amount">
         </md-input-container>
       </div>
-
-    </md-content>
+    <div layout="row">
+      <md-icon class="fa fa-user"></md-icon>
+      <md-select ng-model="transaction.trs_category" placeholder="Catégorie ?" flex="1" class="select-add">
+        <md-option ng-repeat="category in categories.data" value="{{category._id}}">{{category.ctg_name}}</md-option>
+      </md-select>
+    </div>
+      </md-content>
   </div>
   <div>
     <md-content class="md-padding">
       <h3>Bénéficiaires</h3>
-      <md-card>
+      <md-card ng-repeat="participant in participants.data">
         <div layout="row">
-          <md-switch ng-model="data.cb1" aria-label="Switch 1">
-            Switch 1: {{ data.cb1 }}
+          <md-switch ng-model="participant._id">
+            {{participant.prt_lname}}
           </md-switch>
           <md-icon class="fa fa-pie-chart"></md-icon>
           <md-input-container>
-            <label>Nombre</label>
-            <input type="number" ng-disabled=!data.cb1>
+            <label>Parts ?</label>
+            <input type="number" ng-disabled=!participant._id ng-value="participant.prt_share">
           </md-input-container>
         </div>
       </md-card>
-      <md-card>
-        <div layout="row">
-          <md-switch ng-model="data.cb1" aria-label="Switch 1">
-            Switch 1: {{ data.cb1 }}
-          </md-switch>
-          <md-icon class="fa fa-pie-chart"></md-icon>
-          <md-input-container>
-            <label>Nombre</label>
-            <input type="number" ng-disabled=!data.cb1>
-          </md-input-container>
-        </div>
-      </md-card>
-
     </md-content>
   </div>
 

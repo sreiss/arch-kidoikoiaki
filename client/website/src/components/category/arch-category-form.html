@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-
-</body>
-</html>
+<div layout="column">
+  <div layout="row">
+    <md-icon class="fa fa-folder"></md-icon>
+    <md-input-container flex>
+      <label>Nom de la catégorie</label>
+      <input type="text" ng-model="category.ctg_name">
+    </md-input-container>
+  </div>
+  <div layout="row">
+    <md-icon class="fa fa-bars"></md-icon>
+    <md-input-container flex>
+      <label>Description de la catégorie</label>
+      <input type="text" ng-model="category.ctg_description">
+    </md-input-container>
+  </div>
+</div>
+<div class="md-actions" layout="row">
+  <md-button class="md-raised md-accent" type="submit">Valider</md-button>
+</div>

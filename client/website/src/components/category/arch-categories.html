@@ -1,10 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-
-</body>
-</html>
+<h1>Catégories</h1>
+<md-button class="md-accent md-raised" ui-sref="sheet.categoryNew">
+  Nouvelle catégorie
+</md-button>
+<div layout="row" class="table-participants">
+  <table class="responsive-table striped">
+    <thead>
+    <tr>
+      <th data-field="name">Nom</th>
+      <th data-field="firstName">Description</th>
+      <th data-field="edit>"></th>
+      <th data-field="delete"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="category in categories.data">
+      <td>{{category.ctg_name}}</td>
+      <td>{{category.ctg_description}}</td>
+      <td>
+        <a href="#"><md-icon class="fa fa-pencil-square-o" ></md-icon></a>
+        <a href="#"><md-icon class="fa fa-trash"></md-icon></a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

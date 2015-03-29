@@ -1,9 +1,15 @@
 angular.module('kid')
-  .controller('archParticipantController', function($scope, Participants,Sheet,$stateParams){
-    Sheet.get({she_id:$stateParams.idSheet},function(sheet) {
-      $scope.participants = Participants.query({she_id : sheet.data._id});
-      console.log(sheet.data._id);
-    });
+  .controller('archParticipantController', function ($scope, Participants,Sheet,$stateParams){
+    Sheet.get({she_id: $stateParams.idSheet},
+      function (sheet) {
+        $scope.participants = Participants.query({she_id: sheet.data._id});
+      },
+      function (responseError){
+        if (responseError.status === 400) {
+          console.log(responseError);
+        }
+      }
+    );
   })
   .controller('archParticipantEditController', function($scope, Participant){
     $scope.participants = Participant
@@ -27,14 +33,26 @@ angular.module('kid')
       console.log(sheet.data._id);
     });
     $scope.newParticipant = function() {
-        $scope.participant.$save(function(){
+      $scope.participant.$save(
+        function (value) {
+          $scope.participant.$save(function () {
             $mdToast.show(
               $mdToast.simple()
-                .content('Participants crée')
+                .content('Participant crée')
                 .position($scope.getToastPosition())
                 .hideDelay(3000)
             );
-        });
+          });
+          $state.go('sheet.categories');
+        }
+        ,
+        function (responseError) {
+          if (responseError.status === 400) {
+            console.log(responseError);
+          }
+
+        }
+      );
       $state.go('sheet.participants');
     }
 });
