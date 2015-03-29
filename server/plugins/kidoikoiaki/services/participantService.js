@@ -45,7 +45,7 @@ module.exports = function(Participant, qService) {
                 {
                     deferred.reject(err);
                 }
-                else if(participant)
+                else if(!participant)
                 {
                     deferred.reject(new Error('No participant matching [PARTICIPANT_ID] : ' + participantId + "."));
                 }

@@ -19,6 +19,7 @@ module.exports = function(Transaction, qService) {
             transaction.trs_contributor = transactionData.trs_contributor;
             transaction.trs_beneficiaries = [];
             transaction.trs_category = transactionData.trs_category;
+            transaction.trs_weight = transactionData.trs_weight;
 
             for(var i = 0; i < transactionData.trs_beneficiaries.length; i++)
             {

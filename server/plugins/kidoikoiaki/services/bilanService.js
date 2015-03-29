@@ -5,27 +5,44 @@
  * @copyright ArchTailors 2015
  */
 
-module.exports = function(Debt, qService) {
+module.exports = function(Debt, bilanService, debtService, participantsService, transactionsService, qService) {
     return {
         /** Generate bilan. */
-        generateBilan: function(sheetData)
+        generateBilan: function(sheetId)
         {
             var deferred = qService.defer();
 
-            var sheet = new Sheet();
-            sheet.she_reference = sheetData.she_reference;
-
-            // Saving sheet.
-            sheet.save(function(err)
+            // Remove previous debts.
+            debtService.deleteDebts(sheetId).then(function(debts)
             {
-                if(err)
+                console.log("Delete previous debts : " + debts);
+
+                // Get transactions.
+                participantsService.getParticipants(sheetId).then(function(participants)
+                {
+                    console.log("Participants found : " + participants.length);
+
+                    // Get transactions.
+                    transactionsService.getTransactions(sheetId).then(function(transactions)
+                    {
+                        console.log("Transactions found : " + transactions.length);
+
+                        // ADD ALGO HERE !
+
+                    })
+                    .catch(function(err)
+                    {
+                        deferred.reject(err);
+                    })
+                })
+                .catch(function(err)
                 {
                     deferred.reject(err);
-                }
-                else
-                {
-                    deferred.resolve(sheet);
-                }
+                })
+            })
+            .catch(function(err)
+            {
+                deferred.reject(err);
             });
 
             return deferred.promise;
@@ -41,6 +58,17 @@ module.exports = function(Debt, qService) {
                 if(err)
                 {
                     deferred.reject(err);
+                }
+                else if(debts.length == 0)
+                {
+                    bilanService.generateBilan(sheetId).then(function(debts)
+                    {
+                        deferred.resolve(debts);
+                    })
+                    .catch(function(err)
+                    {
+                        deferred.reject(err);
+                    });
                 }
                 else
                 {

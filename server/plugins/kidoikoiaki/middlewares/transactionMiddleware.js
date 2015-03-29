@@ -31,9 +31,9 @@ module.exports = function() {
 
             // Check transaction amount.
             var transactionAmount = transactionData.trs_amount || '';
-            if(!validator.isNumeric(transactionAmount))
+            if(!validator.isNumeric(transactionAmount) && transactionAmount > 0)
             {
-                throw new ArchParameterError("Transaction amount must be numeric.")
+                throw new ArchParameterError("Transaction amount must be numeric and greater than 0.")
             }
 
             // Check transaction contributor id.
@@ -58,6 +58,13 @@ module.exports = function() {
                 {
                     throw new ArchParameterError("Beneficiary ID isn't a valid MongoId.");
                 }
+            }
+
+            // Check transaction weight.
+            var transactionWeight = transactionData.trs_weight || '';
+            if(!validator.isNumeric(transactionWeight) && transactionWeight > 0)
+            {
+                throw new ArchParameterError("Transaction weight must be numeric and greater than 0.")
             }
 
             next();
