@@ -23,7 +23,7 @@ module.exports = function(participantsService)
             },
             function(err)
             {
-                throw new ArchFindError(err.message);
+                res.status(500).json({"error" : new ArchFindError(err.message)});
             });
         }
     };

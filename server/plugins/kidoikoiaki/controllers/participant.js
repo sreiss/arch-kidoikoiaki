@@ -20,11 +20,11 @@ module.exports = function(participantService) {
             // Saving participant.
             participantService.saveParticipant(participantData).then(function(participant)
             {
-                res.status(200).json({"count" : 1, "data" : participant});
+                res.status(200).json({"count" : (participant ? 1 : 0), "data" : participant});
             },
             function(err)
             {
-                throw new ArchSaveError(err.message);
+                res.status(500).json({"error" : new ArchSaveError(err.message)});
             });
         },
 
@@ -37,11 +37,11 @@ module.exports = function(participantService) {
             // Saving participant.
             participantService.deleteParticipant(participantId).then(function(participant)
             {
-                res.status(200).json({"count" : 1, "data" : participant});
+                res.status(200).json({"count" : (participant ? 1 : 0), "data" : participant});
             },
             function(err)
             {
-                throw new ArchDeleteError(err.message);
+                res.status(500).json({"error" : new ArchDeleteError(err.message)});
             });
         },
 
@@ -54,11 +54,11 @@ module.exports = function(participantService) {
             // Get participant.
             participantService.getParticipant(participantId).then(function(participant)
             {
-                res.status(200).json({"count" : 1, "data" : participant});
+                res.status(200).json({"count" : (participant ? 1 : 0), "data" : participant});
             },
             function(err)
             {
-                throw new ArchFindError(err.message);
+                res.status(500).json({"error" : new ArchFindError(err.message)});
             });
         }
     };

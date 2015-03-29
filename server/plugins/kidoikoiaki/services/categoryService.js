@@ -42,7 +42,7 @@ module.exports = function(Category, qService) {
                 {
                     deferred.reject(err);
                 }
-                else if(category == null)
+                else if(!category)
                 {
                     deferred.reject(new Error('No category matching [CATEGORY_ID] : ' + categoryId + "."));
                 }
@@ -65,10 +65,6 @@ module.exports = function(Category, qService) {
                 if(err)
                 {
                     deferred.reject(err);
-                }
-                else if(!category)
-                {
-                    deferred.reject(new Error('No category matching [CATEGORY_ID] : ' + categoryId + "."));
                 }
                 else
                 {

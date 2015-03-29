@@ -20,11 +20,11 @@ module.exports = function(sheetService)
             // Saving sheet.
             sheetService.saveSheet(sheetData).then(function(sheet)
             {
-                res.status(200).json({"count" : 1, "data" : sheet});
+                res.status(200).json({"count" : (sheet ? 1 : 0), "data" : sheet});
             },
             function(err)
             {
-                throw new ArchSaveError(err.message);
+                res.status(500).json({"error" : new ArchSaveError(err.message)});
             });
         },
 
@@ -37,11 +37,11 @@ module.exports = function(sheetService)
             // Get sheet.
             sheetService.getSheet(sheetReference).then(function(sheet)
             {
-                res.status(200).json({"count" : 1, "data" : sheet});
+                res.status(200).json({"count" : (sheet ? 1 : 0), "data" : sheet});
             },
             function(err)
             {
-                throw new ArchFindError(err.message);
+                res.status(500).json({"error" : new ArchFindError(err.message)});
             });
         }
     };

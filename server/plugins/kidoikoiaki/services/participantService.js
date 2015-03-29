@@ -45,7 +45,7 @@ module.exports = function(Participant, qService) {
                 {
                     deferred.reject(err);
                 }
-                else if(participant == null)
+                else if(participant)
                 {
                     deferred.reject(new Error('No participant matching [PARTICIPANT_ID] : ' + participantId + "."));
                 }
@@ -63,15 +63,11 @@ module.exports = function(Participant, qService) {
         {
             var deferred = qService.defer();
 
-            Participant.findOne({_id: participantId}).exec(function (err, participant)
+            Participant.findOne({_id: participantId}).populate('prt_sheet').exec(function (err, participant)
             {
                 if(err)
                 {
                     deferred.reject(err);
-                }
-                else if(participant == null)
-                {
-                    deferred.reject(new Error('No participant matching [PARTICIPANT_ID] : ' + participantId + "."));
                 }
                 else
                 {
