@@ -7,9 +7,11 @@
 
 module.exports = function(Types) {
     return {
-        schema: {
+        schema:
+        {
             ctg_name: {type: String, required: true},
             ctg_description: {type: String}
-        }
+        },
+        priority: 2
     };
 };

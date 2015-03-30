@@ -75,7 +75,7 @@ module.exports = function(Transaction, qService) {
         {
             var deferred = qService.defer();
 
-            Transaction.findOne({_id: transactionId}).exec(function (err, transaction)
+            Transaction.findOne({_id: transactionId}).populate('trs_sheet trs_contributor trs_beneficiaries.trs_participant trs_category').exec(function (err, transaction)
             {
                 if(err)
                 {

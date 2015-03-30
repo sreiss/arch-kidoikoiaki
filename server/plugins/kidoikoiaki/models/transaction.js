@@ -19,6 +19,7 @@ module.exports = function(Types) {
             }],
             trs_creation_date: {type: Date, default: Date.now, required: true},
             trs_category: {type: Types.ObjectId, ref: 'Category'}
-        }
+        },
+        priority: 4
     };
 };

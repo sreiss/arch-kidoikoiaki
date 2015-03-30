@@ -12,7 +12,7 @@ module.exports = function(Participant, qService) {
         {
             var deferred = qService.defer();
 
-            Participant.find({prt_sheet: sheetId}).exec(function (err, participants)
+            Participant.find({prt_sheet: sheetId}).populate('prt_sheet').exec(function (err, participants)
             {
                 if(err)
                 {

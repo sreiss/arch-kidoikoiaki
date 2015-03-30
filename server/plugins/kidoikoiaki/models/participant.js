@@ -7,12 +7,14 @@
 
 module.exports = function(Types) {
     return {
-        schema: {
+        schema:
+        {
             prt_sheet: { type: Types.ObjectId, ref: 'Sheet', required: true},
             prt_fname: {type: String, required: true},
             prt_lname: {type: String, required: true},
             prt_email: {type: String, required: true},
             prt_share: {type: Number, min: 0, default: 0, required: true}
-        }
+        },
+        priority: 3
     };
 };

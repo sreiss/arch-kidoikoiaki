@@ -12,7 +12,7 @@ module.exports = function(Transaction, qService) {
         {
             var deferred = qService.defer();
 
-            Transaction.find({trs_sheet: sheetId}).exec(function (err, transactions)
+            Transaction.find({trs_sheet: sheetId}).populate('trs_sheet trs_contributor trs_beneficiaries.trs_participant trs_category').exec(function (err, transactions)
             {
                 if(err)
                 {
