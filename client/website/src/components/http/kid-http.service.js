@@ -19,10 +19,7 @@ angular.module('kid')
   .factory("Sheet", function ($resource) {
     return $resource('http://localhost:3005/kidoikoiaki/sheet/:she_id', {}, {
       get: {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        method: 'GET'
       }
     });
   })

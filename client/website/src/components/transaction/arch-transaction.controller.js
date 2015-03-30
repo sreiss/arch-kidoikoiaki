@@ -2,29 +2,11 @@ angular.module('kid')
   .controller('archTransactionsController', function ($scope, Transactions, Sheet, $stateParams) {
     Sheet.get({she_id: $stateParams.idSheet}, function (sheet) {
       $scope.transactions = Transactions.query({she_id: sheet.data._id});
+      console.log($scope.transactions);
+      console.log(sheet.data._id);
     });
   })
   .controller('archTransactionNewController', function ($scope, Participants,Categories, Transaction, $location, $mdToast, Sheet , $stateParams, $state, $animate) {
-    Sheet.get({she_id: $stateParams.idSheet},
-      function (sheet) {
-        $scope.participants = Participants.query({she_id: sheet.data._id});
-      },
-      function (responseError){
-        if (responseError.status === 400) {
-          console.log(responseError);
-        }
-      }
-    );
-    Sheet.get({she_id: $stateParams.idSheet},
-      function (sheet) {
-        $scope.categories = Categories.query({she_id: sheet.data._id});
-      },
-      function (responseError){
-        if (responseError.status === 400) {
-          console.log(responseError);
-        }
-      }
-    );
     $scope.toastPosition = {
       bottom: false,
       top: true,
@@ -39,9 +21,18 @@ angular.module('kid')
         .join(' ');
     };
     $scope.transaction = new Transaction();
-    Sheet.get({she_id: $stateParams.idSheet}, function (sheet) {
-      $scope.transaction.prt_sheet = sheet.data._id;
-    });
+    Sheet.get({she_id: $stateParams.idSheet},
+      function (sheet) {
+        $scope.participants = Participants.query({she_id: sheet.data._id});
+        $scope.categories = Categories.query({she_id: sheet.data._id});
+        $scope.transaction.prt_sheet = sheet.data._id;
+      },
+      function (responseError){
+        if (responseError.status === 400) {
+          console.log(responseError);
+        }
+      }
+    );
     $scope.newTransaction = function () {
       $scope.transaction.$save(function () {
         $mdToast.show(

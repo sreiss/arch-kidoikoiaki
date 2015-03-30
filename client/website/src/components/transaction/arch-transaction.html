@@ -7,16 +7,18 @@
     <div>
       <div layout="row">
         <div flex="70">
-          {{transaction.trs_contributor}} à payé {{transaction.trs_amount | currency:'€'}} €
+          {{transaction.trs_contributor.prt_lname }} paye {{transaction.trs_amount}} €
         </div>
         <div flex>
           <span class="pull-right">Le : {{transaction.trs_creation_date | date:'dd/MM/yyyy'}}</span>
         </div>
       </div>
       <blockquote>
-        {{transaction.trs_description}} dans {{transaction.trs_category}}
-        <footer>Bénéficiaires :
-          <span ng-repeat="beneficary in transaction.trs_beneficiaries">{{beneficary}}</span>
+        <strong>{{transaction.trs_description}}</strong> <span ng-show="transaction.trs_category">dans</span> {{transaction.trs_category}}
+        <footer>Pour :
+          <span ng-repeat="beneficary in transaction.trs_beneficiaries">
+            - {{beneficary.trs_participant.prt_lname}} ({{beneficary.trs_weight}} parts)
+          </span>
         </footer>
         <span class="pull-right"><a href="#">
           <md-icon class="fa fa-pencil-square-o"></md-icon>

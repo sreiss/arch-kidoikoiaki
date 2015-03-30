@@ -32,14 +32,12 @@ angular.module('kid')
     $scope.newCategory = function () {
       $scope.category.$save(
         function (value) {
-          $scope.category.$save(function () {
             $mdToast.show(
               $mdToast.simple()
                 .content('Catégorie créee')
                 .position($scope.getToastPosition())
                 .hideDelay(3000)
             );
-          });
           $state.go('sheet.categories');
         }
         ,

@@ -35,14 +35,12 @@ angular.module('kid')
     $scope.newParticipant = function() {
       $scope.participant.$save(
         function (value) {
-          $scope.participant.$save(function () {
             $mdToast.show(
               $mdToast.simple()
                 .content('Participant crée')
                 .position($scope.getToastPosition())
                 .hideDelay(3000)
-            );
-          });
+          );
           $state.go('sheet.categories');
         }
         ,

@@ -12,12 +12,14 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
     $stateProvider
       .state('home', {
         url: "/",
-        templateUrl: "app/main/main.html"
+        templateUrl: "app/main/main.html",
+        controller: 'archSheetNewController'
       })
       .state('sheet', {
         url: '/sheet/:idSheet',
         abstract: true,
         template: '<div ui-view></div>'
+
       })
       .state('sheet.participants', {
         url: '/participants',
