@@ -14,7 +14,7 @@ module.exports = function(Types) {
             trs_contributor: {type: Types.ObjectId, ref: 'Participant', required: true},
             trs_beneficiaries:
             [{
-                trs_participant: {type: Types.ObjectId, ref: 'Beneficiary', required: true},
+                trs_participant: {type: Types.ObjectId, ref: 'Participant', required: true},
                 trs_weight: {type: Number, min: 1, default: 0, required: true}
             }],
             trs_creation_date: {type: Date, default: Date.now, required: true},
