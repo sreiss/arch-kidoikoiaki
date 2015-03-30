@@ -11,7 +11,8 @@ module.exports = function(Types) {
             dbt_sheet : { type: Types.ObjectId, ref: 'Sheet', required: true},
             dbt_giver : { type: Types.ObjectId, ref: 'Participant', required: true},
             dbt_taker : { type: Types.ObjectId, ref: 'Participant', required: true},
-            dbt_amount : {type: Number, min: 0, default: 0}
+            dbt_amount : {type: Number, min: 0, default: 0},
+            dbt_sold : {type: Boolean, default: false}
         }
     };
 };

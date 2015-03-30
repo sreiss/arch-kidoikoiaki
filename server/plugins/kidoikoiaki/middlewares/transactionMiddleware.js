@@ -54,17 +54,15 @@ module.exports = function() {
             var transactionBeneficiaries = transactionData.trs_beneficiaries || [];
             for(var i = 0; i < transactionBeneficiaries.length; i++)
             {
-                if(!validator.isMongoId(transactionBeneficiaries[i]))
+                if(!validator.isMongoId(transactionBeneficiaries[i].trs_participant))
                 {
                     throw new ArchParameterError("Beneficiary ID isn't a valid MongoId.");
                 }
-            }
 
-            // Check transaction weight.
-            var transactionWeight = transactionData.trs_weight || '';
-            if(!validator.isNumeric(transactionWeight) && transactionWeight > 0)
-            {
-                throw new ArchParameterError("Transaction weight must be numeric and greater than 0.")
+                if(!validator.isNumeric(transactionBeneficiaries[i].trs_weight) && transactionBeneficiaries[i].trs_weight > 0)
+                {
+                    throw new ArchParameterError("Beneficiary weight must be numeric and greater than 0 (default 1).")
+                }
             }
 
             next();

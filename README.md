@@ -74,7 +74,9 @@
     * trs_amount : montant de la transaction
     * trs_contributor : identifiant unique du contributeur
     * trs_creation_date : date de la transaction
-    * trs_beneficiaries : tableau d'identifiant unique de bénéficiaire
+    * trs_beneficiaries : tableau d'objet couplant d'identifiant unique de bénéficiaire et son poids
+      * trs_participant : identifiant unique du bénéficiaire (participant)
+      * trs_weight : poids du bénéficiaire dans la transaction
     * trs_category : identifiant unique de la transacation
   * DELETE /kidoikoiaki/transaction/:trs_id : supression d'une transaction
     * trs_id : identifiant unique d'une transaction
