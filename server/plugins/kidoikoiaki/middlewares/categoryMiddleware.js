@@ -22,11 +22,11 @@ module.exports = function() {
                 throw new ArchParameterError("Category name must contain at least 3 chars.")
             }
 
-            // Check category description (empty or length >= 10.
+            // Check category description (empty or length >= 5).
             var categoryDescription = categoryData.ctg_description || '';
-            if(categoryDescription.length > 0 && !validator.isLength(categoryDescription, 10))
+            if(categoryDescription.length > 0 && !validator.isLength(categoryDescription, 5))
             {
-                throw new ArchParameterError("Category name must contain at least 10 chars.")
+                throw new ArchParameterError("Category name must contain at least 5 chars.")
             }
 
             next();

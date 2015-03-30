@@ -17,9 +17,9 @@ module.exports = function() {
 
             // Check sheet reference.
             var sheetReference = sheetData.she_reference || '';
-            if(!validator.isLength(sheetReference, 10))
+            if(!validator.isLength(sheetReference, 5))
             {
-                throw new ArchParameterError("Sheet reference must contain at least 10 chars.")
+                throw new ArchParameterError("Sheet reference must contain at least 5 chars.")
             }
 
             next();
@@ -30,9 +30,9 @@ module.exports = function() {
             // Get sheet reference.
             var sheetReference = req.params.sheetReference || '';
 
-            if(!validator.isLength(sheetReference, 10))
+            if(!validator.isLength(sheetReference, 5))
             {
-                throw new ArchParameterError("Sheet reference must contain at least 10 chars.")
+                throw new ArchParameterError("Sheet reference must contain at least 5 chars.")
             }
 
             next();

@@ -18,7 +18,7 @@ module.exports = function(Types) {
                 trs_weight: {type: Number, min: 1, default: 0, required: true}
             }],
             trs_creation_date: {type: Date, default: Date.now, required: true},
-            trs_category: {type: Types.ObjectId, ref: 'Category', required: true}
+            trs_category: {type: Types.ObjectId, ref: 'Category'}
         }
     };
 };
