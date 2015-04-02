@@ -30,6 +30,7 @@ exports.attach = function(opts) {
             var schemaObj = require(modelPath)(Types);
 
             schemaObj.modelName = modelName;
+            schemaObj.priority = schemaObj.priority || 1;
             schemaObjs.push(schemaObj);
         }
 
