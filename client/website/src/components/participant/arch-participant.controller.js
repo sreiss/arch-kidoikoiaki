@@ -1,5 +1,5 @@
 angular.module('kid')
-  .controller('archParticipantController', function ($scope, Participants,Sheet,$stateParams){
+  .controller('archParticipantController', function ($scope, Participants,Sheet,$stateParams, Participant){
     Sheet.get({she_id: $stateParams.idSheet},
       function (sheet) {
         $scope.participants = Participants.query({she_id: sheet.data._id});
@@ -10,6 +10,12 @@ angular.module('kid')
         }
       }
     );
+    $scope.deleteParticipant = function(id){
+      console.log(id);
+     Participant.test({id: id},function(){
+        //success
+      });
+    }
   })
   .controller('archParticipantEditController', function($scope, Participant){
     $scope.participants = Participant

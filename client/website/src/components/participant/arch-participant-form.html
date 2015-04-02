@@ -3,28 +3,28 @@
     <md-icon class="fa fa-user"></md-icon>
     <md-input-container flex>
       <label>Nom</label>
-      <input type="text" ng-model="participant.prt_fname">
+      <input type="text" ng-model="participant.prt_fname" required="">
     </md-input-container>
   </div>
   <div layout="row">
     <md-icon class="fa fa-user"></md-icon>
     <md-input-container flex>
       <label>Prénom</label>
-      <input type="text" ng-model="participant.prt_lname">
+      <input type="text" ng-model="participant.prt_lname" required="">
     </md-input-container>
   </div>
   <div layout="row">
     <md-icon class="fa fa-envelope-o"></md-icon>
     <md-input-container flex>
       <label>Email</label>
-      <input type="email" ng-model="participant.prt_email">
+      <input type="email" ng-model="participant.prt_email" required="">
     </md-input-container>
   </div>
   <div layout="row">
     <md-icon class="fa fa-pie-chart"></md-icon>
     <md-input-container flex>
-      <label>Nombre de parts (par défaut)</label>
-      <input type="number" ng-model="participant.prt_share">
+      <label>Parts (par défaut)</label>
+      <input type="number" ng-model="participant.prt_share" required="" min="1">
     </md-input-container>
   </div>
 </div>

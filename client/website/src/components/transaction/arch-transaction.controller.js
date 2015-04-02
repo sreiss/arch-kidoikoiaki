@@ -25,7 +25,7 @@ angular.module('kid')
       function (sheet) {
         $scope.participants = Participants.query({she_id: sheet.data._id});
         $scope.categories = Categories.query({she_id: sheet.data._id});
-        $scope.transaction.prt_sheet = sheet.data._id;
+        $scope.transaction.trs_sheet = sheet.data._id;
       },
       function (responseError){
         if (responseError.status === 400) {
@@ -33,15 +33,22 @@ angular.module('kid')
         }
       }
     );
+    $scope.transaction.trs_beneficiaries = [{"trs_participant" : "551c52b6d626f1cc1ab1593e", "trs_weight" : "2"}];
     $scope.newTransaction = function () {
-      $scope.transaction.$save(function () {
+      console.log($scope.transaction);
+      $scope.transaction.$save(function (value) {
         $mdToast.show(
           $mdToast.simple()
-            .content('Participants crée')
+            .content('Transaction crée')
             .position($scope.getToastPosition())
             .hideDelay(3000)
-        );
-      });
-      $state.go('sheet.transaction');
+        )
+      },
+        function (responseError){
+
+            console.log(responseError);
+
+        });
+      $state.go('sheet.transactions');
     }
   });

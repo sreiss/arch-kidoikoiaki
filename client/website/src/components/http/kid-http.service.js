@@ -7,11 +7,19 @@ angular.module('kid')
     });
   })
   .factory("Participant", function ($resource) {
-    return $resource('http://localhost:3005/kidoikoiaki/participant/', {}, {
+    return $resource('http://localhost:3005/kidoikoiaki/participant/:id', {  }, {
       save: {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
+        }
+      },
+      'test' : {
+        method: 'DELETE',
+        headers: {
+          'Access-Control-Allow-Origin': "http://localhost:3005/",
+          'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+          'Access-Control-Allow-Headers': 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept'
         }
       }
     });
@@ -31,7 +39,7 @@ angular.module('kid')
     });
   })
   .factory("Transaction", function ($resource) {
-    return $resource('http://localhost:3005/kidoikoiaki/transation/', {}, {
+    return $resource('http://localhost:3005/kidoikoiaki/transation/:id', {}, {
       save: {
         method: 'POST',
         headers: {
@@ -41,7 +49,7 @@ angular.module('kid')
     });
   })
   .factory("Category", function ($resource) {
-    return $resource('http://localhost:3005/kidoikoiaki/category/', {}, {
+    return $resource('http://localhost:3005/kidoikoiaki/category/:id', {}, {
       save: {
         method: 'POST',
         headers: {

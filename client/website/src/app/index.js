@@ -27,15 +27,15 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
         controller: 'archParticipantController'
 
       })
-      .state('sheet.partcipantNew', {
+      .state('sheet.participantNew', {
         url: "/participant/new",
         templateUrl: "components/participant/arch-participant-new.html",
         controller: "archParticipantNewController"
       })
-      .state('sheet.partcipantEdit', {
+      .state('sheet.participantEdit', {
         url: "/participant/:idParticipant/edit",
         templateUrl: "components/participant/arch-participant-edit.html",
-        controller: "archPartcipantEditController"
+        controller: "archParticipantEditController"
       })
       .state('sheet.transactions', {
         url: "/transactions",
