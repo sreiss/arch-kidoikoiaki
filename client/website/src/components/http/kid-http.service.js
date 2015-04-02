@@ -39,7 +39,7 @@ angular.module('kid')
     });
   })
   .factory("Transaction", function ($resource) {
-    return $resource('http://localhost:3005/kidoikoiaki/transation/:id', {}, {
+    return $resource('http://localhost:3005/kidoikoiaki/transaction/:id', {}, {
       save: {
         method: 'POST',
         headers: {

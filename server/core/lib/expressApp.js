@@ -21,7 +21,7 @@ exports.attach = function(opts) {
     expressApp.use(cookieParser());
     expressApp.use(express.static(path.join(__dirname, '..', 'public')));
 
-    expressApp.options('/', function(req, res)
+    expressApp.options('*', function(req, res)
     {
         var headers = {};
 
