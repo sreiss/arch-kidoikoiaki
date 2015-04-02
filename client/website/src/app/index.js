@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngResource', 'ngMaterial','ui.router'])
-  .config(function ($mdThemingProvider, $stateProvider, $urlRouterProvider) {
+  .config(function ($mdThemingProvider, $stateProvider, $urlRouterProvider)
+  {
     $mdThemingProvider
       .theme('default')
       .primaryPalette('deep-orange')
@@ -20,6 +21,11 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
         abstract: true,
         template: '<div ui-view></div>'
 
+      })
+      .state('sheet.home', {
+        url: "/",
+        templateUrl: "app/main/main.html",
+        controller: 'archSheetNewController'
       })
       .state('sheet.participants', {
         url: '/participants',

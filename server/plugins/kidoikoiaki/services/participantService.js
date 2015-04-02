@@ -76,6 +76,26 @@ module.exports = function(Participant, qService) {
             });
 
             return deferred.promise;
+        },
+
+        /** Get all participants. */
+        getParticipants: function(sheetId)
+        {
+            var deferred = qService.defer();
+
+            Participant.find({prt_sheet: sheetId}).populate('prt_sheet').exec(function (err, participants)
+            {
+                if(err)
+                {
+                    deferred.reject(err);
+                }
+                else
+                {
+                    deferred.resolve(participants);
+                }
+            });
+
+            return deferred.promise;
         }
     };
 };

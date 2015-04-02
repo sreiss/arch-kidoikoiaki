@@ -39,7 +39,7 @@ angular.module('kid')
       $scope.transaction.$save(function (value) {
         $mdToast.show(
           $mdToast.simple()
-            .content('Transaction crée')
+            .content('Transaction créée avec succés.')
             .position($scope.getToastPosition())
             .hideDelay(3000)
         )

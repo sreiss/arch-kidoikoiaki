@@ -43,7 +43,7 @@ angular.module('kid')
         function (value) {
             $mdToast.show(
               $mdToast.simple()
-                .content('Participant crée')
+                .content('Participant créé avec succés.')
                 .position($scope.getToastPosition())
                 .hideDelay(3000)
           );

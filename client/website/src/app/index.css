@@ -304,6 +304,40 @@ blockquote {
   margin-top: 20px;
 }
 
+.table-transactions{
+  margin-top: 20px;
+}
+
 .md-button{
   margin-bottom: 5px;
+}
+
+.text-justify
+{
+  text-align:justify;
+}
+
+.text-right
+{
+  text-align:right;
+}
+
+.margin-top-25
+{
+  margin-top:25px;
+}
+
+.padding-right-15
+{
+  padding-right: 15px;
+}
+
+.table-transactions > ul
+{
+  width:100%;
+}
+
+.margin-bottom-20
+{
+  margin-bottom:20px;
 }
