@@ -5,6 +5,8 @@
  * @copyright ArchTailors 2015
  */
 
+var uuid = require('node-uuid');
+
 module.exports = function(Sheet, participantService, qService) {
     return {
         /** Save sheet. */
@@ -13,7 +15,7 @@ module.exports = function(Sheet, participantService, qService) {
             var deferred = qService.defer();
 
             var sheet = new Sheet();
-            sheet.she_reference = sheetData.she_reference;
+            sheet.she_reference = sheetData.she_reference || uuid.v4();
 
             // Saving sheet.
             sheet.save(function(err)
@@ -44,7 +46,7 @@ module.exports = function(Sheet, participantService, qService) {
                 }
                 else if(sheet == null)
                 {
-                    deferred.reject(new Error('No sheet matching [SHE__REFERENCE] : ' + sheetReference + "."));
+                    deferred.reject(new Error('No sheet matching [SHE_REFERENCE] : ' + sheetReference + "."));
                 }
                 else
                 {

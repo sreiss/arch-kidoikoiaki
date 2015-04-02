@@ -34,7 +34,7 @@ angular.module('kid')
         function (value) {
             $mdToast.show(
               $mdToast.simple()
-                .content('Catégorie créee')
+                .content('Catégorie créée avec succés.')
                 .position($scope.getToastPosition())
                 .hideDelay(3000)
             );

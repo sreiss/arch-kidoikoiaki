@@ -1,32 +1,41 @@
 <h1>Dépenses </h1>
+
 <md-button class="md-accent md-raised" ui-sref="sheet.transactionNew">
   Nouvelle dépense
 </md-button>
-<ul class="collection">
-  <li class="collection-item" ng-repeat="transaction in transactions.data">
-    <div>
-      <div layout="row">
-        <div flex="70">
-          {{transaction.trs_contributor.prt_lname }} paye {{transaction.trs_amount}} €
+
+<div layout="row" class="table-transactions">
+  <p ng-hide="transactions.data.length">Vous n'avez à ce jour ajouté aucune dépense.</p>
+
+  <ul class="collection" ng-show="transactions.data.length">
+    <li class="collection-item" ng-repeat="transaction in transactions.data">
+      <div>
+        <div layout="row">
+          <div flex="70">
+            {{transaction.trs_contributor.prt_lname }} dépense {{transaction.trs_amount}} €
+          </div>
+          <div flex>
+            <span class="pull-right">Le {{transaction.trs_creation_date | date:'dd/MM/yyyy'}}</span>
+          </div>
         </div>
-        <div flex>
-          <span class="pull-right">Le : {{transaction.trs_creation_date | date:'dd/MM/yyyy'}}</span>
-        </div>
-      </div>
-      <blockquote>
-        <strong>{{transaction.trs_description}}</strong> <span ng-show="transaction.trs_category">dans</span> {{transaction.trs_category}}
-        <footer>Pour :
-          <span ng-repeat="beneficary in transaction.trs_beneficiaries">
-            - {{beneficary.trs_participant.prt_lname}} ({{beneficary.trs_weight}} parts)
+        <blockquote>
+          <strong>{{transaction.trs_description}}</strong> <span ng-show="transaction.trs_category.ctg_name">dans</span> {{transaction.trs_category.ctg_name}}
+          <footer>Pour
+            <span ng-repeat="beneficary in transaction.trs_beneficiaries">
+              {{beneficary.trs_participant.prt_lname}} ({{beneficary.trs_weight}} parts)
+              <span ng-if="!$last">, </span>
+            </span>
+          </footer>
+          <span class="pull-right">
+            <a href="#">
+              <md-icon class="fa fa-pencil-square-o"></md-icon>
+            </a>
+            <a href="#">
+              <md-icon class="fa fa-trash"></md-icon>
+            </a>
           </span>
-        </footer>
-        <span class="pull-right"><a href="#">
-          <md-icon class="fa fa-pencil-square-o"></md-icon>
-        </a>
-        <a href="#">
-          <md-icon class="fa fa-trash"></md-icon>
-        </a></span>
-      </blockquote>
-    </div>
-  </li>
-</ul>
+        </blockquote>
+      </div>
+    </li>
+  </ul>
+</div>
