@@ -72,6 +72,11 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
         url: "/category/:idCategory/edit",
         templateUrl: "components/category/arch-category.html",
         controller: "archCategoryEditController"
+      })
+      .state('sheet.bilan', {
+        url: "/bilan",
+        templateUrl: "components/bilan/arch-bilan.html",
+        controller: "archBilanController"
       });
 
       $urlRouterProvider
