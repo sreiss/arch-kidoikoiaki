@@ -18,8 +18,8 @@
       <td>{{category.ctg_name}}</td>
       <td>{{category.ctg_description}}</td>
       <td class="text-right">
-        <a href="#"><md-icon class="fa fa-pencil-square-o" ></md-icon></a>
-        <a href="#"><md-icon class="fa fa-trash"></md-icon></a>
+        <a href="#"><md-icon class="fa fa-pencil-square-o" ng-click="editCategory(category._id)"></md-icon></a>
+        <a href="#"><md-icon class="fa fa-trash" ng-click="deleteCategory(category._id)"></md-icon></a>
       </td>
     </tr>
     </tbody>

@@ -1,7 +1,7 @@
 <div layout="column">
   <div layout="row">
       <md-icon class="fa fa-user"></md-icon>
-      <md-select ng-model="transaction.trs_contributor" placeholder="Qui ?" class="select-add" flex>
+      <md-select ng-model="transaction.trs_contributor" placeholder="Qui ?" class="select-add" flex required="">
         <md-option ng-repeat="participant in participants.data" value="{{participant._id}}">{{participant.prt_lname}}</md-option>
       </md-select>
     </div>
@@ -9,45 +9,44 @@
       <md-icon class="fa fa-info-circle"></md-icon>
       <md-input-container flex>
         <label>Quoi ?</label>
-        <input ng-model="transaction.trs_description" type="text">
+        <input ng-model="transaction.trs_description" type="text" required="">
       </md-input-container>
     </div>
     <div layout="row">
       <md-icon class="fa fa-money"></md-icon>
       <md-input-container flex>
         <label>Combien ?</label>
-        <input type="number" ng-model="transaction.trs_amount">
+        <input type="number" ng-model="transaction.trs_amount" required="">
       </md-input-container>
     </div>
     <div layout="row">
       <md-icon class="fa fa-user"></md-icon>
-      <md-select ng-model="transaction.trs_category" placeholder="Catégorie ?" class="select-add" flex>
+      <md-select ng-model="transaction.trs_category" placeholder="Catégorie ?" class="select-add" flex >
         <md-option ng-repeat="category in categories.data" value="{{category._id}}">{{category.ctg_name}}</md-option>
       </md-select>
     </div>
 </div>
 
-<div layout="row" class="margin-bottom-20">
+<div layout="column" class="margin-bottom-20" >
   <div flex="50" ng-repeat="participant in participants.data">
     <md-card>
-      <div layout="row">
-        <div flex="50">
-          <md-switch class="margin-top-25">
+      <div layout="row" >
+        <div>
+          <md-switch class="margin-top-25" ng-model="tmp_benefs[participant._id]" ng-false-value="0" ng-true-value="{{participant.prt_share}}" id="test">
             {{participant.prt_lname}}
           </md-switch>
         </div>
-        <div layout="row" flex="50" class="padding-right-15">
+        <div layout="row" class="padding-right-15">
           <md-icon class="fa fa-pie-chart"></md-icon>
           <md-input-container>
             <label>Parts ?</label>
-            <input type="number" ng-model="transaction.trs_amount">
+            <input type="number" ng-model="tmp_benefs[participant._id]"  ng-disabled="!participant._id" min="0" disabled="disabled">
           </md-input-container>
         </div>
       </div>
     </md-card>
   </div>
 </div>
-
 <div class="md-actions" layout="row">
   <md-button class="md-raised md-accent" ng-click="answer('valider')">Valider</md-button>
 </div>

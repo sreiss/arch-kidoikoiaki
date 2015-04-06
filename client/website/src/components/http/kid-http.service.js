@@ -14,13 +14,8 @@ angular.module('kid')
           'Content-Type': 'application/json'
         }
       },
-      'test' : {
-        method: 'DELETE',
-        headers: {
-          'Access-Control-Allow-Origin': "http://localhost:3005/",
-          'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
-          'Access-Control-Allow-Headers': 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept'
-        }
+      update: {
+        method: 'PUT'
       }
     });
   })

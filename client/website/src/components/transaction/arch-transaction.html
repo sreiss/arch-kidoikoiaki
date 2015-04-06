@@ -20,19 +20,15 @@
         </div>
         <blockquote>
           <strong>{{transaction.trs_description}}</strong> <span ng-show="transaction.trs_category.ctg_name">dans</span> {{transaction.trs_category.ctg_name}}
-          <footer>Pour
+          <footer>Pour :
             <span ng-repeat="beneficary in transaction.trs_beneficiaries">
               {{beneficary.trs_participant.prt_lname}} ({{beneficary.trs_weight}} parts)
               <span ng-if="!$last">, </span>
             </span>
           </footer>
           <span class="pull-right">
-            <a href="#">
-              <md-icon class="fa fa-pencil-square-o"></md-icon>
-            </a>
-            <a href="#">
-              <md-icon class="fa fa-trash"></md-icon>
-            </a>
+            <a href="#"><md-icon class="fa fa-pencil-square-o" ng-click="editTransaction(transaction._id)"></md-icon></a>
+            <a href="#"><md-icon class="fa fa-trash" ng-click="deleteTransaction(transaction._id)"></md-icon></a>
           </span>
         </blockquote>
       </div>
