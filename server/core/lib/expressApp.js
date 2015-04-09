@@ -7,9 +7,9 @@ var express = require('express'),
 
 exports.name = 'arch-http';
 
-exports.attach = function(opts) {
+exports.attach = function(opts)
+{
     var app = this;
-
     var expressApp = app.arch.expressApp = express();
 
     expressApp.set('views', path.join(__dirname, '..', 'views'));
@@ -36,6 +36,7 @@ exports.attach = function(opts) {
     });
 };
 
-exports.init = function (done) {
+exports.init = function (done)
+{
     return done();
 };
