@@ -59,4 +59,11 @@ angular.module('kid')
         isArray: false
       }
     });
+  })
+  .factory("Bilan", function ($resource,httpConstant) {
+    return $resource(httpConstant.apiUrl + '/kidoikoiaki/bilan/:she_id', {}, {
+      query: {
+        isArray: false
+      }
+    });
   });

@@ -1,6 +1,13 @@
 angular.module('kid')
-  .controller('archBilanController', function ($scope, Sheet ,$stateParams)
+  .controller('archBilanController', function ($scope, Sheet ,$stateParams, Bilan)
   {
-    $scope.debts = {data : []};
+    Sheet.get({she_id: $stateParams.idSheet}, function (result) {
+        if (result.count > 0) {
+          $scope.debts = Bilan.get({she_id: result.data._id});
+        }
+      },
+      function (responseError) {
+      }
+    );
   });
 
