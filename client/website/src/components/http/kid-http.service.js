@@ -1,13 +1,13 @@
 angular.module('kid')
-  .factory("Participants", function ($resource) {
-    return $resource('http://localhost:3005/kidoikoiaki/participants/:she_id', {}, {
+  .factory("Participants", function ($resource,httpConstant) {
+    return $resource(httpConstant.apiUrl+'/kidoikoiaki/participants/:she_id', {}, {
       query: {
         isArray: false
       }
     });
   })
-  .factory("Participant", function ($resource) {
-    return $resource('http://localhost:3005/kidoikoiaki/participant/:id', {  }, {
+  .factory("Participant", function ($resource,httpConstant) {
+    return $resource(httpConstant.apiUrl + '/kidoikoiaki/participant/:id', {  }, {
       save: {
         method: 'POST',
         headers: {
@@ -19,22 +19,22 @@ angular.module('kid')
       }
     });
   })
-  .factory("Sheet", function ($resource) {
-    return $resource('http://localhost:3005/kidoikoiaki/sheet/:she_id', {}, {
+  .factory("Sheet", function ($resource,httpConstant) {
+    return $resource(httpConstant.apiUrl + '/kidoikoiaki/sheet/:she_id', {}, {
       get: {
         method: 'GET'
       }
     });
   })
-  .factory("Transactions", function ($resource) {
-    return $resource('http://localhost:3005/kidoikoiaki/transactions/:she_id', {}, {
+  .factory("Transactions", function ($resource,httpConstant) {
+    return $resource(httpConstant.apiUrl + '/kidoikoiaki/transactions/:she_id', {}, {
       query: {
         isArray: false
       }
     });
   })
-  .factory("Transaction", function ($resource) {
-    return $resource('http://localhost:3005/kidoikoiaki/transaction/:id', {}, {
+  .factory("Transaction", function ($resource,httpConstant) {
+    return $resource(httpConstant.apiUrl + '/kidoikoiaki/transaction/:id', {}, {
       save: {
         method: 'POST',
         headers: {
@@ -43,8 +43,8 @@ angular.module('kid')
       }
     });
   })
-  .factory("Category", function ($resource) {
-    return $resource('http://localhost:3005/kidoikoiaki/category/:id', {}, {
+  .factory("Category", function ($resource,httpConstant) {
+    return $resource(httpConstant.apiUrl + '/kidoikoiaki/category/:id', {}, {
       save: {
         method: 'POST',
         headers: {
@@ -53,8 +53,8 @@ angular.module('kid')
       }
     });
   })
-  .factory("Categories", function ($resource) {
-    return $resource('http://localhost:3005/kidoikoiaki/category/', {}, {
+  .factory("Categories", function ($resource,httpConstant) {
+    return $resource(httpConstant.apiUrl + '/kidoikoiaki/category/', {}, {
       query: {
         isArray: false
       }
