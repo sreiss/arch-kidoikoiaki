@@ -7,9 +7,9 @@ var express = require('express'),
 
 exports.name = 'arch-http';
 
-exports.attach = function(opts) {
+exports.attach = function(opts)
+{
     var app = this;
-
     var expressApp = app.arch.expressApp = express();
 
     expressApp.set('views', path.join(__dirname, '..', 'views'));
@@ -21,9 +21,22 @@ exports.attach = function(opts) {
     expressApp.use(cookieParser());
     expressApp.use(express.static(path.join(__dirname, '..', 'public')));
 
+    expressApp.options('*', function(req, res)
+    {
+        var headers = {};
 
+        headers["Access-Control-Allow-Origin"] = "*";
+        headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, DELETE";
+        headers["Access-Control-Allow-Credentials"] = false;
+        headers["Access-Control-Max-Age"] = '86400';
+        headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization";
+
+        res.writeHead(200, headers);
+        res.end();
+    });
 };
 
-exports.init = function (done) {
+exports.init = function (done)
+{
     return done();
 };

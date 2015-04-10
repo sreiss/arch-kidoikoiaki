@@ -3,22 +3,23 @@
   Nouvelle catégorie
 </md-button>
 <div layout="row" class="table-participants">
-  <table class="responsive-table striped">
+  <p ng-hide="categories.data.length">Vous n'avez à ce jour ajouté aucune catégorie.</p>
+
+  <table class="responsive-table striped" ng-show="categories.data.length">
     <thead>
     <tr>
       <th data-field="name">Nom</th>
       <th data-field="firstName">Description</th>
-      <th data-field="edit>"></th>
-      <th data-field="delete"></th>
+      <th data-field="actions>"></th>
     </tr>
     </thead>
     <tbody>
     <tr ng-repeat="category in categories.data">
       <td>{{category.ctg_name}}</td>
       <td>{{category.ctg_description}}</td>
-      <td>
-        <a href="#"><md-icon class="fa fa-pencil-square-o" ></md-icon></a>
-        <a href="#"><md-icon class="fa fa-trash"></md-icon></a>
+      <td class="text-right">
+        <a href="#"><md-icon class="fa fa-pencil-square-o" ng-click="editCategory(category._id)"></md-icon></a>
+        <a href="#"><md-icon class="fa fa-trash" ng-click="deleteCategory(category._id)"></md-icon></a>
       </td>
     </tr>
     </tbody>

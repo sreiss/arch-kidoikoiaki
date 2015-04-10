@@ -1,37 +1,19 @@
-<!--
-<div layout="vertical" layout-fill>
+<h1>Accueil</h1>
 
-<md-content>
+<p class="text-justify">
+  Vous vivez en colocation, vous partez en vacances entre amis, vous organisez une soirée ou un diner,
+  vous achetez vos cadeaux de noël en famille ? Autant d'occasions d'utiliser notre outil afin de gérer
+  ses comptes communs.
+</p>
 
-<section class="jumbotron">
-  <h1>'Allo, 'Allo!</h1>
-  <p class="lead">
-    <img src="assets/images/yeoman.png" alt="I'm Yeoman"><br>
-    Always a pleasure scaffolding your apps.
-  </p>
-  <p><a class="btn" ng-href="#">Splendid!</a></p>
-</section>
-  <div class="techs" layout-align="center">
-    <md-card ng-repeat="awesomeThing in awesomeThings | orderBy:'rank'">
-      <div class="thumbnail">
-        <img class="pull-right" ng-src="assets/images/{{awesomeThing.logo}}" alt="{{awesomeThing.title}}">
-        <div class="caption">
-          <h3>{{awesomeThing.title}}</h3>
-          <p>{{awesomeThing.description}}</p>
-          <p><a ng-href="{{awesomeThing.url}}">{{awesomeThing.url}}</a></p>
-        </div>
-      </div>
-    </md-card>
-  </div>
-    </md-content>
+<p class="text-justify">
+  A chaque fois qu'un participant fait une dépense pour le groupe, il l'enregistre dans la liste des dépenses.
+  A la fin, il vous suffit de calculer automatiquement le bilan afin de savoir très simplement qui
+  doit rembourser quoi et à qui.
+</p>
+<p ng-show="path">L'adresse de votre Kidoikoiaki : {{path}}</p>
 
-    <!-- <footer>
-       <md-toolbar layout="row" layout-align="center center">
-         <p>With ♥ from <a href="https://twitter.com/Swiip">@Swiip</a></p>
-       </md-toolbar>
-     </footer>
-   </div>
-   -->
+<md-button class="md-accent md-raised" ng-click="newSheet()">
+  Nouvelle feuille
+</md-button>
 
-
-<h1>Mdr</h1>

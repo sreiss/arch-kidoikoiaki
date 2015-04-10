@@ -1,58 +1,140 @@
 angular.module('kid')
-  .controller('archParticipantController', function ($scope, Participants,Sheet,$stateParams){
-    Sheet.get({she_id: $stateParams.idSheet},
-      function (sheet) {
-        $scope.participants = Participants.query({she_id: sheet.data._id});
-      },
-      function (responseError){
-        if (responseError.status === 400) {
-          console.log(responseError);
+  .controller('archParticipantController', function ($scope, Participants, Sheet, $stateParams, Participant,$state,$mdToast) {
+
+    Sheet.get({she_id: $stateParams.idSheet}, function (result) {
+        if (result.count > 0) {
+          $scope.participants = Participants.query({she_id: result.data._id});
         }
+      },
+      function (responseError) {
       }
     );
+    $scope.deleteParticipant = function (id) {
+      Participant.delete({id: id}, function (result) {
+          if (result.count > 0) {
+            $mdToast.show($mdToast.simple()
+                .content('Participant supprimé avec succés.')
+                .position('top right')
+                .hideDelay(3000)
+            );
+            $state.go($state.current, {}, {reload: true});
+          }
+          else {
+            $mdToast.show($mdToast.simple()
+                .content('Une erreur est survenue à la suppression du participant.')
+                .position('top right')
+                .hideDelay(3000)
+            );
+          }
+        },
+        function (responseError) {
+          $mdToast.show($mdToast.simple()
+              .content('Une erreur est survenue à la suppression du participant.')
+              .position('top right')
+              .hideDelay(3000)
+          );
+        });
+    };
+    $scope.editParticipant = function (id) {
+      $state.go('sheet.participantEdit', {she_id: $stateParams.idSheet,'idParticipant' : id})
+    }
   })
-  .controller('archParticipantEditController', function($scope, Participant){
-    $scope.participants = Participant
-      .get({ sheetReference: 'prout' });
-  })
-.controller('archParticipantNewController', function($scope, Participant,$location,$mdToast, Sheet,$stateParams, $state,$animate){
-    $scope.toastPosition = {
+  .controller('archParticipantEditController', function ($scope, Participant,$stateParams,$mdToast) {
+    $scope.toastPosition =
+    {
       bottom: false,
       top: true,
       left: false,
       right: true
     };
-    $scope.getToastPosition = function() {
-      return Object.keys($scope.toastPosition)
-        .filter(function(pos) { return $scope.toastPosition[pos]; })
+
+    $scope.getToastPosition = function () {
+      return Object.keys($scope.toastPosition).filter(function (pos) {
+        return $scope.toastPosition[pos];
+      })
         .join(' ');
     };
-    $scope.participant = new Participant();
-    Sheet.get({she_id:$stateParams.idSheet},function(sheet) {
-      $scope.participant.prt_sheet = sheet.data._id;
-      console.log(sheet.data._id);
-    });
-    $scope.newParticipant = function() {
-      $scope.participant.$save(
-        function (value) {
-          $scope.participant.$save(function () {
-            $mdToast.show(
-              $mdToast.simple()
-                .content('Participant crée')
+
+    Participant.get({id: $stateParams.idParticipant}, function (result) {
+        if (result.count > 0) {
+          $scope.participant = result.data;
+        }
+      },
+      function (responseError) {
+      }
+    );
+
+    $scope.editParticipant = function () {
+
+      Participant.get({id: $stateParams.idParticipant}, function (result) {
+          if (result.count > 0) {
+            $scope.participant.prt_sheet = result.data.prt_sheet._id;
+            $scope.participant.prt_sheet = result.data._id;
+          }
+        },
+        function (responseError) {
+        }
+      );
+      $scope.participant.$save( function (result) {
+          if (result.count > 0) {
+            $mdToast.show($mdToast.simple()
+                .content('Participant créé avec succés.')
+                .hideDelay(3000)
+            );
+            $state.go('sheet.participants');
+          }
+          else {
+            $mdToast.show($mdToast.simple()
+                .content('Une erreur est survenue à la création du participant.')
                 .position($scope.getToastPosition())
                 .hideDelay(3000)
             );
-          });
-          $state.go('sheet.categories');
-        }
-        ,
-        function (responseError) {
-          if (responseError.status === 400) {
-            console.log(responseError);
           }
+        },
+        function (responseError) {
+          $mdToast.show($mdToast.simple()
+              .content('Une erreur est survenue à la création du participant.')
+              .position($scope.getToastPosition())
+              .hideDelay(3000)
+          );
+        });
+    };
+  })
+  .controller('archParticipantNewController', function ($scope, Participant, $location, $mdToast, Sheet, $stateParams, $state) {
 
+    $scope.participant = new Participant();
+    Sheet.get({she_id: $stateParams.idSheet}, function (result) {
+        if (result.count > 0) {
+          $scope.participant.prt_sheet = result.data._id;
         }
-      );
-      $state.go('sheet.participants');
-    }
-});
+      },
+      function (responseError) {
+      }
+    );
+    $scope.newParticipant = function () {
+      $scope.participant.$save( function (result) {
+          if (result.count > 0) {
+            $mdToast.show($mdToast.simple()
+                .content('Participant créé avec succés.')
+                .position('top right')
+                .hideDelay(3000)
+            );
+            $state.go('sheet.participants');
+          }
+          else {
+            $mdToast.show($mdToast.simple()
+                .content('Une erreur est survenue à la création du participant.')
+                .position('top right')
+                .hideDelay(3000)
+            );
+          }
+        },
+        function (responseError) {
+          $mdToast.show($mdToast.simple()
+              .content('Une erreur est survenue à la création du participant.')
+              .position('top right')
+              .hideDelay(3000)
+          );
+        });
+    };
+  });

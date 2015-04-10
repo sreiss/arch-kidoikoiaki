@@ -1,6 +1,6 @@
 {
   "http": {
-    "port": "3005"
+    "port": "3024"
   },
   "db": {
     "url": "mongodb://localhost/archKidoikoiaki"

@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngResource', 'ngMaterial','ui.router'])
-  .config(function ($mdThemingProvider, $stateProvider, $urlRouterProvider) {
+  .config(function ($mdThemingProvider, $stateProvider, $urlRouterProvider)
+  {
     $mdThemingProvider
       .theme('default')
       .primaryPalette('deep-orange')
@@ -12,12 +13,19 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
     $stateProvider
       .state('home', {
         url: "/",
-        templateUrl: "app/main/main.html"
+        templateUrl: "app/main/main.html",
+        controller: 'archSheetNewController'
       })
       .state('sheet', {
         url: '/sheet/:idSheet',
         abstract: true,
         template: '<div ui-view></div>'
+
+      })
+      .state('sheet.home', {
+        url: "/",
+        templateUrl: "app/main/main.html",
+        controller: 'archSheetNewController'
       })
       .state('sheet.participants', {
         url: '/participants',
@@ -25,15 +33,15 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
         controller: 'archParticipantController'
 
       })
-      .state('sheet.partcipantNew', {
+      .state('sheet.participantNew', {
         url: "/participant/new",
         templateUrl: "components/participant/arch-participant-new.html",
         controller: "archParticipantNewController"
       })
-      .state('sheet.partcipantEdit', {
+      .state('sheet.participantEdit', {
         url: "/participant/:idParticipant/edit",
         templateUrl: "components/participant/arch-participant-edit.html",
-        controller: "archPartcipantEditController"
+        controller: "archParticipantEditController"
       })
       .state('sheet.transactions', {
         url: "/transactions",
@@ -64,6 +72,11 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
         url: "/category/:idCategory/edit",
         templateUrl: "components/category/arch-category.html",
         controller: "archCategoryEditController"
+      })
+      .state('sheet.bilan', {
+        url: "/bilan",
+        templateUrl: "components/bilan/arch-bilan.html",
+        controller: "archBilanController"
       });
 
       $urlRouterProvider
