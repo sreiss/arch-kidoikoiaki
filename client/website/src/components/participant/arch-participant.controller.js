@@ -10,30 +10,32 @@ angular.module('kid')
       }
     );
     $scope.deleteParticipant = function (id) {
-      Participant.delete({id: id}, function (result) {
-          if (result.count > 0) {
-            $mdToast.show($mdToast.simple()
-                .content('Participant supprimé avec succés.')
-                .position('top right')
-                .hideDelay(3000)
-            );
-            $state.go($state.current, {}, {reload: true});
-          }
-          else {
+      if(confirm('Souhaitez-vous réellement supprimer ce participant ?')) {
+        Participant.delete({id: id}, function (result) {
+            if (result.count > 0) {
+              $mdToast.show($mdToast.simple()
+                  .content('Participant supprimé avec succés.')
+                  .position('top right')
+                  .hideDelay(3000)
+              );
+              $state.go($state.current, {}, {reload: true});
+            }
+            else {
+              $mdToast.show($mdToast.simple()
+                  .content('Une erreur est survenue à la suppression du participant.')
+                  .position('top right')
+                  .hideDelay(3000)
+              );
+            }
+          },
+          function (responseError) {
             $mdToast.show($mdToast.simple()
                 .content('Une erreur est survenue à la suppression du participant.')
                 .position('top right')
                 .hideDelay(3000)
             );
-          }
-        },
-        function (responseError) {
-          $mdToast.show($mdToast.simple()
-              .content('Une erreur est survenue à la suppression du participant.')
-              .position('top right')
-              .hideDelay(3000)
-          );
-        });
+          });
+      }
     };
     $scope.editParticipant = function (id) {
       $state.go('sheet.participantEdit', {she_id: $stateParams.idSheet,'idParticipant' : id})

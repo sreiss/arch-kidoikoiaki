@@ -12,30 +12,32 @@ angular.module('kid')
       }
     );
     $scope.deleteCategory = function (id) {
-      Category.delete({id: id}, function (result) {
-          if (result.count > 0) {
+      if(confirm('Souhaitez-vous réellement supprimer cette catégorie ?')) {
+        Category.delete({id: id}, function (result) {
+            if (result.count > 0) {
+              $mdToast.show($mdToast.simple()
+                  .content('Catégorie supprimée avec succés.')
+                  .position('top right')
+                  .hideDelay(3000)
+              );
+              $state.go($state.current, {}, {reload: true});
+            }
+            else {
+              $mdToast.show($mdToast.simple()
+                  .content('Une erreur est survenue à la suppression de la catégorie.')
+                  .position('top right')
+                  .hideDelay(3000)
+              );
+            }
+          },
+          function (responseError) {
             $mdToast.show($mdToast.simple()
-                .content('Catégorie supprimée avec succés.')
+                .content('Une erreur est survenue à la suppression de la catégorie.')
                 .position('top right')
                 .hideDelay(3000)
             );
-            $state.go($state.current, {}, {reload: true});
-          }
-          else {
-            $mdToast.show($mdToast.simple()
-                .content('Une erreur est survenue à la suppression de la categorie.')
-                .position('top right')
-                .hideDelay(3000)
-            );
-          }
-        },
-        function (responseError) {
-          $mdToast.show($mdToast.simple()
-              .content('Une erreur est survenue à la suppression de la transaction.')
-              .position('top right')
-              .hideDelay(3000)
-          );
-        });
+          });
+      }
     };
   })
   .controller('archCategoryNewController', function ($scope, Category, $location, $mdToast, Sheet, $stateParams, $state, $animate) {

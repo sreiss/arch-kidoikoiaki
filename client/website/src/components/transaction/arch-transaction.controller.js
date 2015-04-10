@@ -10,30 +10,32 @@ angular.module('kid')
       }
     );
     $scope.deleteTransaction = function (id) {
-      Transaction.delete({id: id}, function (result) {
-          if (result.count > 0) {
+      if(confirm('Souhaitez-vous réellement supprimer cette dépense ?')) {
+        Transaction.delete({id: id}, function (result) {
+            if (result.count > 0) {
+              $mdToast.show($mdToast.simple()
+                  .content('Dépense supprimée avec succés.')
+                  .position('top right')
+                  .hideDelay(3000)
+              );
+              $state.go($state.current, {}, {reload: true});
+            }
+            else {
+              $mdToast.show($mdToast.simple()
+                  .content('Une erreur est survenue à la suppression de la dépense.')
+                  .position('top right')
+                  .hideDelay(3000)
+              );
+            }
+          },
+          function (responseError) {
             $mdToast.show($mdToast.simple()
-                .content('Transaction supprimé avec succés.')
+                .content('Une erreur est survenue à la suppression de la dépense.')
                 .position('top right')
                 .hideDelay(3000)
             );
-            $state.go($state.current, {}, {reload: true});
-          }
-          else {
-            $mdToast.show($mdToast.simple()
-                .content('Une erreur est survenue à la suppression de la transaction.')
-                .position('top right')
-                .hideDelay(3000)
-            );
-          }
-        },
-        function (responseError) {
-          $mdToast.show($mdToast.simple()
-              .content('Une erreur est survenue à la suppression de la transaction.')
-              .position('top right')
-              .hideDelay(3000)
-          );
-        });
+          });
+      }
     };
   })
   .controller('archTransactionNewController', function ($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, $animate) {
@@ -67,7 +69,7 @@ angular.module('kid')
       $scope.transaction.$save(function (value) {
         $mdToast.show(
           $mdToast.simple()
-            .content('Transaction créée avec succés.')
+            .content('Dépense créée avec succés.')
             .position('top right')
             .hideDelay(3000)
         )

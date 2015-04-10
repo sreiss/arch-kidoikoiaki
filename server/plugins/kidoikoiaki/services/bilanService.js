@@ -7,6 +7,38 @@
 
 module.exports = function(Debt, bilanService, debtService, participantsService, transactionsService, qService) {
     return {
+        /** Get bilan. */
+        getBilan: function(sheetId)
+        {
+            var deferred = qService.defer();
+
+            console.log('Début de la génération du bilan.');
+
+            bilanService.generateBilan(sheetId).then(function()
+            {
+                console.log('Fin de la génération du bilan.');
+
+                Debt.find({dbt_sheet: sheetId}).populate('dbt_giver dbt_taker').exec(function (err, debts)
+                {
+                    if(err)
+                    {
+                        deferred.reject(err);
+                    }
+                    else
+                    {
+                        deferred.resolve(debts);
+                    }
+                });
+
+            })
+            .catch(function(err)
+            {
+                deferred.reject(err);
+            });
+
+            return deferred.promise;
+        },
+
         /** Generate bilan. */
         generateBilan: function(sheetId)
         {
@@ -52,7 +84,6 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
 
                                 if (currentTransaction.trs_contributor._id.equals(currentPersonne._id)) {
                                     give = give + parseFloat(currentTransaction.trs_amount);
-                                    console.log("give de " + currentPersonne + " : " + give);
                                 }
 
                                 //-----------------------TAKE-------------------------------
@@ -77,7 +108,6 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                     take = parseFloat(take) + parseFloat((currentTransaction.trs_amount / totalTransactionWeight) * currentPersonneWeight);                 //résultat très proche de la réalité
                                 }
                             }
-                            console.log("take de " + currentPersonne + " : " + take);
 
                             tabRes1step.push([currentPersonne, take - give]);     //take-give => si positif alors la personne à plus reçu que dépensée et vis versa
                         }
@@ -95,7 +125,6 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
 
                         //envoie du tableau de la balance courantes de chaques personnes
                         //res.send(JSON.stringify(tabRes1stepSorted));
-                        console.log(tabRes1stepSorted);
 
                         //séparation des gens qui vont donner et recevoir
                         var GiveTab = [];  //gens qui vont payer
@@ -116,61 +145,18 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         var howShouldPayNow = GiveTab[GiveTab.length-1];   //en théorie si le tableau est bien trié le premier résultat est celui de la personne qui a le plus payé                                               // et donc qui devrait payé prochainement
 
                         bilanService.makeThatClean(GiveTab, TakeTab, sheetId, "test-equal");
-
-                        console.log("Celui qui devrait payer maintenant est : "+howShouldPayNow[0]);
-
                     })
-                        .catch(function(err)
-                        {
-                            deferred.reject(err);
-                        })
                 })
-                    .catch(function(err)
-                    {
-                        deferred.reject(err);
-                    })
             })
-                .catch(function(err)
-                {
-                    deferred.reject(err);
-                });
-
-            return deferred.promise;
-        },
-
-        /** Get bilan. */
-        getBilan: function(sheetId)
-        {
-            var deferred = qService.defer();
-
-            Debt.find({dbt_sheet: sheetId}).exec(function (err, debts)
+            .catch(function(err)
             {
-                if(err)
-                {
-                    deferred.reject(err);
-                }
-                else if(debts.length == 0)
-                {
-                    bilanService.generateBilan(sheetId).then(function(debts)
-                    {
-                        deferred.resolve(debts);
-                    })
-                        .catch(function(err)
-                        {
-                            deferred.reject(err);
-                        });
-                }
-                else
-                {
-                    deferred.resolve(debts);
-                }
+                deferred.reject(err);
             });
 
             return deferred.promise;
         },
 
         makeThatClean: function(given, taken, uri, param){
-            console.log("je passe par la");
             give = given;   //très important => permet de définir la variable en global et donc elle ne peut avoir qu'une seul valeur à la fois et partout
             take = taken;   //ce qui permet de terminer chaque fin d'appel de récursivité avec la condition give ou take.length == 0.
                             //si on ne le fait pas, quand on appele la fonction makeThatClean dans la fonction makeThatClean une fois que la récursivité est fini elle continue
