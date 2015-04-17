@@ -19,7 +19,8 @@ exports.attach = function(opts)
     expressApp.use(bodyParser.json());
     expressApp.use(bodyParser.urlencoded({extended: false}));
     expressApp.use(cookieParser());
-    expressApp.use(express.static(path.join(__dirname, '..', 'public')));
+    //expressApp.use(express.static(path.join(__dirname, '..', 'public')));
+    expressApp.use('/', express.static(path.join(__dirname, '..', '..', 'public')));
 
     expressApp.options('*', function(req, res)
     {
