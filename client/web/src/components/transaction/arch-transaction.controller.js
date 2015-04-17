@@ -1,5 +1,5 @@
 angular.module('kid')
-  .controller('archTransactionsController', function ($scope, Transactions, Sheet, $stateParams, Transaction, $scope, $mdToast, $state) {
+  .controller('archTransactionsController', function ($scope, Transactions, Sheet, $stateParams, Transaction, $mdToast, $state) {
 
     Sheet.get({she_id: $stateParams.idSheet}, function (result) {
         if (result.count > 0) {

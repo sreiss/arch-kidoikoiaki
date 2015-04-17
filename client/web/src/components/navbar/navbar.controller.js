@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('kid')
-  .controller('NavCtrl', ['$scope', '$mdSidenav', function($scope, $mdSidenav){
+  .controller('NavCtrl', function($scope, $mdSidenav){
     $scope.toggleSidenav = function(menuId) {
       $mdSidenav(menuId).toggle();
     };
-  }]);
+  });
