@@ -16,11 +16,11 @@
     "http": "0.0.0",
     "injectr": "^0.5.1",
     "jade": "^1.9.2",
-    "mongoose": "^3.8.23",
+    "mongoose": "^4.0.3",
     "morgan": "^1.5.1",
     "nconf": "^0.7.1",
+    "node-uuid": "^1.4.3",
     "q": "^1.2.0",
-    "validator": "^3.35.0",
-    "node-uuid" : "^1.4.3"
+    "validator": "^3.35.0"
   }
 }
