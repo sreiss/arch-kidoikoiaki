@@ -1,14 +1,29 @@
 angular.module('kid')
-  .controller('archTransactionsController', function ($scope, Transactions, Sheet, $stateParams, Transaction, $mdToast, $state) {
-
-    Sheet.get({she_id: $stateParams.idSheet}, function (result) {
-        if (result.count > 0) {
+  .controller('archTransactionsController', function ($scope, Transactions, Sheet, $stateParams, Transaction, $mdToast, $state)
+  {
+    if($stateParams.idSheet.length == 0)
+    {
+      // Avoid navigate without sheetReference.
+      $mdToast.show($mdToast.simple()
+          .content('Veuillez au préalable créer une nouvelle feuille.')
+          .position('top right')
+          .hideDelay(3000)
+      );
+      $state.go('sheet.home');
+    }
+    else
+    {
+      Sheet.get({she_id: $stateParams.idSheet}, function (result)
+      {
+        if (result.count > 0)
+        {
           $scope.transactions = Transactions.query({she_id: result.data._id});
         }
       },
-      function (responseError) {
-      }
-    );
+      function (responseError)
+      {
+      });
+    }
     $scope.deleteTransaction = function (id) {
       if(confirm('Souhaitez-vous réellement supprimer cette dépense ?')) {
         Transaction.delete({id: id}, function (result) {

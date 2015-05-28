@@ -2,15 +2,32 @@
  * Created by Brian on 29/03/2015.
  */
 angular.module('kid')
-  .controller('archCategoriesController', function ($scope, Categories, Category, Sheet, $stateParams, $state, $mdToast) {
-    Sheet.get({she_id: $stateParams.idSheet}, function (result) {
-        if (result.count > 0) {
-          $scope.categories = Categories.query({she_id: result.data._id});
+  .controller('archCategoriesController', function ($scope, Categories, Category, Sheet, $stateParams, $state, $mdToast)
+  {
+    if($stateParams.idSheet.length == 0)
+    {
+      // Avoid navigate without sheetReference.
+      $mdToast.show($mdToast.simple()
+          .content('Veuillez au préalable créer une nouvelle feuille.')
+          .position('top right')
+          .hideDelay(3000)
+      );
+      $state.go('sheet.home');
+    }
+    else
+    {
+      Sheet.get({she_id: $stateParams.idSheet}, function (result)
+        {
+          if(result.count > 0)
+          {
+            $scope.categories = Categories.query({she_id: result.data._id});
+          }
+        },
+        function (responseError)
+        {
         }
-      },
-      function (responseError) {
-      }
-    );
+      );
+    }
     $scope.deleteCategory = function (id) {
       if(confirm('Souhaitez-vous réellement supprimer cette catégorie ?')) {
         Category.delete({id: id}, function (result) {
