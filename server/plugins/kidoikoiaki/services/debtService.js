@@ -5,12 +5,14 @@
  * @copyright ArchTailors 2015
  */
 
-module.exports = function(Debt, qService) {
+var Q = require('q');
+
+module.exports = function(Debt) {
     return {
         /** Delete debts. */
         deleteDebts: function(sheetId)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             Debt.find({dbt_sheet: sheetId}).remove().exec(function(err, debts)
             {

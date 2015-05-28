@@ -5,12 +5,14 @@
  * @copyright ArchTailors 2015
  */
 
-module.exports = function(Participant, qService) {
+var Q = require('q');
+
+module.exports = function(Participant) {
     return {
         /** Save participant. */
         saveParticipant: function(participantData)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             var participant = new Participant();
             participant.prt_sheet = participantData.prt_sheet;
@@ -37,7 +39,7 @@ module.exports = function(Participant, qService) {
         /** Delete participant. */
         deleteParticipant: function(participantId)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             Participant.findOneAndRemove({_id: participantId}, function(err, participant)
             {
@@ -61,7 +63,7 @@ module.exports = function(Participant, qService) {
         /** Get participant. */
         getParticipant: function(participantId)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             Participant.findOne({_id: participantId}).populate('prt_sheet').exec(function (err, participant)
             {
@@ -81,7 +83,7 @@ module.exports = function(Participant, qService) {
         /** Get all participants. */
         getParticipants: function(sheetId)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             Participant.find({prt_sheet: sheetId}).populate('prt_sheet').exec(function (err, participants)
             {

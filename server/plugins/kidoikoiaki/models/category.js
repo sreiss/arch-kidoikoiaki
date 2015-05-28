@@ -9,6 +9,7 @@ module.exports = function(Types) {
     return {
         schema:
         {
+            ctg_sheet: { type: Types.ObjectId, ref: 'Sheet'},
             ctg_name: {type: String, required: true},
             ctg_description: {type: String}
         },

@@ -4,15 +4,16 @@
  * @module arch/kidoikoiaki
  * @copyright ArchTailors 2015
  */
-
+    
+var Q = require('q');
 var uuid = require('node-uuid');
 
-module.exports = function(Sheet, participantService, qService) {
+module.exports = function(Sheet, participantService) {
     return {
         /** Save sheet. */
         saveSheet: function(sheetData)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             var sheet = new Sheet();
             sheet.she_reference = sheetData.she_reference || uuid.v4();
@@ -36,7 +37,7 @@ module.exports = function(Sheet, participantService, qService) {
         /** Get sheet. */
         getSheet: function(sheetReference)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             Sheet.findOne({she_reference: sheetReference}).exec(function (err, sheet)
             {

@@ -5,14 +5,17 @@
  * @copyright ArchTailors 2015
  */
 
-module.exports = function(Category, qService) {
+var Q = require('q');
+
+module.exports = function(Category) {
     return {
         /** Save category. */
         saveCategory: function(categoryData)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             var category = new Category();
+            category.ctg_sheet = categoryData.ctg_sheet;
             category.ctg_name = categoryData.ctg_name;
             category.ctg_description = categoryData.ctg_description;
 
@@ -31,10 +34,35 @@ module.exports = function(Category, qService) {
             return deferred.promise;
         },
 
+        /** Update category. */
+        updateCategory: function(categoryData)
+        {
+            var deferred = Q.defer();
+
+            Category.update({_id: categoryData._id},
+            {
+                ctg_name: categoryData.ctg_name,
+                ctg_description: categoryData.ctg_description
+            },
+            function(err, numberAffected, rawResponse)
+            {
+                if(err)
+                {
+                    deferred.reject(err);
+                }
+                else
+                {
+                    deferred.resolve(numberAffected);
+                }
+            });
+
+            return deferred.promise;
+        },
+
         /** Delete category. */
         deleteCategory: function(categoryId)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             Category.findOneAndRemove({_id: categoryId}, function(err, category)
             {
@@ -58,7 +86,7 @@ module.exports = function(Category, qService) {
         /** Get category. */
         getCategory: function(categoryId)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             Category.findOne({_id: categoryId}).exec(function (err, category)
             {
@@ -69,26 +97,6 @@ module.exports = function(Category, qService) {
                 else
                 {
                     deferred.resolve(category);
-                }
-            });
-
-            return deferred.promise;
-        },
-
-        /** Get categories. */
-        getCategories: function()
-        {
-            var deferred = qService.defer();
-
-            Category.find().exec(function (err, categories)
-            {
-                if(err)
-                {
-                    deferred.reject(err);
-                }
-                else
-                {
-                    deferred.resolve(categories);
                 }
             });
 

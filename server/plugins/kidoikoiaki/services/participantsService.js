@@ -5,12 +5,14 @@
  * @copyright ArchTailors 2015
  */
 
-module.exports = function(Participant, qService) {
+var Q = require('q');
+
+module.exports = function(Participant) {
     return {
         /** Get all participants. */
         getParticipants: function(sheetId)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             Participant.find({prt_sheet: sheetId}).populate('prt_sheet').exec(function (err, participants)
             {

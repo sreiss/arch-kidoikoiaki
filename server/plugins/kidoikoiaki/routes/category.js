@@ -5,14 +5,16 @@
  * @copyright ArchTailors 2015
  */
 
-module.exports = function(categoryController, categoryRouter, categoryMiddleware) {
+module.exports = function(categoryController, categoryRouter, categoryMiddleware)
+{
     categoryRouter.route('/')
-        .get(categoryController.getCategories)
-        .post(categoryMiddleware.checkCategory)
+        .post(categoryMiddleware.checkSaveCategory)
         .post(categoryController.saveCategory)
+        .put(categoryMiddleware.checkUpdateCategory)
+        .put(categoryController.updateCategory);
 
     categoryRouter.route('/:categoryId')
         .all(categoryMiddleware.checkCategoryId)
         .get(categoryController.getCategory)
-        .delete(categoryController.deleteCategory)
+        .delete(categoryController.deleteCategory);
 }

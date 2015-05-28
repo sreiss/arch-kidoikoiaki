@@ -2,81 +2,92 @@
  * Created by Brian on 29/03/2015.
  */
 angular.module('kid')
-  .controller('archCategoriesController', function ($scope, Categories, Category, Sheet, $stateParams, $state, $mdToast)
+  .controller('archCategoriesController', function ($scope, Categories, Category, Sheet, $stateParams, $state, $mdToast, archSheetService, archCategoryService)
   {
-    if($stateParams.idSheet.length == 0)
+    $scope.categories = new Array();
+
+    archSheetService.getCurrentSheet().then(function(sheet)
     {
-      // Avoid navigate without sheetReference.
-      $mdToast.show($mdToast.simple()
-          .content('Veuillez au préalable créer une nouvelle feuille.')
-          .position('top right')
-          .hideDelay(3000)
-      );
+      $scope.categories = Categories.query({she_id: sheet._id});
+    })
+    .catch(function()
+    {
+      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
       $state.go('sheet.home');
-    }
-    else
+    });
+
+    $scope.deleteCategory = function(id)
     {
-      Sheet.get({she_id: $stateParams.idSheet}, function (result)
+      if(confirm('Souhaitez-vous réellement supprimer cette catégorie ?'))
+      {
+        archCategoryService.deleteCategory(id).then(function()
         {
-          if(result.count > 0)
-          {
-            $scope.categories = Categories.query({she_id: result.data._id});
-          }
-        },
-        function (responseError)
+          $mdToast.show($mdToast.simple().content('Catégorie supprimée avec succés.').position('top right').hideDelay(3000));
+          $state.go($state.current, {}, {reload: true});
+        })
+        .catch(function()
         {
-        }
-      );
-    }
-    $scope.deleteCategory = function (id) {
-      if(confirm('Souhaitez-vous réellement supprimer cette catégorie ?')) {
-        Category.delete({id: id}, function (result) {
-            if (result.count > 0) {
-              $mdToast.show($mdToast.simple()
-                  .content('Catégorie supprimée avec succés.')
-                  .position('top right')
-                  .hideDelay(3000)
-              );
-              $state.go($state.current, {}, {reload: true});
-            }
-            else {
-              $mdToast.show($mdToast.simple()
-                  .content('Une erreur est survenue à la suppression de la catégorie.')
-                  .position('top right')
-                  .hideDelay(3000)
-              );
-            }
-          },
-          function (responseError) {
-            $mdToast.show($mdToast.simple()
-                .content('Une erreur est survenue à la suppression de la catégorie.')
-                .position('top right')
-                .hideDelay(3000)
-            );
-          });
+          $mdToast.show($mdToast.simple().content('Une erreur est survenue à la suppression de la catégorie.').position('top right').hideDelay(3000));
+        });
       }
     };
+
+    $scope.editCategory = function(id)
+    {
+      $state.go('sheet.categoryEdit', {'idCategory' : id});
+    };
   })
-  .controller('archCategoryNewController', function ($scope, Category, $location, $mdToast, Sheet, $stateParams, $state, $animate) {
+  .controller('archCategoryNewController', function ($scope, Category, $location, $mdToast, Sheet, $stateParams, $state, archSheetService) {
 
     $scope.category = new Category();
-    $scope.newCategory = function () {
-      $scope.category.$save(
-        function (value) {
-            $mdToast.show(
-              $mdToast.simple()
-                .content('Catégorie créée avec succés.')
-                .position('top right')
-                .hideDelay(3000)
-            );
-          $state.go('sheet.categories');
-        }
-        ,
-        function (responseError) {
-          if (responseError.status === 400) {
-            console.log(responseError);
-          }
-        }
-      )
+
+    archSheetService.getCurrentSheet().then(function(sheet)
+    {
+      $scope.category.ctg_sheet = sheet._id;
+    })
+    .catch(function()
+    {
+      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
+      $state.go('sheet.home');
+    });
+
+    $scope.newCategory = function ()
+    {
+      $scope.category.$save(function()
+      {
+        $mdToast.show($mdToast.simple().content('Catégorie créée avec succés.').position('top right').hideDelay(3000));
+        $state.go('sheet.categories');
+      },
+      function()
+      {
+        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la création de la catégorie.').position('top right').hideDelay(3000));
+      })
+    }
+  })
+  .controller('archCategoryEditController', function ($scope, Category, $state, $stateParams, $mdToast, archCategoryService)
+  {
+    $scope.category = new Category();
+
+    archCategoryService.getCategory($stateParams.idCategory).then(function(category)
+    {
+      $scope.category = category;
+    })
+    .catch(function()
+    {
+      $mdToast.show($mdToast.simple().content('Une erreur est survenue à la récupération de la catégorie.').position('top right').hideDelay(3000));
+      $state.go('sheet.categories');
+    });
+
+    $scope.editCategory = function ()
+    {
+      Category.update({category:$scope.category}, function(result)
+      {
+        $mdToast.show($mdToast.simple().content('Catégorie modifiée avec succés.').position('top right').hideDelay(3000));
+        $state.go('sheet.categories');
+      },
+      function(responseError)
+      {
+        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la modification de la catégorie.').position('top right').hideDelay(3000));
+      });
     }
   });

@@ -5,12 +5,14 @@
  * @copyright ArchTailors 2015
  */
 
-module.exports = function(Transaction, qService) {
+var Q = require('q');
+
+module.exports = function(Transaction) {
     return {
         /** Save transaction. */
         saveTransaction: function(transactionData)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             var transaction = new Transaction();
             transaction.trs_sheet = transactionData.trs_sheet;
@@ -49,7 +51,7 @@ module.exports = function(Transaction, qService) {
         /** Delete transaction. */
         deleteTransaction: function(transactionId)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             Transaction.findOneAndRemove({_id: transactionId}, function(err, transaction)
             {
@@ -73,7 +75,7 @@ module.exports = function(Transaction, qService) {
         /** Get transaction. */
         getTransaction: function(transactionId)
         {
-            var deferred = qService.defer();
+            var deferred = Q.defer();
 
             Transaction.findOne({_id: transactionId}).populate('trs_sheet trs_contributor trs_beneficiaries.trs_participant trs_category').exec(function (err, transaction)
             {

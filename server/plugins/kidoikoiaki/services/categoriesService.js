@@ -7,14 +7,14 @@
 
 var Q = require('q');
 
-module.exports = function(Transaction) {
+module.exports = function(Category) {
     return {
-        /** Get all transactions. */
-        getTransactions: function(sheetId)
+        /** Get categories. */
+        getCategories: function(sheetId)
         {
             var deferred = Q.defer();
 
-            Transaction.find({trs_sheet: sheetId}).populate('trs_sheet trs_contributor trs_beneficiaries.trs_participant trs_category').exec(function (err, transactions)
+            Category.find({ctg_sheet : sheetId}).exec(function (err, categories)
             {
                 if(err)
                 {
@@ -22,7 +22,7 @@ module.exports = function(Transaction) {
                 }
                 else
                 {
-                    deferred.resolve(transactions);
+                    deferred.resolve(categories);
                 }
             });
 

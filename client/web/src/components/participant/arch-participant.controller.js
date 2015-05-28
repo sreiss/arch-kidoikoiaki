@@ -121,14 +121,30 @@ angular.module('kid')
   .controller('archParticipantNewController', function ($scope, Participant, $location, $mdToast, Sheet, $stateParams, $state) {
 
     $scope.participant = new Participant();
-    Sheet.get({she_id: $stateParams.idSheet}, function (result) {
-        if (result.count > 0) {
+
+    if($stateParams.idSheet.length == 0)
+    {
+      // Avoid navigate without sheetReference.
+      $mdToast.show($mdToast.simple()
+          .content('Veuillez au préalable créer une nouvelle feuille.')
+          .position('top right')
+          .hideDelay(3000)
+      );
+      $state.go('sheet.home');
+    }
+    else
+    {
+      Sheet.get({she_id: $stateParams.idSheet}, function (result)
+      {
+        if (result.count > 0)
+        {
           $scope.participant.prt_sheet = result.data._id;
         }
-      },
-      function (responseError) {
-      }
-    );
+      }, function (responseError)
+      {
+      });
+    }
+
     $scope.newParticipant = function () {
       $scope.participant.$save( function (result) {
           if (result.count > 0) {

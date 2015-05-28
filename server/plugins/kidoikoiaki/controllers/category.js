@@ -21,9 +21,26 @@ module.exports = function(categoryService)
             // Saving category.
             categoryService.saveCategory(categoryData).then(function(category)
             {
-                res.status(200).json({"count" : (category ? 1 : 0), "data" : category});
+                res.status(201).json({"count" : (category ? 1 : 0), "data" : category});
             },
             function(err)
+            {
+                res.status(500).json({"error" : new ArchSaveError(err.message)});
+            });
+        },
+
+        /** Update category. */
+        updateCategory: function(req, res)
+        {
+            // Get posted category.
+            var category = req.body.category;
+
+            // Saving user.
+            categoryService.updateCategory(category).then(function(result)
+            {
+                res.status(200).json({"count": (result ? 1 : 0), "data": result});
+            })
+            .catch(function(err)
             {
                 res.status(500).json({"error" : new ArchSaveError(err.message)});
             });
@@ -58,20 +75,6 @@ module.exports = function(categoryService)
                 res.status(200).json({"count": (category ? 1 : 0), "data": category});
             },
             function (err)
-            {
-                res.status(500).json({"error" : new ArchFindError(err.message)});
-            });
-        },
-
-        /** Get categories. */
-        getCategories: function(req, res)
-        {
-            // Get categories.
-            categoryService.getCategories().then(function(categories)
-            {
-                res.status(200).json({"count" : categories.length, "data" : categories});
-            },
-            function(err)
             {
                 res.status(500).json({"error" : new ArchFindError(err.message)});
             });

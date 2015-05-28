@@ -70,7 +70,7 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
       })
       .state('sheet.categoryEdit', {
         url: "/category/:idCategory/edit",
-        templateUrl: "components/category/arch-category.html",
+        templateUrl: "components/category/arch-category-edit.html",
         controller: "archCategoryEditController"
       })
       .state('sheet.bilan', {

@@ -57,18 +57,34 @@ angular.module('kid')
 
     $scope.transaction = new Transaction();
     $scope.tmp_benefs = {};
-    Sheet.get({she_id: $stateParams.idSheet},
-      function (result) {
+
+    if($stateParams.idSheet.length == 0)
+    {
+      // Avoid navigate without sheetReference.
+      $mdToast.show($mdToast.simple()
+          .content('Veuillez au préalable créer une nouvelle feuille.')
+          .position('top right')
+          .hideDelay(3000)
+      );
+      $state.go('sheet.home');
+    }
+    else
+    {
+      Sheet.get({she_id: $stateParams.idSheet}, function (result)
+      {
         $scope.participants = Participants.query({she_id: result.data._id});
         $scope.categories = Categories.query({she_id: result.data._id});
         $scope.transaction.trs_sheet = result.data._id;
       },
-      function (responseError) {
-        if (responseError.status === 400) {
+      function (responseError)
+      {
+        if(responseError.status === 400)
+        {
           console.log(responseError);
         }
-      }
-    );
+      });
+    }
+
     $scope.newTransaction = function () {
       var log = [];
       angular.forEach($scope.tmp_benefs, function(value, key) {
