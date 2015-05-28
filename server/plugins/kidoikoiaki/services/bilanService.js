@@ -120,24 +120,23 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         });
 
                         // Distinct giver & taker.
-                        var GiveTab = [];
-                        var TakeTab = []; 
+                        var givers = new Array();
+                        var takers = new Array();
 
                         tabRes1stepSorted.forEach(function (res) 
                         {
                             if(parseFloat(res[1]) > parseFloat("0")) 
                             {
-                                GiveTab.push(res);
+                                givers.push(res);
                             }
                             else if(parseFloat(res[1]) < parseFloat("0")) 
                             {
-                                TakeTab.push(res);
+                                takers.push(res);
                             }
                         });
 
-                        bilanService.generateDebts(GiveTab, TakeTab, sheetId, "test-equal").then(function()
+                        bilanService.testEqual(givers, takers, sheetId).then(function()
                         {
-                            console.log('')
                            deferred.resolve(true);
                         });
                     })
@@ -151,81 +150,83 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             return deferred.promise;
         },
 
-        generateDebts: function(given, taken, uri, param)
+        testEqual: function(given, taken, uri)
         {
             var deferred = Q.defer();
 
-            console.log('## Generate debts.');
-
-            give = given;   //très important => permet de définir la variable en global et donc elle ne peut avoir qu'une seul valeur à la fois et partout
-            take = taken;   //ce qui permet de terminer chaque fin d'appel de récursivité avec la condition give ou take.length == 0.
-                            //si on ne le fait pas, quand on appele la fonction generateDebts dans la fonction generateDebts une fois que la récursivité est fini elle continue
-                            //avec les tableaux give et take du moment ou la récursivité est faite et donc c'est le bronx.
-                            //vous avez qu'a les enlever pour voir.
-
-            //comparaison si dans le tableau de give il y'a une valeur égale a une autre*(-1) dans le tableau de take
-            //  si oui on supprime les deux et on recommence
-            //  si non on passe au if suivant
-            if(param.localeCompare("test-equal"))
+            for(var i = 0; i < given.length; i++)
             {
-                isEqual:
-                    for(var i = 0; i < give.length; i++) 
+                for(var u = 0; u < taken.length; u++)
+                {
+                    if(Math.round(given[i][1]*1000)/1000 == Math.round(taken[u][1]*parseFloat("-1")*1000)/1000)
                     {
-                        for(var u = 0; u < take.length; u++)
+                        var newDebt = new Debt(
                         {
-                            if(Math.round(give[i][1]*1000)/1000 == Math.round(take[u][1]*parseFloat("-1")*1000)/1000)
-                            {
-                                var newDebt = new Debt(
-                                {
-                                    dbt_sheet: uri,
-                                    dbt_giver: give[i][0]._id,
-                                    dbt_taker: take[u][0]._id,
-                                    dbt_amount: Math.round(give[i][1]*100)/100
-                                });
-
-                                newDebt.save(function (err) {});
-                                give.splice(i, 1);    //on enleve le giver car pour lui plus de transaction
-                                take.splice(u, 1);    //on enleve aussi le taker car il a recu sa tune
-
-                                if(give.length > 0 || take.length > 0)
-                                {
-                                    bilanService.generateDebts(give, take, uri, "test-equal").then(function()
-                                    {
-                                        deferred.resolve(true);
-                                    });
-                                }
-
-                                break isEqual;
-                            }
-                        }
-                    }
-
-                    if(give.length > 0 || take.length > 0)
-                    {
-                        bilanService.generateDebts(give, take, uri, "test-provide").then(function()
-                        {
-                            deferred.resolve(true);
+                            dbt_sheet: uri,
+                            dbt_giver: given[i][0]._id,
+                            dbt_taker: taken[u][0]._id,
+                            dbt_amount: Math.round(given[i][1]*100)/100
                         });
-                    }
-            }
-            // Optmization : check if n+1 give < ou > take -> give == take
-            else if(param.localeCompare("test-provide"))
-            {
-                var sauvGive = JSON.parse(JSON.stringify(give));
-                var sauvTake = JSON.parse(JSON.stringify(take));
-                var status = false;
 
-                // dans ce cas la, le label permet de break 4 boucles imbriquées, et donc de gagner beaucoup de calculs
-                isEqual:
-                    for(var i = 0; i < give.length; i++)
-                    {
-                        for(var u = 0; u < take.length; u++)
+                        newDebt.save(function (err) {});
+                        given.splice(i, 1);    //on enleve le giver car pour lui plus de transaction
+                        taken.splice(u, 1);    //on enleve aussi le taker car il a recu sa tune
+
+                        if(given.length > 0 || taken.length > 0)
                         {
-                            var newDebt;
-
-                            if(give[i][1] < take[u][1]*parseFloat("-1"))
+                            bilanService.testEqual(given, taken, uri).then(function()
                             {
-                                newDebt = new Debt(
+                                deferred.resolve(true);
+                            })
+                            .catch(function(err)
+                            {
+                                deferred.reject(err);
+                            });
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            if(given.length > 0 || taken.length > 0)
+            {
+                bilanService.testProvide(given, taken, uri).then(function()
+                {
+                    deferred.resolve(true);
+                })
+                .catch(function(err)
+                {
+                    deferred.reject(err);
+                });
+            }
+            else
+            {
+                deferred.resolve(true);
+            }
+
+            return deferred.promise;
+        },
+
+        testProvide: function(given, taken, uri)
+        {
+            var deferred = Q.defer();
+
+            var sauvGive = JSON.parse(JSON.stringify(give));
+            var sauvTake = JSON.parse(JSON.stringify(take));
+            var status = false;
+
+            for(var i = 0; i < given.length; i++)
+            {
+                (function()
+                {
+                    for(var u = 0; u < taken.length; u++)
+                    {
+                        var newDebt;
+
+                        if(give[i][1] < take[u][1]*parseFloat("-1"))
+                        {
+                            newDebt = new Debt(
                                 {
                                     dbt_sheet: uri,
                                     dbt_giver: give[i][0]._id,
@@ -233,12 +234,12 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                     dbt_amount: Math.round(give[i][1]*100)/100
                                 });
 
-                                take[u][1] = take[u][1]+give[i][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
-                                give.splice(i, 1);    //on enleve le giver car pour lui plus de transaction
-                            }
-                            else if(give[i][1] > take[u][1]*parseFloat("-1"))
-                            {
-                                newDebt = new Debt(
+                            take[u][1] = take[u][1]+give[i][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
+                            given.splice(i, 1);    //on enleve le giver car pour lui plus de transaction
+                        }
+                        else if(give[i][1] > take[u][1]*parseFloat("-1"))
+                        {
+                            newDebt = new Debt(
                                 {
                                     dbt_sheet: uri,
                                     dbt_giver: give[i][0]._id,
@@ -246,101 +247,117 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                     dbt_amount: Math.round(take[u][1]*100)/100*parseInt("-1")
                                 });
 
-                                give[i][1] = give[i][1]+take[u][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
-                                take.splice(u, 1);    //on enleve le giver car pour lui plus de transaction
-                            }
+                            give[i][1] = give[i][1]+take[u][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
+                            taken.splice(u, 1);    //on enleve le giver car pour lui plus de transaction
+                        }
 
-                            for(var ii = 0; ii < give.length; ii++)
+                        for(var ii = 0; ii < given.length; ii++)
+                        {
+                            for(var uu = 0; uu < taken.length; uu++)
                             {
-                                for(var uu = 0; uu < take.length; uu++)
+                                if(Math.round(give[ii][1]*1000)/1000 == Math.round(take[uu][1]*parseFloat("-1")*1000)/1000)
                                 {
-                                    if(Math.round(give[ii][1]*1000)/1000 == Math.round(take[uu][1]*parseFloat("-1")*1000)/1000)
+                                    status = true;  //pour ne pas rentré dans le prochain if d'en dessous
+                                    //si on est dans le if, c'est qu'on a trouvé un couple qui va nous permettre de tombé sur une égalité ensuite
+                                    //Donc on sauvegarde la transaction précédente (give > ou < take)
+                                    //Et on passe les tableaux en récursivité : le give == take sera supprimé ensuite.
+                                    newDebt.save(function (err) {});
+
+                                    if(given.length > 0 || taken.length > 0)
                                     {
-                                        status = true;  //pour ne pas rentré dans le prochain if d'en dessous
-                                        //si on est dans le if, c'est qu'on a trouvé un couple qui va nous permettre de tombé sur une égalité ensuite
-                                        //Donc on sauvegarde la transaction précédente (give > ou < take)
-                                        //Et on passe les tableaux en récursivité : le give == take sera supprimé ensuite.
-                                        newDebt.save(function (err) {});
-
-                                        if(give.length > 0 || take.length > 0)
-                                        {
-                                            bilanService.generateDebts(give, take, uri, "test-equal");   //on envoie une nouvelle récursivité avec les nouveaux tableaux
-                                        }
-
-                                        break isEqual;  // et on break les 4 boucles
+                                        bilanService.generateDebts(given, taken, uri, "test-equal");   //on envoie une nouvelle récursivité avec les nouveaux tableaux
                                     }
+
+                                    return;  // et on break les 4 boucles
                                 }
                             }
-
-                            // si on arrive ici c'est qu'on a pas trouvé d'optimisation pour give[i] et les valeurs du tableau de take
-                            // donc on remets les tableaux a neufs et on recommence pour give[i+1]
-                            give = JSON.parse(JSON.stringify(sauvGive));
-                            take = JSON.parse(JSON.stringify(sauvTake));
                         }
-                    }
 
-                //si status reste false cela veut dire que l'optimisation n'est pas possible et qu'on doit faire partir une valeur au hasard
-                //avec une simple comparaison give > ou < take
-                if(!status)
-                {
-                    if(give.length > 0 || take.length > 0)
-                    {
-                        bilanService.generateDebts(sauvGive, sauvTake, uri, "no-optimisation").then(function()
-                        {
-                            deferred.resolve(true);
-                        });
+                        // si on arrive ici c'est qu'on a pas trouvé d'optimisation pour give[i] et les valeurs du tableau de take
+                        // donc on remets les tableaux a neufs et on recommence pour give[i+1]
+                        given = JSON.parse(JSON.stringify(sauvGive));
+                        taken = JSON.parse(JSON.stringify(sauvTake));
                     }
+                }();
+            }
+
+            //si status reste false cela veut dire que l'optimisation n'est pas possible et qu'on doit faire partir une valeur au hasard
+            //avec une simple comparaison give > ou < take
+            if(!status)
+            {
+                if(given.length > 0 || taken.length > 0)
+                {
+                    bilanService.noOptimisation(sauvGive, sauvTake, uri).then(function()
+                    {
+                        deferred.resolve(true);
+                    })
+                    .catch(function(err)
+                    {
+                        deferred.reject(err);
+                    });
                 }
             }
-            else if(param.localeCompare("no-optimisation"))
+            else
             {
-                noOpti:
-                    for(var i = 0; i < give.length; i++)
+                deferred.resolve(true);
+            }
+
+            return deferred.promise;
+        },
+
+        noOptimisation: function(given, taken, uri)
+        {
+            var deferred = Q.defer();
+
+            for(var i = 0; i < given.length; i++)
+            {
+                for(var u = 0; u < taken.length; u++)
+                {
+                    if(give[i][1] < take[u][1]*parseFloat("-1"))
                     {
-                        for(var u = 0; u < take.length; u++)
-                        {
-                            if(give[i][1] < take[u][1]*parseFloat("-1"))
+                        var newDebt = new Debt(
                             {
-                                var newDebt = new Debt(
-                                {
-                                    dbt_sheet: uri,
-                                    dbt_giver: give[i][0]._id,
-                                    dbt_taker: take[u][0]._id,
-                                    dbt_amount: Math.round(give[i][1]*100)/100
-                                });
+                                dbt_sheet: uri,
+                                dbt_giver: give[i][0]._id,
+                                dbt_taker: take[u][0]._id,
+                                dbt_amount: Math.round(give[i][1]*100)/100
+                            });
 
-                                newDebt.save(function (err) {});
+                        newDebt.save(function (err) {});
 
-                                take[u][1] = take[u][1]+give[i][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
-                                give.splice(i, 1);    //on enleve le giver car pour lui plus de transaction
-                            }
-                            else if(give[i][1] > take[u][1]*parseFloat("-1"))
-                            {
-                                var newDebt = new Debt(
-                                {
-                                     dbt_sheet: uri,
-                                     dbt_giver: give[i][0]._id,
-                                     dbt_taker: take[u][0]._id,
-                                     dbt_amount: Math.round(take[u][1]*100)/100*parseInt("-1")
-                                });
-
-                                newDebt.save(function (err) {});
-
-                                give[i][1] = give[i][1]+take[u][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
-                                take.splice(u, 1);    //on enleve le giver car pour lui plus de transaction
-                            }
-
-                            if(give.length > 0 || take.length > 0)
-                            {
-                                bilanService.generateDebts(give, take, uri, "test-equal").then(function()
-                                {
-                                    deferred.resolve(true);
-                                });
-                            }
-
-                            break noOpti;
-                        }
+                        take[u][1] = take[u][1]+give[i][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
+                        given.splice(i, 1);    //on enleve le giver car pour lui plus de transaction
                     }
+                    else if(give[i][1] > take[u][1]*parseFloat("-1"))
+                    {
+                        var newDebt = new Debt(
+                            {
+                                dbt_sheet: uri,
+                                dbt_giver: give[i][0]._id,
+                                dbt_taker: take[u][0]._id,
+                                dbt_amount: Math.round(take[u][1]*100)/100*parseInt("-1")
+                            });
+
+                        newDebt.save(function (err) {});
+
+                        give[i][1] = give[i][1]+take[u][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
+                        taken.splice(u, 1);    //on enleve le giver car pour lui plus de transaction
+                    }
+
+                    if(given.length > 0 || taken.length > 0)
+                    {
+                        bilanService.testEqual(given, taken, uri).then(function()
+                        {
+                            deferred.resolve(true);
+                        })
+                        .catch(function(err)
+                        {
+                            reject(err);
+                        });
+                    }
+
+                    break(2);
+                }
             }
 
             return deferred.promise;

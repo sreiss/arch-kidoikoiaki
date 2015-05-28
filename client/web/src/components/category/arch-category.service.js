@@ -16,7 +16,7 @@ angular.module('kid')
           }
           else
           {
-            deferred.reject(new Erro());
+            deferred.reject(new Error());
           }
         },
         function(responseError)
