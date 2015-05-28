@@ -218,8 +218,6 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
 
             for(var i = 0; i < given.length; i++)
             {
-                (function()
-                {
                     for(var u = 0; u < taken.length; u++)
                     {
                         var newDebt;
@@ -278,7 +276,6 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         given = JSON.parse(JSON.stringify(sauvGive));
                         taken = JSON.parse(JSON.stringify(sauvTake));
                     }
-                }();
             }
 
             //si status reste false cela veut dire que l'optimisation n'est pas possible et qu'on doit faire partir une valeur au hasard
@@ -308,7 +305,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
         noOptimisation: function(given, taken, uri)
         {
             var deferred = Q.defer();
-
+            loop1:
             for(var i = 0; i < given.length; i++)
             {
                 for(var u = 0; u < taken.length; u++)
@@ -356,7 +353,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         });
                     }
 
-                    break(2);
+                    break loop1;
                 }
             }
 
