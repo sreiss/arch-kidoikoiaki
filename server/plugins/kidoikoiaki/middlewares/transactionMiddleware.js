@@ -10,7 +10,7 @@ var ArchParameterError = GLOBAL.ArchParameterError;
 
 module.exports = function() {
     return {
-        checkTransaction: function(req, res, next)
+        checkSaveTransaction: function(req, res, next)
         {
             // Get transaction data.
             var transactionData = req.body;
@@ -37,7 +37,58 @@ module.exports = function() {
             }
 
             // Check transaction contributor id.
-            var transactionContributorId = transactionData.trs_contributor || '';
+            var transactionContributorId = transactionData.trs_contributor._id || '';
+            if(!validator.isMongoId(transactionContributorId))
+            {
+                throw new ArchParameterError("Contributor ID isn't a valid MongoId.");
+            }
+
+            // Check transaction beneficiaries.
+            var transactionBeneficiaries = transactionData.trs_beneficiaries || [];
+            for(var i = 0; i < transactionBeneficiaries.length; i++)
+            {
+                if(!validator.isMongoId(transactionBeneficiaries[i].trs_participant))
+                {
+                    throw new ArchParameterError("Beneficiary ID isn't a valid MongoId.");
+                }
+
+                if(!validator.isNumeric(transactionBeneficiaries[i].trs_weight) && transactionBeneficiaries[i].trs_weight > 0)
+                {
+                    throw new ArchParameterError("Beneficiary weight must be numeric and greater than 0 (default 1).")
+                }
+            }
+
+            next();
+        },
+
+        checkUpdateTransaction: function(req, res, next)
+        {
+            // Get transaction data.
+            var transactionData = req.body.transaction;
+
+            // Check sheet id.
+            var transactionSheetId = transactionData.trs_sheet || '';
+            if(!validator.isMongoId(transactionSheetId))
+            {
+                throw new ArchParameterError("Sheet ID isn't a valid MongoId.");
+            }
+
+            // Check transaction description (empty or length >= 5).
+            var transactionDescription = transactionData.trs_description || '';
+            if(transactionDescription.length > 0 && !validator.isLength(transactionDescription, 5))
+            {
+                throw new ArchParameterError("Transaction description must contain at least 5 chars.")
+            }
+
+            // Check transaction amount.
+            var transactionAmount = transactionData.trs_amount || '';
+            if(!validator.isNumeric(transactionAmount) && transactionAmount > 0)
+            {
+                throw new ArchParameterError("Transaction amount must be numeric and greater than 0.")
+            }
+
+            // Check transaction contributor id.
+            var transactionContributorId = transactionData.trs_contributor._id || '';
             if(!validator.isMongoId(transactionContributorId))
             {
                 throw new ArchParameterError("Contributor ID isn't a valid MongoId.");

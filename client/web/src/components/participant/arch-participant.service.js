@@ -1,14 +1,14 @@
 'use strict'
 
 angular.module('kid')
-  .factory('archCategoryService', function(Category, archHttpService, $q)
+  .factory('archParticipantService', function(Participant, archHttpService, $q)
   {
     return {
-      getCategory: function(id)
+      getParticipant: function(id)
       {
         var deferred = $q.defer();
 
-        Category.get({id: id}, function(result)
+        Participant.get({id: id}, function(result)
         {
           if(result.count > 0)
           {
@@ -27,11 +27,11 @@ angular.module('kid')
         return deferred.promise;
       },
 
-      deleteCategory: function(id)
+      deleteParticipant: function(id)
       {
         var deferred = $q.defer();
 
-        Category.delete({id: id}, function(result)
+        Participant.delete({id: id}, function(result)
         {
           if(result.count > 0)
           {

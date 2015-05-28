@@ -1,4 +1,5 @@
 'use strict'
+
 angular.module('kid')
   .factory('archSheetService', function(Sheet, archHttpService, $q, httpConstant, $stateParams)
   {

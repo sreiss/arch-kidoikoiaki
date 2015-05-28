@@ -1,116 +1,124 @@
+'use strict'
+
 angular.module('kid')
-  .controller('archTransactionsController', function ($scope, Transactions, Sheet, $stateParams, Transaction, $mdToast, $state)
+  .controller('archTransactionsController', function ($scope, Transactions, Sheet, $stateParams, Transaction, $mdToast, $state, archSheetService, archTransactionService)
   {
-    if($stateParams.idSheet.length == 0)
+    $scope.transactions = new Array();
+
+    archSheetService.getCurrentSheet().then(function(sheet)
     {
-      // Avoid navigate without sheetReference.
-      $mdToast.show($mdToast.simple()
-          .content('Veuillez au préalable créer une nouvelle feuille.')
-          .position('top right')
-          .hideDelay(3000)
-      );
+      $scope.transactions = Transactions.query({she_id: sheet._id});
+    })
+    .catch(function()
+    {
+      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
       $state.go('sheet.home');
-    }
-    else
+    });
+
+    $scope.deleteTransaction = function(id)
     {
-      Sheet.get({she_id: $stateParams.idSheet}, function (result)
+      if(confirm('Souhaitez-vous réellement supprimer cette dépense ?'))
       {
-        if (result.count > 0)
+        archTransactionService.deleteTransaction(id).then(function()
         {
-          $scope.transactions = Transactions.query({she_id: result.data._id});
-        }
-      },
-      function (responseError)
-      {
-      });
-    }
-    $scope.deleteTransaction = function (id) {
-      if(confirm('Souhaitez-vous réellement supprimer cette dépense ?')) {
-        Transaction.delete({id: id}, function (result) {
-            if (result.count > 0) {
-              $mdToast.show($mdToast.simple()
-                  .content('Dépense supprimée avec succés.')
-                  .position('top right')
-                  .hideDelay(3000)
-              );
-              $state.go($state.current, {}, {reload: true});
-            }
-            else {
-              $mdToast.show($mdToast.simple()
-                  .content('Une erreur est survenue à la suppression de la dépense.')
-                  .position('top right')
-                  .hideDelay(3000)
-              );
-            }
-          },
-          function (responseError) {
-            $mdToast.show($mdToast.simple()
-                .content('Une erreur est survenue à la suppression de la dépense.')
-                .position('top right')
-                .hideDelay(3000)
-            );
-          });
+          $mdToast.show($mdToast.simple().content('Dépense supprimée avec succés.').position('top right').hideDelay(3000));
+          $state.go($state.current, {}, {reload: true});
+        })
+        .catch(function()
+        {
+          $mdToast.show($mdToast.simple().content('Une erreur est survenue à la suppression de la dépense.').position('top right').hideDelay(3000));
+        });
       }
     };
+
+    $scope.editTransaction = function(id)
+    {
+      $state.go('sheet.transactionEdit', {'idTransaction' : id});
+    };
   })
-  .controller('archTransactionNewController', function ($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, $animate) {
-
+  .controller('archTransactionNewController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService)
+  {
     $scope.transaction = new Transaction();
-    $scope.tmp_benefs = {};
 
-    if($stateParams.idSheet.length == 0)
+    archSheetService.getCurrentSheet().then(function(sheet)
     {
-      // Avoid navigate without sheetReference.
-      $mdToast.show($mdToast.simple()
-          .content('Veuillez au préalable créer une nouvelle feuille.')
-          .position('top right')
-          .hideDelay(3000)
-      );
+      $scope.beneficiaries = {};
+      $scope.participants = Participants.query({she_id: sheet._id});
+      $scope.categories = Categories.query({she_id: sheet._id});
+      $scope.transaction.trs_sheet = sheet._id;
+    })
+    .catch(function()
+    {
+      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
       $state.go('sheet.home');
-    }
-    else
+    });
+
+    $scope.newTransaction = function()
     {
-      Sheet.get({she_id: $stateParams.idSheet}, function (result)
+      $scope.transaction.trs_beneficiaries = new Array();
+
+      angular.forEach($scope.beneficiaries, function(weight, participantId)
       {
-        $scope.participants = Participants.query({she_id: result.data._id});
-        $scope.categories = Categories.query({she_id: result.data._id});
-        $scope.transaction.trs_sheet = result.data._id;
-      },
-      function (responseError)
-      {
-        if(responseError.status === 400)
+        var beneficiary =
         {
-          console.log(responseError);
-        }
+          trs_participant : participantId,
+          trs_weight : weight
+        };
+        $scope.transaction.trs_beneficiaries.push(beneficiary);
+      });
+
+      $scope.transaction.$save(function()
+      {
+        $mdToast.show($mdToast.simple().content('Dépense créée avec succés.').position('top right').hideDelay(3000));
+        $state.go('sheet.transactions');
+      },
+      function()
+      {
+        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la création de la dépense.').position('top right').hideDelay(3000));
+      })
+    }
+  })
+  .controller('archTransactionEditController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTransactionService)
+  {
+    $scope.transaction = new Transaction();
+
+    archSheetService.getCurrentSheet().then(function(sheet)
+    {
+      archTransactionService.getTransaction($stateParams.idTransaction).then(function(transaction)
+      {
+        $scope.transaction = transaction;
+        $scope.participants = Participants.query({she_id: sheet._id});
+        $scope.categories = Categories.query({she_id: sheet._id});
+        $scope.beneficiaries = new Array();
+
+        angular.forEach(transaction.trs_beneficiaries, function(participant)
+        {
+          $scope.beneficiaries[participant._id] = participant.trs_weight;
+        });
+      })
+      .catch(function()
+      {
+        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la récupération de la dépense.').position('top right').hideDelay(3000));
+        $state.go('sheet.transactions');
+      });
+    })
+    .catch(function()
+    {
+      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
+      $state.go('sheet.home');
+    });
+
+    $scope.editTransaction = function ()
+    {
+      Transaction.update({transaction:$scope.transaction}, function()
+      {
+        $mdToast.show($mdToast.simple().content('Dépense modifiée avec succés.').position('top right').hideDelay(3000));
+        $state.go('sheet.transactions');
+      },
+      function()
+      {
+        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la modification de la dépense.').position('top right').hideDelay(3000));
       });
     }
-
-    $scope.newTransaction = function () {
-      var log = [];
-      angular.forEach($scope.tmp_benefs, function(value, key) {
-        var tmp = {
-          trs_participant : key,
-          trs_weight : value
-      };
-        this.push(tmp);
-      },log);
-      console.log(log);
-      $scope.transaction.trs_beneficiaries = log;
-      console.log($scope.transaction);
-      $scope.transaction.$save(function (value) {
-        $mdToast.show(
-          $mdToast.simple()
-            .content('Dépense créée avec succés.')
-            .position('top right')
-            .hideDelay(3000)
-        )
-      },
-        function (responseError){
-
-            console.log(responseError);
-
-        });
-      $state.go('sheet.transactions');
-    }
-
   });
+

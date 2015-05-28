@@ -18,9 +18,9 @@ module.exports = function(Transaction) {
             transaction.trs_sheet = transactionData.trs_sheet;
             transaction.trs_description = transactionData.trs_description;
             transaction.trs_amount = transactionData.trs_amount;
-            transaction.trs_contributor = transactionData.trs_contributor;
+            transaction.trs_contributor = transactionData.trs_contributor._id;
             transaction.trs_beneficiaries = [];
-            transaction.trs_category = transactionData.trs_category;
+            transaction.trs_category = transactionData.trs_category._id;
 
             for(var i = 0; i < transactionData.trs_beneficiaries.length; i++)
             {
@@ -42,6 +42,29 @@ module.exports = function(Transaction) {
                 else
                 {
                     deferred.resolve(transaction);
+                }
+            });
+
+            return deferred.promise;
+        },
+
+        /** Update transaction. */
+        updateTransaction: function(transactionData)
+        {
+            var deferred = Q.defer();
+
+            Transaction.update({_id: transactionData._id},
+            {
+            },
+            function(err, result)
+            {
+                if(err)
+                {
+                    deferred.reject(err);
+                }
+                else
+                {
+                    deferred.resolve(result);
                 }
             });
 

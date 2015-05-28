@@ -56,7 +56,7 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
       .state('sheet.transactionEdit', {
         url: "/transaction/:idTransaction/edit",
         templateUrl: "components/transaction/arch-transaction-edit.html",
-        controller: "archParticipantEditController"
+        controller: "archTransactionEditController"
       })
       .state('sheet.categories', {
         url: "/categories",

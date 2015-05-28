@@ -7,11 +7,13 @@
 
 module.exports = function(participantController, participantRouter, participantMiddleware) {
     participantRouter.route('/')
-        .post(participantMiddleware.checkParticipant)
+        .post(participantMiddleware.checkSaveParticipant)
         .post(participantController.saveParticipant)
+        .put(participantMiddleware.checkUpdateParticipant)
+        .put(participantController.updateParticipant);
 
     participantRouter.route('/:participantId')
         .all(participantMiddleware.checkParticipantId)
         .get(participantController.getParticipant)
-        .delete(participantController.deleteParticipant)
+        .delete(participantController.deleteParticipant);
 }

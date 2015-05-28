@@ -1,3 +1,5 @@
+'use strict'
+
 angular.module('kid')
   .controller('archBilanController', function ($scope, Sheet ,$stateParams, $mdToast, $state, Bilan)
   {

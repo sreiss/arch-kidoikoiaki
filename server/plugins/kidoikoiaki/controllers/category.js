@@ -38,7 +38,7 @@ module.exports = function(categoryService)
             // Saving user.
             categoryService.updateCategory(category).then(function(result)
             {
-                res.status(200).json({"count": (result ? 1 : 0), "data": result});
+                res.status(200).json({"count": result.ok, "data": result});
             })
             .catch(function(err)
             {

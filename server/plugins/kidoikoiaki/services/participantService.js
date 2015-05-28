@@ -36,6 +36,33 @@ module.exports = function(Participant) {
             return deferred.promise;
         },
 
+        /** Update participant. */
+        updateParticipant: function(participantData)
+        {
+            var deferred = Q.defer();
+
+            Participant.update({_id: participantData._id},
+            {
+                prt_fname : participantData.prt_fname,
+                prt_lname : participantData.prt_lname,
+                prt_email : participantData.prt_email,
+                prt_share : participantData.prt_share
+            },
+            function(err, result)
+            {
+                if(err)
+                {
+                    deferred.reject(err);
+                }
+                else
+                {
+                    deferred.resolve(result);
+                }
+            });
+
+            return deferred.promise;
+        },
+
         /** Delete participant. */
         deleteParticipant: function(participantId)
         {
@@ -65,7 +92,7 @@ module.exports = function(Participant) {
         {
             var deferred = Q.defer();
 
-            Participant.findOne({_id: participantId}).populate('prt_sheet').exec(function (err, participant)
+            Participant.findOne({_id: participantId}).exec(function (err, participant)
             {
                 if(err)
                 {

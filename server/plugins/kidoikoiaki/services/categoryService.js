@@ -44,7 +44,7 @@ module.exports = function(Category) {
                 ctg_name: categoryData.ctg_name,
                 ctg_description: categoryData.ctg_description
             },
-            function(err, numberAffected, rawResponse)
+            function(err, result)
             {
                 if(err)
                 {
@@ -52,7 +52,7 @@ module.exports = function(Category) {
                 }
                 else
                 {
-                    deferred.resolve(numberAffected);
+                    deferred.resolve(result);
                 }
             });
 

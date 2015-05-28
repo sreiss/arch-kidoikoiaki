@@ -7,11 +7,13 @@
 
 module.exports = function(transactionController, transactionRouter, transactionMiddleware) {
     transactionRouter.route('/')
-        .post(transactionMiddleware.checkTransaction)
+        .post(transactionMiddleware.checkSaveTransaction)
         .post(transactionController.saveTransaction)
+        .put(transactionMiddleware.checkUpdateTransaction)
+        .put(transactionController.updateTransaction);
 
     transactionRouter.route('/:transactionId')
         .all(transactionMiddleware.checkTransactionId)
         .get(transactionController.getTransaction)
-        .delete(transactionController.deleteTransaction)
+        .delete(transactionController.deleteTransaction);
 }

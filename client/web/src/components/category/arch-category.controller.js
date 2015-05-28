@@ -1,6 +1,5 @@
-/**
- * Created by Brian on 29/03/2015.
- */
+'use strict'
+
 angular.module('kid')
   .controller('archCategoriesController', function ($scope, Categories, Category, Sheet, $stateParams, $state, $mdToast, archSheetService, archCategoryService)
   {
@@ -37,8 +36,8 @@ angular.module('kid')
       $state.go('sheet.categoryEdit', {'idCategory' : id});
     };
   })
-  .controller('archCategoryNewController', function ($scope, Category, $location, $mdToast, Sheet, $stateParams, $state, archSheetService) {
-
+  .controller('archCategoryNewController', function ($scope, Category, $location, $mdToast, Sheet, $stateParams, $state, archSheetService)
+  {
     $scope.category = new Category();
 
     archSheetService.getCurrentSheet().then(function(sheet)
@@ -80,12 +79,12 @@ angular.module('kid')
 
     $scope.editCategory = function ()
     {
-      Category.update({category:$scope.category}, function(result)
+      Category.update({category:$scope.category}, function()
       {
         $mdToast.show($mdToast.simple().content('Catégorie modifiée avec succés.').position('top right').hideDelay(3000));
         $state.go('sheet.categories');
       },
-      function(responseError)
+      function()
       {
         $mdToast.show($mdToast.simple().content('Une erreur est survenue à la modification de la catégorie.').position('top right').hideDelay(3000));
       });
