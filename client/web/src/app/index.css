@@ -53,8 +53,10 @@ https://github.com/google/material-design-icons
 }
 
 .side-list {
-  padding:10px 15px;
+  margin : 0px;
+  padding: 5px 10px;
 }
+
 
 ul li {
   list-style-type: none;
