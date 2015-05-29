@@ -74,10 +74,6 @@ module.exports = function(Participant) {
                 {
                     deferred.reject(err);
                 }
-                else if(!participant)
-                {
-                    deferred.reject(new Error('No participant matching [PARTICIPANT_ID] : ' + participantId + "."));
-                }
                 else
                 {
                     deferred.resolve(participant);

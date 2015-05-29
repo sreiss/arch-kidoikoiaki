@@ -29,40 +29,36 @@ angular.module('kid')
           {
             if(transaction.trs_contributor._id == id)
             {
-              console.log('linked');
               isLinked = true;
             }
             else
             {
               transaction.trs_beneficiaries.forEach(function(beneficiary)
               {
-                if(beneficiary.trs_participant == id)
+                if(beneficiary.trs_participant._id == id)
                 {
-                  console.log('linked');
                   isLinked = true;
                 }
               });
             }
-
-            console.log(isLinked);
-            /*
-            if(!isLinked)
-            {
-              archParticipantService.deleteParticipant(id).then(function()
-              {
-                $mdToast.show($mdToast.simple().content('Participant supprimé avec succés.').position('top right').hideDelay(3000));
-                $state.go($state.current, {}, {reload: true});
-              })
-              .catch(function()
-              {
-                $mdToast.show($mdToast.simple().content('Une erreur est survenue à la suppression de ce participant.').position('top right').hideDelay(3000));
-              });
-            }
-            else
-            {
-              $mdToast.show($mdToast.simple().content('Impossible de supprimer ce participant, celui-ci est lié à une dépense.').position('top right').hideDelay(3000));
-            }*/
           });
+
+          if(!isLinked)
+          {
+            archParticipantService.deleteParticipant(id).then(function()
+            {
+              $mdToast.show($mdToast.simple().content('Participant supprimé avec succés.').position('top right').hideDelay(3000));
+              $state.go($state.current, {}, {reload: true});
+            })
+            .catch(function()
+            {
+              $mdToast.show($mdToast.simple().content('Une erreur est survenue à la suppression de ce participant.').position('top right').hideDelay(3000));
+            });
+          }
+          else
+          {
+            $mdToast.show($mdToast.simple().content('Impossible de supprimer ce participant, celui-ci est lié à une dépense.').position('top right').hideDelay(3000));
+          }
         })
         .catch(function()
         {

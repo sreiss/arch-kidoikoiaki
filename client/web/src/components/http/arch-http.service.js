@@ -67,8 +67,11 @@ angular.module('kid')
   })
   .factory("Sheet", function ($resource,httpConstant) {
     return $resource(httpConstant.apiUrl + '/kidoikoiaki/sheet/:id', {}, {
-      get: {
-        method: 'GET'
+      save: {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       },
       update: {
         method: 'PUT'
@@ -89,6 +92,12 @@ angular.module('kid')
         headers: {
           'Content-Type': 'application/json'
         }
+      },
+      update: {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
     });
   })
@@ -101,7 +110,10 @@ angular.module('kid')
         }
       },
       update: {
-        method: 'PUT'
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
     });
   })

@@ -40,7 +40,7 @@ module.exports = function() {
             var participantEmail = participantData.prt_email || '';
             if(!validator.isEmail(participantEmail))
             {
-                throw new ArchParameterError("Participant email isn't a valid mail address")
+                throw new ArchParameterError("Participant email isn't a valid mail address.")
             }
 
             // Check participant share.
@@ -83,7 +83,7 @@ module.exports = function() {
             var participantEmail = participantData.prt_email || '';
             if(!validator.isEmail(participantEmail))
             {
-                throw new ArchParameterError("Participant email isn't a valid mail address")
+                throw new ArchParameterError("Participant email isn't a valid mail address.")
             }
 
             // Check participant share.
@@ -100,7 +100,6 @@ module.exports = function() {
         {
             // Get participant id.
             var participantId = req.params.participantId;
-
             if(!validator.isMongoId(participantId))
             {
                 throw new ArchParameterError("Participant ID isn't a valid MongoId.");

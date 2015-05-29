@@ -12,9 +12,8 @@ module.exports = function() {
     return {
         checkSheetId: function(req, res, next)
         {
-            // Get shet id.
+            // Get sheet id.
             var sheetId = req.params.sheetId || '';
-
             if(!validator.isMongoId(sheetId))
             {
                 throw new ArchParameterError("Sheet ID isn't a valid MongoId.");

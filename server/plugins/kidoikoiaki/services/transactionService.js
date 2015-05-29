@@ -82,10 +82,6 @@ module.exports = function(Transaction) {
                 {
                     deferred.reject(err);
                 }
-                else if(!transaction)
-                {
-                    deferred.reject(new Error('No transaction matching [TRANSACTION_ID] : ' + transactionId + "."));
-                }
                 else
                 {
                     deferred.resolve(transaction);

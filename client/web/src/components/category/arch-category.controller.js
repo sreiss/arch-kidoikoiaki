@@ -1,13 +1,14 @@
 'use strict'
 
 angular.module('kid')
-  .controller('archCategoriesController', function ($scope, Categories, Category, Sheet, $stateParams, $state, $mdToast, archSheetService, archCategoryService)
+  .controller('archCategoriesController', function ($scope, Categories, Category, Sheet, $stateParams, $state, $mdToast, archSheetService, archCategoryService, archTransactionService)
   {
     $scope.categories = new Array();
 
     archSheetService.getCurrentSheet().then(function(sheet)
     {
       $scope.categories = Categories.query({id: sheet._id});
+      $scope.sheet = sheet;
     })
     .catch(function()
     {
@@ -19,14 +20,38 @@ angular.module('kid')
     {
       if(confirm('Souhaitez-vous réellement supprimer cette catégorie ?'))
       {
-        archCategoryService.deleteCategory(id).then(function()
+        var isLinked = false;
+
+        archTransactionService.getTransactions($scope.sheet._id).then(function(transactions)
         {
-          $mdToast.show($mdToast.simple().content('Catégorie supprimée avec succés.').position('top right').hideDelay(3000));
-          $state.go($state.current, {}, {reload: true});
+          transactions.forEach(function(transaction)
+          {
+            if(transaction.trs_category._id == id)
+            {
+              isLinked = true;
+            }
+          });
+
+          if(!isLinked)
+          {
+            archCategoryService.deleteCategory(id).then(function()
+            {
+              $mdToast.show($mdToast.simple().content('Catégorie supprimée avec succés.').position('top right').hideDelay(3000));
+              $state.go($state.current, {}, {reload: true});
+            })
+            .catch(function()
+            {
+              $mdToast.show($mdToast.simple().content('Une erreur est survenue à la suppression de la catégorie.').position('top right').hideDelay(3000));
+            });
+          }
+          else
+          {
+            $mdToast.show($mdToast.simple().content('Impossible de supprimer cette catégorie, celle-ci est liée à une dépense.').position('top right').hideDelay(3000));
+          }
         })
         .catch(function()
         {
-          $mdToast.show($mdToast.simple().content('Une erreur est survenue à la suppression de la catégorie.').position('top right').hideDelay(3000));
+          $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la vérification des dépendances.').position('top right').hideDelay(3000));
         });
       }
     };

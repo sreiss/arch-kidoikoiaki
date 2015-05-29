@@ -17,26 +17,35 @@ angular.module('kid')
   {
     $scope.sheet = new Sheet();
 
-    archSheetService.getSheet().then(function(sheet)
+    $scope.sanitizeReference = function()
     {
-      $scope.sheet.she_reference = sheet.she_reference;
-    })
-    .catch(function()
-    {
-      $mdToast.show($mdToast.simple().content('Une erreur est survenue à la génération de la référence de la feuille.').position('top right').hideDelay(3000));
-      $state.go('sheet.home');
-    });
+      $scope.sheet.she_reference = $scope.sheet.she_reference.replace(/[^\w]/gi, '');
+    }
 
     $scope.newSheet = function()
     {
-      Sheet.update({sheet:$scope.sheet}, function()
+      $scope.sheet.she_path = $state.href('home', {}, {absolute: true}) + 'sheet/' + $scope.sheet.she_reference + '/';
+
+      $scope.sheet.$save(function(result)
       {
         $mdToast.show($mdToast.simple().content('Feuille créée avec succés.').position('top right').hideDelay(3000));
-        $state.transitionTo('sheet.home', {'idSheet' : $scope.sheet.she_reference})
+        $state.transitionTo('sheet.home', {'idSheet' : result.data.she_reference})
       },
-      function()
+      function(err)
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la création de la feuille.').position('top right').hideDelay(3000));
+        var errMessage = err.data.error.message || '';
+        if(errMessage == 'SHE_REFERENCE_ALREADY_USED')
+        {
+          $mdToast.show($mdToast.simple().content('Une feuille utilisant cette référence existe déjà.').position('top right').hideDelay(3000));
+        }
+        else if(errMessage == 'SHE_CREATION_DATE_TO_SOON')
+        {
+          $mdToast.show($mdToast.simple().content("Une feuille vient d'être créée, veuillez patienter 5 secondes avant une nouvelle tentative.").position('top right').hideDelay(3000));
+        }
+        else
+        {
+          $mdToast.show($mdToast.simple().content('Une erreur est survenue à la création de la feuille.').position('top right').hideDelay(3000));
+        }
       })
     };
   })

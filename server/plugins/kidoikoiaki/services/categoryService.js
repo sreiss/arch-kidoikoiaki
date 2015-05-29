@@ -70,10 +70,6 @@ module.exports = function(Category) {
                 {
                     deferred.reject(err);
                 }
-                else if(!category)
-                {
-                    deferred.reject(new Error('No category matching [CATEGORY_ID] : ' + categoryId + "."));
-                }
                 else
                 {
                     deferred.resolve(category);

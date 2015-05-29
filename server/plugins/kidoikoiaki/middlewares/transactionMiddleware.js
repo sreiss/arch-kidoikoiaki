@@ -116,7 +116,6 @@ module.exports = function() {
         {
             // Get transaction id.
             var transactionId = req.params.transactionId || '';
-
             if(!validator.isMongoId(transactionId))
             {
                 throw new ArchParameterError("Transaction ID isn't a valid MongoId.");

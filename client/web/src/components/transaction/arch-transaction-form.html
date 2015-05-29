@@ -30,9 +30,8 @@
 <div layout="column" class="margin-bottom-20" >
   <div flex="50" ng-repeat="participant in participants.data">
     <md-card>
-      <div layout="row" >
         <div>
-          <md-switch class="margin-top-25" ng-model="beneficiaries[participant._id]" ng-false-value="0" ng-true-value="{{participant.prt_share}}">
+          <md-switch class="margin-top-25" ng-model="beneficiaries[participant._id]" ng-false-value="false" ng-true-value="true">
             {{participant.prt_lname}}
           </md-switch>
         </div>
@@ -40,7 +39,7 @@
           <md-icon class="fa fa-pie-chart"></md-icon>
           <md-input-container>
             <label>Parts ?</label>
-            <input type="number" ng-model="beneficiaries[participant._id]"  min="0" disabled="true">
+            <input type="number" ng-model="beneficiaries[participant._id]"  min="0">
           </md-input-container>
         </div>
       </div>

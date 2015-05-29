@@ -4,5 +4,11 @@
   },
   "db": {
     "url": "mongodb://localhost/archKidoikoiaki"
+  },
+  "mail":
+  {
+    "username": "acrobattmailer@gmail.com",
+    "password": "iutrs67400",
+    "noreply": "archKidoikoiaki <no-reply@archkidoikoiaki.fr>"
   }
 }

@@ -22,18 +22,11 @@ module.exports = function() {
                 throw new ArchParameterError("Category sheet ID isn't a valid MongoId.");
             }
 
-            // Check category name (length >= 3).
+            // Check category name not empty.
             var categoryName = categoryData.ctg_name || '';
-            if(!validator.isLength(categoryName, 3))
+            if(!validator.isLength(categoryName, 1))
             {
-                throw new ArchParameterError("Category name must contain at least 3 chars.")
-            }
-
-            // Check category description (empty or length >= 5).
-            var categoryDescription = categoryData.ctg_description || '';
-            if(categoryDescription.length > 0 && !validator.isLength(categoryDescription, 5))
-            {
-                throw new ArchParameterError("Category name must contain at least 5 chars.")
+                throw new ArchParameterError("Category name can't be empty.")
             }
 
             next();
@@ -51,18 +44,11 @@ module.exports = function() {
                 throw new ArchParameterError("Category sheet ID isn't a valid MongoId.");
             }
 
-            // Check category name (length >= 3).
+            // Check category name not empty.
             var categoryName = categoryData.ctg_name || '';
-            if(!validator.isLength(categoryName, 3))
+            if(!validator.isLength(categoryName, 1))
             {
-                throw new ArchParameterError("Category name must contain at least 3 chars.")
-            }
-
-            // Check category description (empty or length >= 5).
-            var categoryDescription = categoryData.ctg_description || '';
-            if(categoryDescription.length > 0 && !validator.isLength(categoryDescription, 5))
-            {
-                throw new ArchParameterError("Category name must contain at least 5 chars.")
+                throw new ArchParameterError("Category name can't be empty.")
             }
 
             next();
@@ -72,7 +58,6 @@ module.exports = function() {
         {
             // Get category id.
             var categoryId = req.params.categoryId || '';
-
             if(!validator.isMongoId(categoryId))
             {
                 throw new ArchParameterError("Category ID isn't a valid MongoId.");

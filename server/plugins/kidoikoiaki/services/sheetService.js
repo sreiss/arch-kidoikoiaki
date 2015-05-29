@@ -6,30 +6,66 @@
  */
     
 var Q = require('q');
-var uuid = require('node-uuid');
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
 
-module.exports = function(Sheet, participantService) {
+module.exports = function(Sheet, sheetService, config)
+{
     return {
         /** Save sheet. */
         saveSheet: function(sheetData)
         {
             var deferred = Q.defer();
 
-            var sheet = new Sheet();
-            sheet.she_reference = sheetData.she_reference || uuid.v4();
-
-            // Saving sheet.
-            sheet.save(function(err)
+            sheetService.getSheet(sheetData.she_reference).then(function(sheet)
             {
-                if(err)
+                if(!sheet)
                 {
-                    deferred.reject(err);
+                    sheetService.getLatestSheetByIp(sheetData.she_ip).then(function(latestSheet)
+                    {
+                        var timeElapsed = new Date() - (Date.parse(latestSheet.she_creation_date));
+
+                        if(timeElapsed > 3000)
+                        {
+                            var sheet = new Sheet();
+                            sheet.she_name = sheetData.she_name;
+                            sheet.she_reference = sheetData.she_reference;
+                            sheet.she_email = sheetData.she_email;
+                            sheet.she_ip = sheetData.she_ip;
+
+                            // Saving sheet.
+                            sheet.save(function(err)
+                            {
+                                if(err)
+                                {
+                                    deferred.reject(err);
+                                }
+                                else
+                                {
+                                    sheetService.sendMail(sheetData);
+                                    deferred.resolve(sheet);
+                                }
+                            });
+                        }
+                        else
+                        {
+                            throw new Error('SHE_CREATION_DATE_TO_SOON');
+                        }
+                    })
+                    .catch(function(err)
+                    {
+                        deferred.reject(err);
+                    })
                 }
                 else
                 {
-                    deferred.resolve(sheet);
+                    throw new Error('SHE_REFERENCE_ALREADY_USED');
                 }
-            });
+            })
+            .catch(function(err)
+            {
+                deferred.reject(err);
+            })
 
             return deferred.promise;
         },
@@ -69,9 +105,25 @@ module.exports = function(Sheet, participantService) {
                 {
                     deferred.reject(err);
                 }
-                else if(sheet == null)
+                else
                 {
-                    deferred.reject(new Error('No sheet matching [SHE_REFERENCE] : ' + sheetReference + "."));
+                    deferred.resolve(sheet);
+                }
+            });
+
+            return deferred.promise;
+        },
+
+        /** Get latest sheet by IP. */
+        getLatestSheetByIp: function(sheetIp)
+        {
+            var deferred = Q.defer();
+
+            Sheet.findOne({she_ip: sheetIp}).sort({she_creation_date: -1}).exec(function (err, sheet)
+            {
+                if(err)
+                {
+                    deferred.reject(err);
                 }
                 else
                 {
@@ -80,6 +132,48 @@ module.exports = function(Sheet, participantService) {
             });
 
             return deferred.promise;
+        },
+
+        /** Send Mail. */
+        sendMail: function(sheetData)
+        {
+            var transporter = nodemailer.createTransport(smtpTransport(
+            {
+                service: "Gmail", // sets automatically host, port and connection security settings
+                auth:
+                {
+                    user: config.get('mail:username'),
+                    pass: config.get('mail:password')
+                },
+                tls: {rejectUnauthorized: false},
+                debug:true
+            }));
+
+            var mailOptions =
+            {
+                from: config.get('mail:noreply'),
+                to: sheetData.she_email,
+                subject: "archKidoikoiaki - Création d'une nouvelle feuille ✔",
+                html:   'Bonjour,<br><br>' +
+                'Votre nouvelle feuille <b>' + sheetData.she_name + '</b> a été créée avec succés.<br>' +
+                "Vous pouvez la consulter et la partager à n'importer quel moment à l'adresse suivante : <a href='" + sheetData.she_path + "'>" + sheetData.she_reference + "</a>.<br><br>" +
+                "L'équipe vous remercie et vous souhaite une bonne visite.<br>" +
+                '__<br>Ceci est un message automatique, merci de ne pas y répondre.'
+            };
+
+            transporter.sendMail(mailOptions, function(error, info)
+            {
+                if(error)
+                {
+                    console.log("Message automatique de création de feuille " + sheetData.she_reference + " non envoyé.");
+                }
+                else
+                {
+                    {
+                        console.log("Message automatique de création de feuille " + sheetData.she_reference + " envoyé avec succés.");
+                    }
+                }
+            });
         }
     };
 };

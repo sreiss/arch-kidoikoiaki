@@ -43,7 +43,10 @@ exports.attach = function(opts) {
             dependencyNames.forEach(function(dependencyName) {
                 dependencyName = dependencyName.trim();
                 if (dependencyName != '') {
-                    if (plugin.models[dependencyName]) {
+                    if(dependencyName == 'config') {
+                        serviceArgs.push(config);
+                    }
+                    else if (plugin.models[dependencyName]) {
                         serviceArgs.push(plugin.models[dependencyName]);
                     } else if (plugin.services[dependencyName]) {
                         serviceArgs.push(plugin.services[dependencyName]);
@@ -73,26 +76,26 @@ exports.attach = function(opts) {
 
         // Dependency injection
         /*
-        for (pluginServiceName in pluginServices) {
-            var serviceSignature = pluginServices[pluginServiceName].toString();
-            var dependencyNames = serviceSignature
-                .substring(serviceSignature.indexOf('(') + 1, serviceSignature.indexOf(')'))
-                .split(',');
+         for (pluginServiceName in pluginServices) {
+         var serviceSignature = pluginServices[pluginServiceName].toString();
+         var dependencyNames = serviceSignature
+         .substring(serviceSignature.indexOf('(') + 1, serviceSignature.indexOf(')'))
+         .split(',');
 
-            var serviceArgs = [];
-            dependencyNames.forEach(function(dependencyName) {
-                dependencyName = dependencyName.trim();
-                if (pluginModels[dependencyName]) {
-                    serviceArgs.push(pluginModels[dependencyName]);
-                } else if (pluginServices[dependencyName]) {
-                    serviceArgs.push(pluginServices[dependencyName]);
-                } else {
-                    serviceArgs.push(null);
-                }
-            });
+         var serviceArgs = [];
+         dependencyNames.forEach(function(dependencyName) {
+         dependencyName = dependencyName.trim();
+         if (pluginModels[dependencyName]) {
+         serviceArgs.push(pluginModels[dependencyName]);
+         } else if (pluginServices[dependencyName]) {
+         serviceArgs.push(pluginServices[dependencyName]);
+         } else {
+         serviceArgs.push(null);
+         }
+         });
 
-            pluginServices[pluginServiceName] = pluginServices[pluginServiceName].apply(this, serviceArgs);
-        }*/
+         pluginServices[pluginServiceName] = pluginServices[pluginServiceName].apply(this, serviceArgs);
+         }*/
     }
 };
 

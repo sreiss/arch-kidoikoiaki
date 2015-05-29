@@ -2,5 +2,30 @@
 <md-button class="md-raised" ui-sref="sheet.home">Retour</md-button>
 
 <form  role="form" ng-submit="newSheet()">
-  <div ng-include="'components/sheet/arch-sheet-form.html'"></div>
+  <div layout="column">
+    <div layout="row">
+      <md-icon class="fa fa-folder"></md-icon>
+      <md-input-container flex>
+        <label>Nom de la feuille</label>
+        <input type="text" ng-model="sheet.she_name" required="true">
+      </md-input-container>
+    </div>
+    <div layout="row">
+      <md-icon class="fa fa-bars"></md-icon>
+      <md-input-container flex>
+        <label>Réference de la feuille</label>
+        <input type="text" ng-model="sheet.she_reference" required="true" ng-change="sanitizeReference();">
+      </md-input-container>
+    </div>
+    <div layout="row">
+      <md-icon class="fa fa-envelope-o"></md-icon>
+      <md-input-container flex>
+        <label>Email de contact</label>
+        <input type="email" ng-model="sheet.she_email" required="true">
+      </md-input-container>
+    </div>
+  </div>
+  <div class="md-actions" layout="row">
+    <md-button class="md-raised md-accent" type="submit">Valider</md-button>
+  </div>
 </form>
