@@ -2,15 +2,10 @@
 angular.module('kid')
   .controller('archSheetController', function($scope, $location, $mdToast, Sheet, $stateParams, $state, archSheetService)
   {
-    console.log('archSheetController');
-
     archSheetService.getCurrentSheet().then(function(sheet)
     {
       $scope.sheet = sheet;
       $scope.sheet.she_path = $state.href($state.current.name, $state.params, {absolute: true})
-
-      console.log('getCurrentSheet');
-      console.log($scope.sheet);
     });
 
     $scope.editSheet = function(id)

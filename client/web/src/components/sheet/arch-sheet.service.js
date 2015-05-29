@@ -41,9 +41,6 @@ angular.module('kid')
         {
           Sheet.get({id: sheetId}, function(result)
           {
-            console.log('sheetId : ' + sheetId);
-            console.log(result);
-
             if(result.count > 0)
             {
               deferred.resolve(result.data);

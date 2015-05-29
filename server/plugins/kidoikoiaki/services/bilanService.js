@@ -62,34 +62,31 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         // Algo #1
                         console.log("Transactions found : " + transactions.length);
                         
-                        var tabPersonne = participants;
-                        var tabTransaction = transactions;
-                        var tabRes1step = new Array();
+                        var results = new Array();
 
-                        for(var pIncr = 0; pIncr < tabPersonne.length; pIncr++) 
+                        for(var pIncr = 0; pIncr < participants.length; pIncr++) 
                         {
-                            var currentPersonne = tabPersonne[pIncr];
-                            var give = 0; // Montant dépensée par la personne courante.
-                            var take = 0; // Montant gagnée par la personne courante.
+                            var currentPersonne = participants[pIncr];
+                            var give = 0;
+                            var take = 0;
 
-                            for(var tIncr = 0; tIncr < tabTransaction.length; tIncr++) 
+                            for(var tIncr = 0; tIncr < transactions.length; tIncr++) 
                             {
-                                var currentTransaction = tabTransaction[tIncr];
+                                var currentTransaction = transactions[tIncr];
 
                                 // currentPersonne == currentContributor -> sum amount.
                                 if(currentTransaction.trs_contributor._id.equals(currentPersonne._id)) 
                                 {
-                                    give = give + parseFloat(currentTransaction.trs_amount);
+                                    give += parseFloat(currentTransaction.trs_amount);
                                 }
 
-                                var tabBenef = currentTransaction.trs_beneficiaries;
                                 var totalTransactionWeight = 0;
                                 var isAbenef = false;
                                 var currentPersonneWeight = 0;
 
-                                for(var bIncr = 0; bIncr < tabBenef.length; bIncr++) 
+                                for(var bIncr = 0; bIncr < currentTransaction.trs_beneficiaries.length; bIncr++)
                                 {
-                                    var currentBenef = tabBenef[bIncr];
+                                    var currentBenef = currentTransaction.trs_beneficiaries[bIncr];
                                     
                                     // currentPersonne == currentBeneficiary -> sum amount.
                                     if(currentBenef.trs_participant._id.equals(currentPersonne._id)) 
@@ -98,7 +95,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                         currentPersonneWeight = parseFloat(currentBenef.trs_weight);
                                     }
                                     
-                                    // Keep current weigh (calc. weight average).
+                                    // Keep current weight (calc. weight average).
                                     totalTransactionWeight = parseFloat(parseFloat(totalTransactionWeight) + parseFloat(currentBenef.trs_weight));
                                 }
 
@@ -108,30 +105,30 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                 }
                             }
 
-                            tabRes1step.push([currentPersonne, take - give]);
+                            results.push({participant :currentPersonne, amount : (take - give)});
                         }
-                        
+
                         // Algo #2
 
                         // Useless to sort ?
-                        tabRes1stepSorted = tabRes1step.sort(function(a,b) 
+                        results = results.sort(function(a,b)
                         {
-                            return a[1] - b[1];
+                            return a.amount - b.amount;
                         });
 
                         // Distinct giver & taker.
                         var givers = new Array();
                         var takers = new Array();
 
-                        tabRes1stepSorted.forEach(function (res) 
+                        results.forEach(function(result)
                         {
-                            if(parseFloat(res[1]) > parseFloat("0")) 
+                            if(parseFloat(result.amount) > 0)
                             {
-                                givers.push(res);
+                                givers.push(result);
                             }
-                            else if(parseFloat(res[1]) < parseFloat("0")) 
+                            else if(parseFloat(result.amount) < 0)
                             {
-                                takers.push(res);
+                                takers.push(result);
                             }
                         });
 
@@ -156,6 +153,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
 
             for(var i = 0; i < given.length; i++)
             {
+                // fonction anonyme intere + return to break
                 for(var u = 0; u < taken.length; u++)
                 {
                     if(Math.round(given[i][1]*1000)/1000 == Math.round(taken[u][1]*parseFloat("-1")*1000)/1000)

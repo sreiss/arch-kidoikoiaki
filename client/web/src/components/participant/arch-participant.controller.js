@@ -1,13 +1,15 @@
 'use strict'
 
 angular.module('kid')
-  .controller('archParticipantController', function ($scope, Participants, Sheet, $stateParams, Participant,$state,$mdToast, archSheetService, archParticipantService)
+  .controller('archParticipantController', function ($scope, Participants, Transactions, Sheet, $stateParams, Participant,$state,$mdToast, archSheetService, archParticipantService, archTransactionService)
   {
     $scope.participants = new Array();
+    $scope.sheet = new Sheet();
 
     archSheetService.getCurrentSheet().then(function(sheet)
     {
       $scope.participants = Participants.query({id: sheet._id});
+      $scope.sheet = sheet;
     })
     .catch(function()
     {
@@ -19,14 +21,52 @@ angular.module('kid')
     {
       if(confirm('Souhaitez-vous réellement supprimer ce participant ?'))
       {
-        archParticipantService.deleteParticipant(id).then(function()
+        var isLinked = false;
+
+        archTransactionService.getTransactions($scope.sheet._id).then(function(transactions)
         {
-          $mdToast.show($mdToast.simple().content('Participant supprimé avec succés.').position('top right').hideDelay(3000));
-          $state.go($state.current, {}, {reload: true});
+          transactions.forEach(function(transaction)
+          {
+            if(transaction.trs_contributor._id == id)
+            {
+              console.log('linked');
+              isLinked = true;
+            }
+            else
+            {
+              transaction.trs_beneficiaries.forEach(function(beneficiary)
+              {
+                if(beneficiary.trs_participant == id)
+                {
+                  console.log('linked');
+                  isLinked = true;
+                }
+              });
+            }
+
+            console.log(isLinked);
+            /*
+            if(!isLinked)
+            {
+              archParticipantService.deleteParticipant(id).then(function()
+              {
+                $mdToast.show($mdToast.simple().content('Participant supprimé avec succés.').position('top right').hideDelay(3000));
+                $state.go($state.current, {}, {reload: true});
+              })
+              .catch(function()
+              {
+                $mdToast.show($mdToast.simple().content('Une erreur est survenue à la suppression de ce participant.').position('top right').hideDelay(3000));
+              });
+            }
+            else
+            {
+              $mdToast.show($mdToast.simple().content('Impossible de supprimer ce participant, celui-ci est lié à une dépense.').position('top right').hideDelay(3000));
+            }*/
+          });
         })
         .catch(function()
         {
-          $mdToast.show($mdToast.simple().content('Une erreur est survenue à la suppression de ce participant.').position('top right').hideDelay(3000));
+          $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la vérification des dépendances.').position('top right').hideDelay(3000));
         });
       }
     };
