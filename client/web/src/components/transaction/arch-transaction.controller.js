@@ -7,7 +7,7 @@ angular.module('kid')
 
     archSheetService.getCurrentSheet().then(function(sheet)
     {
-      $scope.transactions = Transactions.query({she_id: sheet._id});
+      $scope.transactions = Transactions.query({id: sheet._id});
     })
     .catch(function()
     {
@@ -43,8 +43,8 @@ angular.module('kid')
     archSheetService.getCurrentSheet().then(function(sheet)
     {
       $scope.beneficiaries = {};
-      $scope.participants = Participants.query({she_id: sheet._id});
-      $scope.categories = Categories.query({she_id: sheet._id});
+      $scope.participants = Participants.query({id: sheet._id});
+      $scope.categories = Categories.query({id: sheet._id});
       $scope.transaction.trs_sheet = sheet._id;
     })
     .catch(function()
@@ -87,8 +87,8 @@ angular.module('kid')
       archTransactionService.getTransaction($stateParams.idTransaction).then(function(transaction)
       {
         $scope.transaction = transaction;
-        $scope.participants = Participants.query({she_id: sheet._id});
-        $scope.categories = Categories.query({she_id: sheet._id});
+        $scope.participants = Participants.query({id: sheet._id});
+        $scope.categories = Categories.query({id: sheet._id});
         $scope.beneficiaries = new Array();
 
         angular.forEach(transaction.trs_beneficiaries, function(participant)

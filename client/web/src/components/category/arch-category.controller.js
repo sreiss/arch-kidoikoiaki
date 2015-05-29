@@ -7,7 +7,7 @@ angular.module('kid')
 
     archSheetService.getCurrentSheet().then(function(sheet)
     {
-      $scope.categories = Categories.query({she_id: sheet._id});
+      $scope.categories = Categories.query({id: sheet._id});
     })
     .catch(function()
     {

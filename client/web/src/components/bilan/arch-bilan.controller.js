@@ -7,7 +7,7 @@ angular.module('kid')
 
     archSheetService.getCurrentSheet().then(function(sheet)
     {
-      $scope.debts = Bilan.query({she_id: sheet._id});
+      $scope.debts = Bilan.query({id: sheet._id});
     })
     .catch(function()
     {

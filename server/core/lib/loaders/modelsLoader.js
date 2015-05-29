@@ -4,11 +4,14 @@ var path = require('path'),
 
 exports.name = 'arch-loaders-modelsLoader';
 
-exports.attach = function(opts) {
+exports.attach = function(opts)
+{
     var app = this;
 
-    if (!app.arch.plugins)
+    if(!app.arch.plugins)
+    {
         throw new Error('Please, load plugins first');
+    }
 
     var pluginsDir = app.arch.config.get('pluginsDir');
     var plugins = app.arch.plugins;
@@ -46,7 +49,10 @@ exports.attach = function(opts) {
                 {
                     schemaObjs[i].onSchemaReady(schema);
                 }
-                models[schemaObjs[i].modelName] = mongoose.model(schemaObjs[i].modelName, schema);
+                var model = models[schemaObjs[i].modelName] = mongoose.model(schemaObjs[i].modelName, schema);
+                if (schemaObjs[i].onModelReady) {
+                    schemaObjs[i].onModelReady(model);
+                }
             }
             catch (err)
             {
@@ -56,6 +62,7 @@ exports.attach = function(opts) {
     }
 };
 
-exports.init = function(done) {
+exports.init = function(done)
+{
     return done();
 };

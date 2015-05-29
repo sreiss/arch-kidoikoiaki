@@ -34,6 +34,30 @@ module.exports = function(Sheet, participantService) {
             return deferred.promise;
         },
 
+        /** Update sheet. */
+        updateSheet: function(sheetData)
+        {
+            var deferred = Q.defer();
+
+            Sheet.update({she_reference: sheetData.she_reference},
+            {
+                she_name : sheetData.she_name
+            },
+            function(err, result)
+            {
+                if(err)
+                {
+                    deferred.reject(err);
+                }
+                else
+                {
+                    deferred.resolve(result);
+                }
+            });
+
+            return deferred.promise;
+        },
+
         /** Get sheet. */
         getSheet: function(sheetReference)
         {

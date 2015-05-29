@@ -11,9 +11,12 @@
   A la fin, il vous suffit de calculer automatiquement le bilan afin de savoir très simplement qui
   doit rembourser quoi et à qui.
 </p>
-<p ng-show="path">L'adresse de votre Kidoikoiaki est : <a href="{{path}}">{{path}}</a></p>
+<p ng-show="sheet">
+  La référence unique de votre feuille <b>{{sheet.she_name}}</b> est <a href="{{sheet.she_path}}">{{sheet.she_reference}}</a>
+  <a href="#"><md-icon class="fa fa-pencil-square-o" ng-click="editSheet(sheet.she_reference)"></md-icon></a>
+</p>
 
-<md-button class="md-accent md-raised" ng-click="newSheet()">
+<md-button class="md-accent md-raised" ui-sref="sheetNew">
   Nouvelle feuille
 </md-button>
 

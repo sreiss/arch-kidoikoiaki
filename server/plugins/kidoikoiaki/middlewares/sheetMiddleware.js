@@ -21,6 +21,24 @@ module.exports = function() {
             }
 
             next();
+        },
+
+        checkUpdateSheet: function(req, res, next)
+        {
+            // Get sheet reference.
+            var sheet = req.body.sheet || {};
+
+            if(!validator.isLength(sheet.she_name, 5))
+            {
+                throw new ArchParameterError("Sheet name must contain at least 5 chars.")
+            }
+
+            if(!validator.isLength(sheet.she_reference, 5))
+            {
+                throw new ArchParameterError("Sheet reference must contain at least 5 chars.")
+            }
+
+            next();
         }
     };
 };

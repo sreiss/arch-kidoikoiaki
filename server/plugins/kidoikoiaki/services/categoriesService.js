@@ -14,7 +14,7 @@ module.exports = function(Category) {
         {
             var deferred = Q.defer();
 
-            Category.find({ctg_sheet : sheetId}).exec(function (err, categories)
+            Category.find({ctg_sheet : { $in : [sheetId, null]}}).exec(function (err, categories)
             {
                 if(err)
                 {

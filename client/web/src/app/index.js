@@ -13,8 +13,13 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
     $stateProvider
       .state('home', {
         url: "/",
-        templateUrl: "app/main/main.html",
-        controller: 'archSheetNewController'
+        templateUrl: "components/sheet/arch-sheet.html",
+        controller: "archSheetController"
+      })
+      .state('sheetNew', {
+        url: "/sheet/new",
+        templateUrl: "components/sheet/arch-sheet-new.html",
+        controller: "archSheetNewController"
       })
       .state('sheet', {
         url: '/sheet/:idSheet',
@@ -24,8 +29,13 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
       })
       .state('sheet.home', {
         url: "/",
-        templateUrl: "app/main/main.html",
-        controller: 'archSheetNewController'
+        templateUrl: "components/sheet/arch-sheet.html",
+        controller: "archSheetController"
+      })
+      .state('sheet.sheetEdit', {
+        url: "/edit",
+        templateUrl: "components/sheet/arch-sheet-edit.html",
+        controller: "archSheetEditController"
       })
       .state('sheet.participants', {
         url: '/participants',

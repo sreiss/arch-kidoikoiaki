@@ -328,14 +328,21 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                     else if(give[i][1] > take[u][1]*parseFloat("-1"))
                     {
                         var newDebt = new Debt(
-                            {
-                                dbt_sheet: uri,
-                                dbt_giver: give[i][0]._id,
-                                dbt_taker: take[u][0]._id,
-                                dbt_amount: Math.round(take[u][1]*100)/100*parseInt("-1")
-                            });
+                        {
+                            dbt_sheet: uri,
+                            dbt_giver: give[i][0]._id,
+                            dbt_taker: take[u][0]._id,
+                            dbt_amount: Math.round(take[u][1]*100)/100*parseInt("-1")
+                        });
 
-                        newDebt.save(function (err) {});
+                        newDebt.save(function(value)
+                        {
+
+                        },
+                        function(err)
+                        {
+                            deferred.reject(err);
+                        });
 
                         give[i][1] = give[i][1]+take[u][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
                         taken.splice(u, 1);    //on enleve le giver car pour lui plus de transaction

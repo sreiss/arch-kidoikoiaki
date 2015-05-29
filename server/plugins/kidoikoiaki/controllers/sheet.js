@@ -28,6 +28,23 @@ module.exports = function(sheetService)
             });
         },
 
+        /** Update sheet. */
+        updateSheet: function(req, res)
+        {
+            // Get sheet data.
+            var sheetData = req.body.sheet;
+
+            // Saving participant.
+            sheetService.updateSheet(sheetData).then(function(result)
+            {
+                res.status(200).json({"count" : result.ok, "data" : result});
+            },
+            function(err)
+            {
+                res.status(500).json({"error" : new ArchSaveError(err.message)});
+            });
+        },
+
         /** Get sheet. */
         getSheet: function(req, res)
         {

@@ -46,7 +46,7 @@ angular.module('kid')
     }
   })
   .factory("Participants", function ($resource,httpConstant) {
-    return $resource(httpConstant.apiUrl+'/kidoikoiaki/participants/:she_id', {}, {
+    return $resource(httpConstant.apiUrl+'/kidoikoiaki/participants/:id', {}, {
       query: {
         isArray: false
       }
@@ -66,14 +66,17 @@ angular.module('kid')
     });
   })
   .factory("Sheet", function ($resource,httpConstant) {
-    return $resource(httpConstant.apiUrl + '/kidoikoiaki/sheet/:she_id', {}, {
+    return $resource(httpConstant.apiUrl + '/kidoikoiaki/sheet/:id', {}, {
       get: {
         method: 'GET'
+      },
+      update: {
+        method: 'PUT'
       }
     });
   })
   .factory("Transactions", function ($resource,httpConstant) {
-    return $resource(httpConstant.apiUrl + '/kidoikoiaki/transactions/:she_id', {}, {
+    return $resource(httpConstant.apiUrl + '/kidoikoiaki/transactions/:id', {}, {
       query: {
         isArray: false
       }
@@ -103,14 +106,14 @@ angular.module('kid')
     });
   })
   .factory("Categories", function ($resource,httpConstant) {
-    return $resource(httpConstant.apiUrl + '/kidoikoiaki/categories/:she_id', {}, {
+    return $resource(httpConstant.apiUrl + '/kidoikoiaki/categories/:id', {}, {
       query: {
         isArray: false
       }
     });
   })
   .factory("Bilan", function ($resource,httpConstant) {
-    return $resource(httpConstant.apiUrl + '/kidoikoiaki/bilan/:she_id', {}, {
+    return $resource(httpConstant.apiUrl + '/kidoikoiaki/bilan/:id', {}, {
       query: {
         isArray: false
       }

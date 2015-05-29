@@ -7,7 +7,9 @@
 
 module.exports = function(sheetController, sheetRouter, sheetMiddleware) {
     sheetRouter.route('/')
-        .get(sheetController.saveSheet);
+        .get(sheetController.saveSheet)
+        .put(sheetMiddleware.checkUpdateSheet)
+        .put(sheetController.updateSheet);
 
     sheetRouter.route('/:sheetReference')
         .get(sheetMiddleware.checkSheetReference)
