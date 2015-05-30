@@ -11,8 +11,9 @@ angular.module('kid')
       {
         $scope.debts = debts;
       })
-      .catch(function()
+      .catch(function(err)
       {
+        console.log(err);
         $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération du bilan.').position('top right').hideDelay(3000));
       });
     })

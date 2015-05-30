@@ -14,15 +14,23 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
         {
             var deferred = Q.defer();
 
-            console.log('## Start generate bilan.');
-
-            bilanService.generateBilan(sheetId).then(function()
+            console.log('## Delete previous debts.');
+            debtService.deleteDebts(sheetId).then(function()
             {
-                console.log('## Stop generate bilan.');
-
-                debtService.getDebts(sheetId).then(function(debts)
+                console.log('## Start generate bilan.');
+                bilanService.generateBilan(sheetId).then(function()
                 {
-                    deferred.resolve(debts);
+                    console.log('## Stop generate bilan.');
+
+                    console.log('## Get all debts.');
+                    debtService.getDebts(sheetId).then(function(debts)
+                    {
+                        deferred.resolve(debts);
+                    })
+                    .catch(function(err)
+                    {
+                        deferred.reject(err);
+                    });
                 })
                 .catch(function(err)
                 {
@@ -42,97 +50,91 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
         {
             var deferred = Q.defer();
 
-            // Remove previous debts.
-            debtService.deleteDebts(sheetId).then(function(debts)
+            // Get participants.
+            participantsService.getParticipants(sheetId).then(function(participants)
             {
-                console.log("Delete previous debts : " + debts);
+                console.log("Participants found : " + participants.length);
 
-                // Get participants.
-                participantsService.getParticipants(sheetId).then(function(participants)
+                // Get transactions.
+                transactionsService.getTransactions(sheetId).then(function(transactions)
                 {
-                    console.log("Participants found : " + participants.length);
+                    // Algo #1
+                    console.log("Transactions found : " + transactions.length);
 
-                    // Get transactions.
-                    transactionsService.getTransactions(sheetId).then(function(transactions)
+                    var results = new Array();
+
+                    for(var pIncr = 0; pIncr < participants.length; pIncr++)
                     {
-                        // Algo #1
-                        console.log("Transactions found : " + transactions.length);
-                        
-                        var results = new Array();
+                        var currentPersonne = participants[pIncr];
+                        var give = 0;
+                        var take = 0;
 
-                        for(var pIncr = 0; pIncr < participants.length; pIncr++) 
+                        for(var tIncr = 0; tIncr < transactions.length; tIncr++)
                         {
-                            var currentPersonne = participants[pIncr];
-                            var give = 0;
-                            var take = 0;
+                            var currentTransaction = transactions[tIncr];
 
-                            for(var tIncr = 0; tIncr < transactions.length; tIncr++) 
+                            // currentPersonne == currentContributor -> sum amount.
+                            if(currentTransaction.trs_contributor._id.equals(currentPersonne._id))
                             {
-                                var currentTransaction = transactions[tIncr];
-
-                                // currentPersonne == currentContributor -> sum amount.
-                                if(currentTransaction.trs_contributor._id.equals(currentPersonne._id)) 
-                                {
-                                    give = parseFloat(give) + parseFloat(currentTransaction.trs_amount);
-                                }
-
-                                var totalTransactionWeight = 0;
-                                var currentPersonneWeight = 0;
-                                var isAbenef = false;
-
-                                for(var bIncr = 0; bIncr < currentTransaction.trs_beneficiaries.length; bIncr++)
-                                {
-                                    var currentBenef = currentTransaction.trs_beneficiaries[bIncr];
-                                    
-                                    // currentPersonne == currentBeneficiary -> sum amount.
-                                    if(currentBenef.trs_participant._id.equals(currentPersonne._id)) 
-                                    {
-                                        isAbenef = true;
-                                        currentPersonneWeight = parseFloat(currentBenef.trs_weight);
-                                    }
-                                    
-                                    // Keep current weight (calc. weight average).
-                                    totalTransactionWeight = parseFloat(totalTransactionWeight) + parseFloat(currentBenef.trs_weight);
-                                }
-
-                                if(isAbenef) 
-                                {
-                                    take = parseFloat(take) + parseFloat((currentTransaction.trs_amount / totalTransactionWeight) * currentPersonneWeight);
-                                }
+                                give = parseFloat(give) + parseFloat(currentTransaction.trs_amount);
                             }
 
-                            results.push({participant :currentPersonne, amount : parseFloat(take - give).toFixed(2)});
+                            var totalTransactionWeight = 0;
+                            var currentPersonneWeight = 0;
+                            var isAbenef = false;
+
+                            for(var bIncr = 0; bIncr < currentTransaction.trs_beneficiaries.length; bIncr++)
+                            {
+                                var currentBenef = currentTransaction.trs_beneficiaries[bIncr];
+
+                                // currentPersonne == currentBeneficiary -> sum amount.
+                                if(currentBenef.trs_participant._id.equals(currentPersonne._id))
+                                {
+                                    isAbenef = true;
+                                    currentPersonneWeight = parseFloat(currentBenef.trs_weight);
+                                }
+
+                                // Keep current weight (calc. weight average).
+                                totalTransactionWeight = parseFloat(totalTransactionWeight) + parseFloat(currentBenef.trs_weight);
+                            }
+
+                            if(isAbenef)
+                            {
+                                take = parseFloat(take) + parseFloat((currentTransaction.trs_amount / totalTransactionWeight) * currentPersonneWeight);
+                            }
                         }
 
-                        // Algo #2
+                        results.push({participant :currentPersonne, amount : parseFloat(take - give).toFixed(2)});
+                    }
 
-                        // Useless to sort ?
-                        results = results.sort(function(a,b)
+                    // Algo #2
+
+                    // Useless to sort ?
+                    results = results.sort(function(a,b)
+                    {
+                        return a.amount - b.amount;
+                    });
+
+                    // Distinct giver & taker.
+                    var givers = new Array();
+                    var takers = new Array();
+
+                    results.forEach(function(result)
+                    {
+                        if(result.amount > 0)
                         {
-                            return a.amount - b.amount;
-                        });
-
-                        // Distinct giver & taker.
-                        var givers = new Array();
-                        var takers = new Array();
-
-                        results.forEach(function(result)
+                            givers.push(result);
+                        }
+                        else if(result.amount < 0)
                         {
-                            if(result.amount > 0)
-                            {
-                                givers.push(result);
-                            }
-                            else if(result.amount < 0)
-                            {
-                                takers.push(result);
-                            }
-                        });
+                            takers.push(result);
+                        }
+                    });
 
-                        bilanService.testEqual(givers, takers, sheetId).then(function()
-                        {
-                           deferred.resolve(true);
-                        });
-                    })
+                    bilanService.testEqual(givers, takers, sheetId).then(function()
+                    {
+                       deferred.resolve(true);
+                    });
                 })
             })
             .catch(function(err)

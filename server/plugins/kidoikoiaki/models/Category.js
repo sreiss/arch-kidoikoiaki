@@ -34,7 +34,7 @@ module.exports = function(Types) {
                     {
                         throw err;
                     }
-                    else(!category)
+                    else if(!category)
                     {
                         var newCategory = new Category();
                         newCategory.ctg_name = globalCategory.ctg_name;

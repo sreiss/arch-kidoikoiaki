@@ -34,7 +34,7 @@ module.exports = function(Debt) {
         {
             var deferred = Q.defer();
 
-          /*  Debt.find({dbt_sheet: sheetId}).remove().exec(function(err, debts)
+            Debt.find({dbt_sheet: sheetId}).remove().exec(function(err, debts)
             {
                 if(err)
                 {
@@ -44,10 +44,7 @@ module.exports = function(Debt) {
                 {
                     deferred.resolve(debts);
                 }
-            });*/
-
-            // Temp.
-            deferred.resolve(true);
+            });
 
             return deferred.promise;
         }

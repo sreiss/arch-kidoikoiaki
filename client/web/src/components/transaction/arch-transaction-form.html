@@ -30,10 +30,12 @@
 <div layout="column" class="margin-bottom-20" >
   <div flex="50" ng-repeat="participant in participants">
     <md-card>
-      <div>
-        <md-switch class="margin-top-25" ng-model="beneficiaries[participant._id].isActive" ng-false-value="false" ng-true-value="true">
-          {{participant.prt_lname}}
-        </md-switch>
+      <div layout="row" >
+        <div>
+          <md-switch class="margin-top-25" ng-model="beneficiaries[participant._id].isActive" ng-false-value="false" ng-true-value="true">
+            {{participant.prt_lname}}
+          </md-switch>
+        </div>
         <div layout="row" class="padding-right-15">
           <md-icon class="fa fa-pie-chart"></md-icon>
           <md-input-container>
