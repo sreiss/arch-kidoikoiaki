@@ -15,6 +15,16 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             var deferred = Q.defer();
 
             console.log('## Delete previous debts.');
+            debtService.deleteDebts(sheetId)
+                .then(bilanService.generateBilan(sheetId))
+                .then(debtService.getDebts(sheetId))
+                .then(function(debts) {
+                    deferred.resolve(debts);
+                })
+                .catch(function(err) {
+                    deferred.reject(err);
+                });
+            /*
             debtService.deleteDebts(sheetId).then(function()
             {
                 console.log('## Start generate bilan.');
@@ -41,6 +51,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             {
                 deferred.reject(err);
             });
+            */
 
             return deferred.promise;
         },
