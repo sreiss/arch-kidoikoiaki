@@ -32,7 +32,7 @@ module.exports = function(transactionService) {
         updateTransaction: function(req, res)
         {
             // Get transaction data.
-            var transactionData = req.body;
+            var transactionData = req.body.transaction;
 
             // Saving transaction.
             transactionService.updateTransaction(transactionData).then(function(result)

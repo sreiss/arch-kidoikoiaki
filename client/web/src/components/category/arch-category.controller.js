@@ -7,8 +7,16 @@ angular.module('kid')
 
     archSheetService.getCurrentSheet().then(function(sheet)
     {
-      $scope.categories = Categories.query({id: sheet._id});
       $scope.sheet = sheet;
+
+      archCategoryService.getCategories(sheet._id).then(function(categories)
+      {
+        $scope.categories = categories;
+      })
+      .catch(function()
+      {
+        $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération des catégories.').position('top right').hideDelay(3000));
+      });
     })
     .catch(function()
     {

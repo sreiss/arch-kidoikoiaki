@@ -61,7 +61,10 @@ angular.module('kid')
         }
       },
       update: {
-        method: 'PUT'
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
     });
   })
@@ -74,7 +77,10 @@ angular.module('kid')
         }
       },
       update: {
-        method: 'PUT'
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
     });
   })

@@ -8,8 +8,16 @@ angular.module('kid')
 
     archSheetService.getCurrentSheet().then(function(sheet)
     {
-      $scope.participants = Participants.query({id: sheet._id});
       $scope.sheet = sheet;
+
+      archParticipantService.getParticipants(sheet._id).then(function(participants)
+      {
+        $scope.participants = participants;
+      })
+      .catch(function()
+      {
+        $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération des participants.').position('top right').hideDelay(3000));
+      });
     })
     .catch(function()
     {

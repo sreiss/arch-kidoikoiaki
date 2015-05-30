@@ -20,18 +20,14 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             {
                 console.log('## Stop generate bilan.');
 
-                Debt.find({dbt_sheet: sheetId}).populate('dbt_giver dbt_taker').exec(function (err, debts)
+                debtService.getDebts(sheetId).then(function(debts)
                 {
-                    if(err)
-                    {
-                        deferred.reject(err);
-                    }
-                    else
-                    {
-                        deferred.resolve(debts);
-                    }
+                    deferred.resolve(debts);
+                })
+                .catch(function(err)
+                {
+                    deferred.reject(err);
                 });
-
             })
             .catch(function(err)
             {
@@ -77,12 +73,12 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                 // currentPersonne == currentContributor -> sum amount.
                                 if(currentTransaction.trs_contributor._id.equals(currentPersonne._id)) 
                                 {
-                                    give += parseFloat(currentTransaction.trs_amount);
+                                    give = parseFloat(give) + parseFloat(currentTransaction.trs_amount);
                                 }
 
                                 var totalTransactionWeight = 0;
-                                var isAbenef = false;
                                 var currentPersonneWeight = 0;
+                                var isAbenef = false;
 
                                 for(var bIncr = 0; bIncr < currentTransaction.trs_beneficiaries.length; bIncr++)
                                 {
@@ -96,16 +92,16 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                     }
                                     
                                     // Keep current weight (calc. weight average).
-                                    totalTransactionWeight = parseFloat(parseFloat(totalTransactionWeight) + parseFloat(currentBenef.trs_weight));
+                                    totalTransactionWeight = parseFloat(totalTransactionWeight) + parseFloat(currentBenef.trs_weight);
                                 }
 
                                 if(isAbenef) 
                                 {
-                                    take = parseFloat(take) + parseFloat((currentTransaction.trs_amount / totalTransactionWeight) * currentPersonneWeight);                 //résultat très proche de la réalité
+                                    take = parseFloat(take) + parseFloat((currentTransaction.trs_amount / totalTransactionWeight) * currentPersonneWeight);
                                 }
                             }
 
-                            results.push({participant :currentPersonne, amount : (take - give)});
+                            results.push({participant :currentPersonne, amount : parseFloat(take - give).toFixed(2)});
                         }
 
                         // Algo #2
@@ -122,11 +118,11 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
 
                         results.forEach(function(result)
                         {
-                            if(parseFloat(result.amount) > 0)
+                            if(result.amount > 0)
                             {
                                 givers.push(result);
                             }
-                            else if(parseFloat(result.amount) < 0)
+                            else if(result.amount < 0)
                             {
                                 takers.push(result);
                             }
@@ -147,49 +143,44 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             return deferred.promise;
         },
 
-        testEqual: function(given, taken, uri)
+        testEqual: function(givers, takers, uri)
         {
             var deferred = Q.defer();
 
-            for(var i = 0; i < given.length; i++)
+            for(var i = 0; i < givers.length; i++)
             {
-                // fonction anonyme intere + return to break
-                for(var u = 0; u < taken.length; u++)
+                for(var u = 0; u < takers.length; u++)
                 {
-                    if(Math.round(given[i][1]*1000)/1000 == Math.round(taken[u][1]*parseFloat("-1")*1000)/1000)
+                    var giverAmountAbs = Math.abs(parseFloat(givers[i].amount).toFixed(2));
+                    var takerAmountAbs = Math.abs(parseFloat(takers[u].amount).toFixed(2));
+
+                    if(giverAmountAbs == takerAmountAbs)
                     {
-                        var newDebt = new Debt(
+                        var debt = new Debt(
                         {
                             dbt_sheet: uri,
-                            dbt_giver: given[i][0]._id,
-                            dbt_taker: taken[u][0]._id,
-                            dbt_amount: Math.round(given[i][1]*100)/100
+                            dbt_giver: givers[i].participant._id,
+                            dbt_taker: takers[u].participant._id,
+                            dbt_amount: giverAmountAbs
                         });
 
-                        newDebt.save(function (err) {});
-                        given.splice(i, 1);    //on enleve le giver car pour lui plus de transaction
-                        taken.splice(u, 1);    //on enleve aussi le taker car il a recu sa tune
-
-                        if(given.length > 0 || taken.length > 0)
+                        debt.save(function(err)
                         {
-                            bilanService.testEqual(given, taken, uri).then(function()
-                            {
-                                deferred.resolve(true);
-                            })
-                            .catch(function(err)
+                            if(err)
                             {
                                 deferred.reject(err);
-                            });
-                        }
+                            }
+                        });
 
-                        break;
+                        givers.splice(i, 1);
+                        takers.splice(u, 1);
                     }
                 }
             }
 
-            if(given.length > 0 || taken.length > 0)
+            if(givers.length > 0 || takers.length > 0)
             {
-                bilanService.testProvide(given, taken, uri).then(function()
+                bilanService.testProvide(givers, takers, uri).then(function()
                 {
                     deferred.resolve(true);
                 })
@@ -206,91 +197,98 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             return deferred.promise;
         },
 
-        testProvide: function(given, taken, uri)
+        testProvide: function(givers, takers, uri)
         {
             var deferred = Q.defer();
 
-            var sauvGive = JSON.parse(JSON.stringify(give));
-            var sauvTake = JSON.parse(JSON.stringify(take));
             var status = false;
+            var tmpGivers = givers;
+            var tmpTakers = takers;
 
-            for(var i = 0; i < given.length; i++)
+            (function()
             {
-                    for(var u = 0; u < taken.length; u++)
+                for(var i = 0; i < givers.length; i++)
+                {
+                    for(var u = 0; u < takers.length; u++)
                     {
-                        var newDebt;
+                        var debt = new Debt();
+                        var giverAmountAbs = Math.abs(parseFloat(givers[i].amount).toFixed(2));
+                        var takerAmountAbs = Math.abs(parseFloat(takers[u].amount).toFixed(2));
 
-                        if(give[i][1] < take[u][1]*parseFloat("-1"))
+                        if(giverAmountAbs < takerAmountAbs)
                         {
-                            newDebt = new Debt(
-                                {
-                                    dbt_sheet: uri,
-                                    dbt_giver: give[i][0]._id,
-                                    dbt_taker: take[u][0]._id,
-                                    dbt_amount: Math.round(give[i][1]*100)/100
-                                });
+                            debt.dbt_sheet = uri,
+                            debt.dbt_giver = givers[i].participant._id,
+                            debt.dbt_taker = takers[u].participant._id;
+                            debt.dbt_amount = giverAmountAbs;
 
-                            take[u][1] = take[u][1]+give[i][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
-                            given.splice(i, 1);    //on enleve le giver car pour lui plus de transaction
+                            takers[u].amount = takerAmountAbs - giverAmountAbs;
+                            givers.splice(i, 1);
                         }
-                        else if(give[i][1] > take[u][1]*parseFloat("-1"))
+                        else if(giverAmountAbs > takerAmountAbs)
                         {
-                            newDebt = new Debt(
-                                {
-                                    dbt_sheet: uri,
-                                    dbt_giver: give[i][0]._id,
-                                    dbt_taker: take[u][0]._id,
-                                    dbt_amount: Math.round(take[u][1]*100)/100*parseInt("-1")
-                                });
+                            debt.dbt_sheet = uri,
+                            debt.dbt_giver = givers[i].participant._id,
+                            debt.dbt_taker = takers[u].participant._id;
+                            debt.dbt_amount = takerAmountAbs;
 
-                            give[i][1] = give[i][1]+take[u][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
-                            taken.splice(u, 1);    //on enleve le giver car pour lui plus de transaction
+                            givers[u].amount = giverAmountAbs - takerAmountAbs;
+                            takers.splice(u, 1);
                         }
 
-                        for(var ii = 0; ii < given.length; ii++)
+                        for(var ii = 0; ii < givers.length; ii++)
                         {
-                            for(var uu = 0; uu < taken.length; uu++)
+                            for(var uu = 0; uu < takers.length; uu++)
                             {
-                                if(Math.round(give[ii][1]*1000)/1000 == Math.round(take[uu][1]*parseFloat("-1")*1000)/1000)
+                                var giverAmountAbs = Math.abs(parseFloat(givers[ii].amount).toFixed(2));
+                                var takerAmountAbs = Math.abs(parseFloat(takers[uu].amount).toFixed(2));
+
+                                if(giverAmountAbs == takerAmountAbs)
                                 {
-                                    status = true;  //pour ne pas rentré dans le prochain if d'en dessous
-                                    //si on est dans le if, c'est qu'on a trouvé un couple qui va nous permettre de tombé sur une égalité ensuite
-                                    //Donc on sauvegarde la transaction précédente (give > ou < take)
-                                    //Et on passe les tableaux en récursivité : le give == take sera supprimé ensuite.
-                                    newDebt.save(function (err) {});
+                                    status = true;
 
-                                    if(given.length > 0 || taken.length > 0)
+                                    debt.save(function(err)
                                     {
-                                        bilanService.generateDebts(given, taken, uri, "test-equal");   //on envoie une nouvelle récursivité avec les nouveaux tableaux
-                                    }
-
-                                    return;  // et on break les 4 boucles
+                                        if(err)
+                                        {
+                                            deferred.reject(err);
+                                        }
+                                        else
+                                        {
+                                            if(givers.length > 0 || takers.length > 0)
+                                            {
+                                                bilanService.testEqual(givers, takers, uri).then(function(result)
+                                                {
+                                                    deferred.resolve(result);
+                                                })
+                                                .catch(function(err)
+                                                {
+                                                    deferred.reject(err);
+                                                });
+                                            }
+                                            else
+                                            {
+                                                return;
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         }
-
-                        // si on arrive ici c'est qu'on a pas trouvé d'optimisation pour give[i] et les valeurs du tableau de take
-                        // donc on remets les tableaux a neufs et on recommence pour give[i+1]
-                        given = JSON.parse(JSON.stringify(sauvGive));
-                        taken = JSON.parse(JSON.stringify(sauvTake));
                     }
-            }
-
-            //si status reste false cela veut dire que l'optimisation n'est pas possible et qu'on doit faire partir une valeur au hasard
-            //avec une simple comparaison give > ou < take
-            if(!status)
-            {
-                if(given.length > 0 || taken.length > 0)
-                {
-                    bilanService.noOptimisation(sauvGive, sauvTake, uri).then(function()
-                    {
-                        deferred.resolve(true);
-                    })
-                    .catch(function(err)
-                    {
-                        deferred.reject(err);
-                    });
                 }
+            })();
+
+            if(!status && (givers.length > 0 || takers.length > 0))
+            {
+                bilanService.noOptimisation(tmpGivers, tmpTakers, uri).then(function(result)
+                {
+                    deferred.resolve(result);
+                })
+                .catch(function(err)
+                {
+                    deferred.reject(err);
+                });
             }
             else
             {
@@ -300,67 +298,78 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             return deferred.promise;
         },
 
-        noOptimisation: function(given, taken, uri)
+        noOptimisation: function(givers, takers, uri)
         {
             var deferred = Q.defer();
-            loop1:
-            for(var i = 0; i < given.length; i++)
+
+            (function()
             {
-                for(var u = 0; u < taken.length; u++)
+                for(var i = 0; i < givers.length; i++)
                 {
-                    if(give[i][1] < take[u][1]*parseFloat("-1"))
+                    for(var u = 0; u < takers.length; u++)
                     {
-                        var newDebt = new Debt(
+                        var giverAmountAbs = Math.abs(parseFloat(givers[ii].amount).toFixed(2));
+                        var takerAmountAbs = Math.abs(parseFloat(takers[uu].amount).toFixed(2));
+
+                        if(giverAmountAbs < takerAmountAbs)
+                        {
+                            var debt = new Debt(
                             {
                                 dbt_sheet: uri,
-                                dbt_giver: give[i][0]._id,
-                                dbt_taker: take[u][0]._id,
-                                dbt_amount: Math.round(give[i][1]*100)/100
+                                dbt_giver: givers[i].participant._id,
+                                dbt_taker: takers[u].participant._id,
+                                dbt_amount: giverAmountAbs
                             });
 
-                        newDebt.save(function (err) {});
+                            debt.save(function(err)
+                            {
+                                if(err)
+                                {
+                                    deferred.reject(err);
+                                }
+                            });
 
-                        take[u][1] = take[u][1]+give[i][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
-                        given.splice(i, 1);    //on enleve le giver car pour lui plus de transaction
-                    }
-                    else if(give[i][1] > take[u][1]*parseFloat("-1"))
-                    {
-                        var newDebt = new Debt(
+                            takers[u].amount = takerAmountAbs - giverAmountAbs;
+                            givers.splice(i, 1);
+                        }
+                        else if(giverAmountAbs > takerAmountAbs)
                         {
-                            dbt_sheet: uri,
-                            dbt_giver: give[i][0]._id,
-                            dbt_taker: take[u][0]._id,
-                            dbt_amount: Math.round(take[u][1]*100)/100*parseInt("-1")
-                        });
+                            var newDebt = new Debt(
+                            {
+                                dbt_sheet: uri,
+                                dbt_giver: givers[i][0]._id,
+                                dbt_taker: takers[u][0]._id,
+                                dbt_amount: takerAmountAbs
+                            });
 
-                        newDebt.save(function(value)
+                            newDebt.save(function(err)
+                            {
+                                deferred.reject(err);
+                            });
+
+                            givers[i].amount = giverAmountAbs - takerAmountAbs;
+                            takers.splice(u, 1);
+                        }
+
+                        if(givers.length > 0 || takers.length > 0)
                         {
-
-                        },
-                        function(err)
-                        {
-                            deferred.reject(err);
-                        });
-
-                        give[i][1] = give[i][1]+take[u][1]; //on soustrait ce que donne la personne a l'autre (si on donne a l'autre 4e et qu'il en attend 5e, il en attendra plus que 1e)
-                        taken.splice(u, 1);    //on enleve le giver car pour lui plus de transaction
-                    }
-
-                    if(given.length > 0 || taken.length > 0)
-                    {
-                        bilanService.testEqual(given, taken, uri).then(function()
+                            bilanService.testEqual(givers, takers, uri).then(function(result)
+                            {
+                                deferred.resolve(result);
+                            })
+                            .catch(function(err)
+                            {
+                                deferred.reject(err);
+                            });
+                        }
+                        else
                         {
                             deferred.resolve(true);
-                        })
-                        .catch(function(err)
-                        {
-                            reject(err);
-                        });
+                            return;
+                        }
                     }
-
-                    break loop1;
                 }
-            }
+            })();
 
             return deferred.promise;
         }

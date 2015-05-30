@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('kid')
-  .factory('archCategoryService', function(Category, archHttpService, $q)
+  .factory('archCategoryService', function(Category, Categories, archHttpService, $q)
   {
     return {
       getCategory: function(id)
@@ -18,6 +18,22 @@ angular.module('kid')
           {
             deferred.reject(new Error());
           }
+        },
+        function(responseError)
+        {
+          deferred.reject(responseError);
+        });
+
+        return deferred.promise;
+      },
+
+      getCategories: function(id)
+      {
+        var deferred = $q.defer();
+
+        Categories.get({id: id}, function(result)
+        {
+          deferred.resolve(result.data);
         },
         function(responseError)
         {

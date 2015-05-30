@@ -3,9 +3,9 @@
   Nouveau participant
 </md-button>
 <div layout="row" class="table-participants">
-  <p ng-hide="participants.data.length">Vous n'avez à ce jour ajouté aucun participant.</p>
+  <p ng-hide="participants.length">Vous n'avez à ce jour ajouté aucun participant.</p>
 
-  <table class="responsive-table striped" ng-show="participants.data.length">
+  <table class="responsive-table striped" ng-show="participants.length">
     <thead>
     <tr>
       <th data-field="name">Nom</th>
@@ -16,7 +16,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="participant in participants.data">
+    <tr ng-repeat="participant in participants">
       <td>{{participant.prt_fname}}</td>
       <td>{{participant.prt_lname}}</td>
       <td>{{participant.prt_email}}</td>

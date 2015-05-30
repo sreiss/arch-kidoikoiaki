@@ -1,13 +1,20 @@
 'use strict'
 
 angular.module('kid')
-  .controller('archBilanController', function ($scope, Sheet ,$stateParams, $mdToast, $state, archSheetService, Bilan)
+  .controller('archBilanController', function ($scope, Sheet ,$stateParams, $mdToast, $state, archSheetService, archBilanService)
   {
     $scope.debts = new Array();
 
     archSheetService.getCurrentSheet().then(function(sheet)
     {
-      $scope.debts = Bilan.query({id: sheet._id});
+      archBilanService.getDebts(sheet._id).then(function(debts)
+      {
+        $scope.debts = debts;
+      })
+      .catch(function()
+      {
+        $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération du bilan.').position('top right').hideDelay(3000));
+      });
     })
     .catch(function()
     {

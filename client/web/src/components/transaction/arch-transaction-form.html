@@ -2,7 +2,7 @@
   <div layout="row">
       <md-icon class="fa fa-user"></md-icon>
       <md-select ng-model="transaction.trs_contributor._id" placeholder="Qui ?" class="select-add" flex required="true">
-        <md-option ng-repeat="participant in participants.data" value="{{participant._id}}">{{participant.prt_lname}}</md-option>
+        <md-option ng-repeat="participant in participants" value="{{participant._id}}">{{participant.prt_lname}}</md-option>
       </md-select>
     </div>
     <div layout="row">
@@ -22,24 +22,23 @@
     <div layout="row">
       <md-icon class="fa fa-user"></md-icon>
       <md-select ng-model="transaction.trs_category._id" placeholder="Catégorie ?" class="select-add" flex required="true">
-        <md-option ng-repeat="category in categories.data" value="{{category._id}}">{{category.ctg_name}}</md-option>
+        <md-option ng-repeat="category in categories" value="{{category._id}}">{{category.ctg_name}}</md-option>
       </md-select>
     </div>
 </div>
 
 <div layout="column" class="margin-bottom-20" >
-  <div flex="50" ng-repeat="participant in participants.data">
+  <div flex="50" ng-repeat="participant in participants">
     <md-card>
-        <div>
-          <md-switch class="margin-top-25" ng-model="beneficiaries[participant._id]" ng-false-value="false" ng-true-value="true">
-            {{participant.prt_lname}}
-          </md-switch>
-        </div>
+      <div>
+        <md-switch class="margin-top-25" ng-model="beneficiaries[participant._id].isActive" ng-false-value="false" ng-true-value="true">
+          {{participant.prt_lname}}
+        </md-switch>
         <div layout="row" class="padding-right-15">
           <md-icon class="fa fa-pie-chart"></md-icon>
           <md-input-container>
             <label>Parts ?</label>
-            <input type="number" ng-model="beneficiaries[participant._id]"  min="0">
+            <input type="number" ng-model="weights[participant._id]"  min="0">
           </md-input-container>
         </div>
       </div>

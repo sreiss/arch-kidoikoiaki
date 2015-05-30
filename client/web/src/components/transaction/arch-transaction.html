@@ -5,14 +5,14 @@
 </md-button>
 
 <div layout="row" class="table-transactions">
-  <p ng-hide="transactions.data.length">Vous n'avez à ce jour ajouté aucune dépense.</p>
+  <p ng-hide="transactions.length">Vous n'avez à ce jour ajouté aucune dépense.</p>
 
-  <ul class="collection" ng-show="transactions.data.length">
-    <li class="collection-item" ng-repeat="transaction in transactions.data">
+  <ul class="collection" ng-show="transactions.length">
+    <li class="collection-item" ng-repeat="transaction in transactions">
       <div>
         <div layout="row">
           <div flex="70">
-            {{transaction.trs_contributor.prt_lname }} dépense {{transaction.trs_amount}} €
+            <strong>{{transaction.trs_contributor.prt_lname}}</strong> dépense {{transaction.trs_amount}} €
           </div>
           <div flex>
             <span class="pull-right">Le {{transaction.trs_creation_date | date:'dd/MM/yyyy'}}</span>

@@ -1,22 +1,13 @@
 <h1>Bilan</h1>
 
 <div layout="row" class="table-transactions">
-  <p ng-hide="debts.data.length">Vous n'avez à ce jour aucune dette.</p>
+  <p ng-hide="debts.length">Vous n'avez à ce jour aucune dette.</p>
 
-  <ul class="collection" ng-show="transactions.data.length">
-    <li class="collection-item" ng-repeat="debt in debts.data">
-      <div>
-        <div layout="row">
-          <div flex="70">
-            {{debt.dbt_giver.prt_lname }} doit {{dbt.amount}} € à {{dbt.dbt_taker.prt_lname}}
-          </div>
-        </div>
+  <ul class="collection" ng-show="debts.length">
+    <li class="collection-item" ng-repeat="debt in debts">
         <blockquote>
-          <span class="pull-right">
-            <a href="#"><md-icon class="fa fa-trash" ng-click="deleteTransaction(transaction._id)"></md-icon></a>
-          </span>
+          <strong>{{debt.dbt_giver.prt_lname }}</strong> doit {{debt.dbt_amount}} € à <strong>{{debt.dbt_taker.prt_lname}}</strong>
         </blockquote>
-      </div>
     </li>
   </ul>
 </div>

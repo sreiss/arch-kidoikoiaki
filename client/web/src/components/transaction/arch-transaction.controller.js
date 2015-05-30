@@ -7,6 +7,15 @@ angular.module('kid')
 
     archSheetService.getCurrentSheet().then(function(sheet)
     {
+      archTransactionService.getTransactions(sheet._id).then(function(transactions)
+      {
+        $scope.transactions = transactions;
+      })
+      .catch(function()
+      {
+        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la récupération des dépenses.').position('top right').hideDelay(3000));
+      });
+
       $scope.transactions = Transactions.query({id: sheet._id});
     })
     .catch(function()
@@ -36,16 +45,43 @@ angular.module('kid')
       $state.go('sheet.transactionEdit', {'idTransaction' : id});
     };
   })
-  .controller('archTransactionNewController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService)
+  .controller('archTransactionNewController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archParticipantService, archCategoryService)
   {
     $scope.transaction = new Transaction();
 
     archSheetService.getCurrentSheet().then(function(sheet)
     {
-      $scope.beneficiaries = {};
-      $scope.participants = Participants.query({id: sheet._id});
-      $scope.categories = Categories.query({id: sheet._id});
+      archCategoryService.getCategories(sheet._id).then(function(categories)
+      {
+        $scope.categories = categories;
+      })
+      .catch(function()
+      {
+        $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération des catégories.').position('top right').hideDelay(3000));
+      });
+
       $scope.transaction.trs_sheet = sheet._id;
+
+      archParticipantService.getParticipants(sheet._id).then(function(participants)
+      {
+        $scope.participants = participants;
+        $scope.beneficiaries = {};
+        $scope.weights = {};
+
+        angular.forEach(participants, function(participant)
+        {
+          var beneficiary = participant;
+          beneficiary.isActive = false;
+          $scope.beneficiaries[participant._id] = beneficiary;
+
+          $scope.weights[participant._id] = participant.prt_share;
+        });
+      })
+      .catch(function()
+      {
+        $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
+        $state.go('sheet.home');
+      });
     })
     .catch(function()
     {
@@ -57,14 +93,17 @@ angular.module('kid')
     {
       $scope.transaction.trs_beneficiaries = new Array();
 
-      angular.forEach($scope.beneficiaries, function(weight, participantId)
+      angular.forEach($scope.beneficiaries, function(beneficiary)
       {
-        var beneficiary =
+        if(beneficiary.isActive)
         {
-          trs_participant : participantId,
-          trs_weight : weight
-        };
-        $scope.transaction.trs_beneficiaries.push(beneficiary);
+          var tmpBeneficiary =
+          {
+            trs_participant : beneficiary._id,
+            trs_weight : $scope.weights[beneficiary._id]
+          };
+          $scope.transaction.trs_beneficiaries.push(tmpBeneficiary);
+        }
       });
 
       $scope.transaction.$save(function()
@@ -78,7 +117,7 @@ angular.module('kid')
       })
     }
   })
-  .controller('archTransactionEditController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTransactionService)
+  .controller('archTransactionEditController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTransactionService, archCategoryService, archParticipantService)
   {
     $scope.transaction = new Transaction();
 
@@ -87,13 +126,35 @@ angular.module('kid')
       archTransactionService.getTransaction($stateParams.idTransaction).then(function(transaction)
       {
         $scope.transaction = transaction;
-        $scope.participants = Participants.query({id: sheet._id});
-        $scope.categories = Categories.query({id: sheet._id});
-        $scope.beneficiaries = new Array();
 
-        angular.forEach(transaction.trs_beneficiaries, function(participant)
+        archCategoryService.getCategories(sheet._id).then(function(categories)
         {
-          $scope.beneficiaries[participant._id] = participant.trs_weight;
+          $scope.categories = categories;
+        })
+        .catch(function()
+        {
+          $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération des catégories.').position('top right').hideDelay(3000));
+        });
+
+        archParticipantService.getParticipants(sheet._id).then(function(participants)
+        {
+          $scope.participants = participants;
+          $scope.beneficiaries = {};
+          $scope.weights = {};
+
+          angular.forEach(participants, function(participant)
+          {
+            var beneficiary = participant;
+            beneficiary.isActive = false;
+            $scope.beneficiaries[participant._id] = beneficiary;
+            $scope.weights[participant._id] = participant.prt_share;
+          });
+
+          angular.forEach($scope.transaction.trs_beneficiaries, function(beneficiary)
+          {
+            $scope.beneficiaries[beneficiary.trs_participant._id].isActive = true;
+            $scope.weights[beneficiary.trs_participant._id] = beneficiary.trs_weight;
+          });
         });
       })
       .catch(function()
@@ -110,6 +171,21 @@ angular.module('kid')
 
     $scope.editTransaction = function ()
     {
+      $scope.transaction.trs_beneficiaries = new Array();
+
+      angular.forEach($scope.beneficiaries, function(beneficiary)
+      {
+        if(beneficiary.isActive)
+        {
+          var tmpBeneficiary =
+          {
+            trs_participant : beneficiary._id,
+            trs_weight : $scope.weights[beneficiary._id]
+          };
+          $scope.transaction.trs_beneficiaries.push(tmpBeneficiary);
+        }
+      });
+
       Transaction.update({transaction:$scope.transaction}, function()
       {
         $mdToast.show($mdToast.simple().content('Dépense modifiée avec succés.').position('top right').hideDelay(3000));

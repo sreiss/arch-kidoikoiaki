@@ -22,13 +22,6 @@ module.exports = function() {
                 throw new ArchParameterError("Sheet ID isn't a valid MongoId.");
             }
 
-            // Check transaction description (empty or length >= 5).
-            var transactionDescription = transactionData.trs_description || '';
-            if(transactionDescription.length > 0 && !validator.isLength(transactionDescription, 5))
-            {
-                throw new ArchParameterError("Transaction description must contain at least 5 chars.")
-            }
-
             // Check transaction amount.
             var transactionAmount = transactionData.trs_amount || '';
             if(!validator.isNumeric(transactionAmount) && transactionAmount > 0)
@@ -71,13 +64,6 @@ module.exports = function() {
             if(!validator.isMongoId(transactionSheetId))
             {
                 throw new ArchParameterError("Sheet ID isn't a valid MongoId.");
-            }
-
-            // Check transaction description (empty or length >= 5).
-            var transactionDescription = transactionData.trs_description || '';
-            if(transactionDescription.length > 0 && !validator.isLength(transactionDescription, 5))
-            {
-                throw new ArchParameterError("Transaction description must contain at least 5 chars.")
             }
 
             // Check transaction amount.

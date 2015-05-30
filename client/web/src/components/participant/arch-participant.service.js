@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('kid')
-  .factory('archParticipantService', function(Participant, archHttpService, $q)
+  .factory('archParticipantService', function(Participant, Participants, archHttpService, $q)
   {
     return {
       getParticipant: function(id)
@@ -18,6 +18,22 @@ angular.module('kid')
           {
             deferred.reject(new Error());
           }
+        },
+        function(responseError)
+        {
+          deferred.reject(responseError);
+        });
+
+        return deferred.promise;
+      },
+
+      getParticipants: function(id)
+      {
+        var deferred = $q.defer();
+
+        Participants.query({id: id}, function(result)
+        {
+          deferred.resolve(result.data);
         },
         function(responseError)
         {
