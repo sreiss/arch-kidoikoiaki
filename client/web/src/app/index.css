@@ -347,3 +347,8 @@ blockquote {
 {
   margin-bottom:20px;
 }
+
+.no-margin-left
+{
+  margin-left:0px;
+}
