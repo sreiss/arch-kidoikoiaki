@@ -25,11 +25,9 @@
       </md-input-container>
     </div>
     <div layout="row">
-      <md-icon class="fa fa-pie-chart"></md-icon>
-      <md-input-container flex>
-        <label>Notifier (par e-mail)</label>
-        <md-switch ng-model="participant.prt_notified" ng-false-value="false" ng-true-value="true">
-      </md-input-container>
+      <md-checkbox ng-model="participant.prt_notified" aria-label="Notifier (par e-mail)">
+        Notifier (par e-mail)
+      </md-checkbox>
     </div>
     <div layout="row">
       <md-icon class="fa fa-pie-chart"></md-icon>

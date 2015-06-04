@@ -32,7 +32,7 @@ module.exports = function(Participant) {
                 else
                 {
                     deferred.resolve(participant);
-                    participantService.sendMail(participantData);
+                    //participantService.sendMail(participantData);
                 }
             });
 
@@ -168,10 +168,7 @@ module.exports = function(Participant) {
                 }
                 else
                 {
-                    console.log(info);
-                  /*  {
-                        console.log("Message automatique d'ajout d'un participan à la feuille " + sheetData.she_reference + " envoyé avec succés.");
-                    }*/
+                    console.log("Message automatique d'ajout d'un participan à la feuille " + sheetData.she_reference + " envoyé avec succés.");
                 }
             });
         }
