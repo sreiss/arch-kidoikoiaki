@@ -99,6 +99,7 @@ angular.module('kid')
     {
       $scope.participant.$save(function()
       {
+        console.log($scope.participant);
         $mdToast.show($mdToast.simple().content('Participant créé avec succés.').position('top right').hideDelay(3000));
         $state.go('sheet.participants');
       },
