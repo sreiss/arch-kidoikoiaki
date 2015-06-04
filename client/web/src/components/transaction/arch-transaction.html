@@ -22,8 +22,7 @@
           <strong>{{transaction.trs_description}}</strong> <span ng-show="transaction.trs_category.ctg_name">dans</span> {{transaction.trs_category.ctg_name}}
           <footer>Pour :
             <span ng-repeat="beneficary in transaction.trs_beneficiaries">
-              <span ng-if="!$last">, </span>
-              {{beneficary.trs_participant.prt_lname}} ({{beneficary.trs_weight}} parts)
+              {{beneficary.trs_participant.prt_lname}} ({{beneficary.trs_weight}} parts)<span ng-if="!$last">, </span>
             </span>
           </footer>
           <span class="pull-right">
