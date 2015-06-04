@@ -87,6 +87,7 @@ angular.module('kid')
     archSheetService.getCurrentSheet().then(function(sheet)
     {
       $scope.participant.prt_sheet = sheet._id;
+      $scope.participant.prt_notified = false;
     })
     .catch(function()
     {
