@@ -1,27 +1,27 @@
 <div layout="column">
   <div layout="row">
       <md-icon class="fa fa-user"></md-icon>
-      <md-select ng-model="transaction.trs_contributor._id" placeholder="Qui ?" class="select-add" flex required="true">
+      <md-select ng-model="transaction.trs_contributor._id" placeholder="{{'TRANSACTION_WHO' | translate}}" class="select-add" flex required="true">
         <md-option ng-repeat="participant in participants" value="{{participant._id}}">{{participant.prt_lname}}</md-option>
       </md-select>
     </div>
     <div layout="row">
       <md-icon class="fa fa-info-circle"></md-icon>
       <md-input-container flex>
-        <label>Quoi ?</label>
+        <label>{{'TRANSACTION_WHAT' | translate}}</label>
         <input ng-model="transaction.trs_description" type="text" required="true">
       </md-input-container>
     </div>
     <div layout="row">
       <md-icon class="fa fa-money"></md-icon>
       <md-input-container flex>
-        <label>Combien ?</label>
+        <label>{{'TRANSACTION_HOW_MUCH' | translate}}</label>
         <input type="number" step="any" ng-model="transaction.trs_amount" required="true">
       </md-input-container>
     </div>
     <div layout="row">
       <md-icon class="fa fa-user"></md-icon>
-      <md-select ng-model="transaction.trs_category._id" placeholder="Catégorie ?" class="select-add" flex required="true">
+      <md-select ng-model="transaction.trs_category._id" placeholder="{{'TRANSACTION_CATEGORY' | translate}}" class="select-add" flex required="true">
         <md-option ng-repeat="category in categories" value="{{category._id}}">{{category.ctg_name}}</md-option>
       </md-select>
     </div>
@@ -39,7 +39,7 @@
         <div layout="row" class="padding-right-15">
           <md-icon class="fa fa-pie-chart"></md-icon>
           <md-input-container>
-            <label>Parts ?</label>
+            <label>{{'TRANSACTION_WEIGHTS' | translate}}</label>
             <input type="number" ng-model="weights[participant._id]"  min="0">
           </md-input-container>
         </div>
@@ -48,5 +48,5 @@
   </div>
 </div>
 <div class="md-actions" layout="row">
-  <md-button class="md-raised md-accent" ng-click="answer('valider')">Valider</md-button>
+  <md-button class="md-raised md-accent">{{'TRANSACTION_SAVE' | translate}}</md-button>
 </div>

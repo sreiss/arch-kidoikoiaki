@@ -1,28 +1,28 @@
-<h1>Dépenses </h1>
+<h1>{{'TRANSACTION_TITLE' | translate}}</h1>
 
 <md-button class="md-accent md-raised" ui-sref="sheet.transactionNew">
-  Nouvelle dépense
+  {{'TRANSACTION_NEW_BUTTON' | translate}}
 </md-button>
 
 <div layout="row" class="table-transactions">
-  <p ng-hide="transactions.length">Vous n'avez à ce jour ajouté aucune dépense.</p>
+  <p ng-hide="transactions.length">{{'TRANSACTION_EMPTY_LIST' | translate}}</p>
 
   <ul class="collection" ng-show="transactions.length">
     <li class="collection-item" ng-repeat="transaction in transactions">
       <div>
         <div layout="row">
           <div flex="70">
-            <strong>{{transaction.trs_contributor.prt_lname}}</strong> dépense {{transaction.trs_amount}} €
+            <strong>{{transaction.trs_contributor.prt_lname}}</strong> {{'TRANSACTION_PAID' | translate}} {{transaction.trs_amount}} {{'TRANSACTION_CURRENCY' | translate}}
           </div>
           <div flex>
-            <span class="pull-right">Le {{transaction.trs_creation_date | date:'dd/MM/yyyy'}}</span>
+            <span class="pull-right">{{transaction.trs_creation_date | date:'dd/MM/yyyy'}}</span>
           </div>
         </div>
         <blockquote>
-          <strong>{{transaction.trs_description}}</strong> <span ng-show="transaction.trs_category.ctg_name">dans</span> {{transaction.trs_category.ctg_name}}
-          <footer>Pour :
+          <strong>{{transaction.trs_description}}</strong> <span ng-show="transaction.trs_category.ctg_name">{{'TRANSACTION_IN' | translate}}</span> {{transaction.trs_category.ctg_name}}
+          <footer>{{'TRANSACTION_FOR' | translate}} :
             <span ng-repeat="beneficary in transaction.trs_beneficiaries">
-              {{beneficary.trs_participant.prt_lname}} ({{beneficary.trs_weight}} parts)<span ng-if="!$last">,&nbsp;</span>
+              {{beneficary.trs_participant.prt_lname}} ({{beneficary.trs_weight}} {{'TRANSACTION_WEIGHT' | translate}})<span ng-if="!$last">,&nbsp;</span>
             </span>
           </footer>
           <span class="pull-right">

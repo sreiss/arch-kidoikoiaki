@@ -1,31 +1,31 @@
-<h1>Modification d'une feuille</h1>
-<md-button class="md-raised" ui-sref="sheet.home">Retour</md-button>
+<h1>{{'SHEET_EDIT_TITLE' | translate}}</h1>
+<md-button class="md-raised" ui-sref="sheet.home">{{'SHEET_BACK' | translate}}</md-button>
 
 <form  role="form" ng-submit="editSheet()">
   <div layout="column">
     <div layout="row">
       <md-icon class="fa fa-folder"></md-icon>
       <md-input-container flex>
-        <label>Nom de la feuille</label>
+        <label>{{'SHEET_TITLE' | translate}}</label>
         <input type="text" ng-model="sheet.she_name" required="true">
       </md-input-container>
     </div>
     <div layout="row">
       <md-icon class="fa fa-bars"></md-icon>
       <md-input-container flex>
-        <label>Réference de la feuille</label>
+        <label>{{'SHEET_REFERENCE' | translate}}</label>
         <input type="text" ng-model="sheet.she_reference" required="true" readonly="true">
       </md-input-container>
     </div>
     <div layout="row">
       <md-icon class="fa fa-envelope-o"></md-icon>
       <md-input-container flex>
-        <label>Email de contact</label>
+        <label>{{'SHEET_MAIL_ADDRESS' | translate}}</label>
         <input type="email" ng-model="sheet.she_email" required="true" readonly="true">
       </md-input-container>
     </div>
   </div>
   <div class="md-actions" layout="row">
-    <md-button class="md-raised md-accent" type="submit">Valider</md-button>
+    <md-button class="md-raised md-accent" type="submit">{{'SHEET_SAVE' | translate}}</md-button>
   </div>
 </form>

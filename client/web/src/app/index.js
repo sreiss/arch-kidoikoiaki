@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngResource', 'ngMaterial','ui.router'])
-  .config(function ($mdThemingProvider, $stateProvider, $urlRouterProvider)
+angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngResource', 'ngMaterial','ui.router', 'pascalprecht.translate'])
+  .config(function ($mdThemingProvider, $stateProvider, $urlRouterProvider, $translateProvider, i18nfrFRConstant, i18nenUSConstant)
   {
     $mdThemingProvider
       .theme('default')
@@ -91,4 +91,9 @@ angular.module('kid', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRes
 
       $urlRouterProvider
         .otherwise("/");
+
+      $translateProvider
+        .translations('fr', i18nfrFRConstant)
+        .translations('en', i18nenUSConstant)
+        .preferredLanguage('fr');
   });

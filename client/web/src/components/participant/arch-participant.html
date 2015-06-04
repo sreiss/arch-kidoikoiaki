@@ -1,17 +1,17 @@
-<h1>Participants</h1>
+<h1>{{'PARTICIPANT_TITLE' | translate}}</h1>
 <md-button class="md-accent md-raised" ui-sref="sheet.participantNew">
-  Nouveau participant
+  {{'PARTICIPANT_NEW_BUTTON' | translate}}
 </md-button>
 <div layout="row" class="table-participants">
-  <p ng-hide="participants.length">Vous n'avez à ce jour ajouté aucun participant.</p>
+  <p ng-hide="participants.length">{{'PARTICIPANT_EMPTY_LIST' | translate}}</p>
 
   <table class="responsive-table striped" ng-show="participants.length">
     <thead>
     <tr>
-      <th data-field="name">Nom</th>
-      <th data-field="firstName">Prénom</th>
-      <th data-field="email">Email</th>
-      <th data-field="share">Parts (par défaut)</th>
+      <th data-field="name">{{'PARTICIPANT_LNAME' | translate}}</th>
+      <th data-field="firstName">{{'PARTICIPANT_FNAME' | translate}}</th>
+      <th data-field="email">{{'PARTICIPANT_MAIL_ADDRESS' | translate}}</th>
+      <th data-field="share">{{'PARTICIPANT_WEIGHT' | translate}}</th>
       <th data-field="actions>"></th>
     </tr>
     </thead>

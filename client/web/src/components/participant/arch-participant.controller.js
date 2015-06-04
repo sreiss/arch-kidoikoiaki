@@ -88,6 +88,7 @@ angular.module('kid')
     {
       $scope.participant.prt_sheet = sheet._id;
       $scope.participant.prt_notified = false;
+      $scope.participant.she_path = $state.href('home', {}, {absolute: true}) + 'sheet/' + sheet.she_reference + '/';
     })
     .catch(function()
     {
@@ -99,7 +100,6 @@ angular.module('kid')
     {
       $scope.participant.$save(function()
       {
-        console.log($scope.participant);
         $mdToast.show($mdToast.simple().content('Participant créé avec succés.').position('top right').hideDelay(3000));
         $state.go('sheet.participants');
       },

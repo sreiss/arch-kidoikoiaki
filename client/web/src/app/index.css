@@ -352,3 +352,15 @@ blockquote {
 {
   margin-left:0px;
 }
+
+.mainTitle
+{
+  position:relative;
+}
+
+.mainTitle span
+{
+  position:absolute;
+  left:40px;
+  top:16px;
+}

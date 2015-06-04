@@ -112,6 +112,40 @@ module.exports = function(Sheet, sheetService, config)
                 }
                 else
                 {
+                    Sheet.update({she_reference: sheetReference},
+                    {
+                        she_last_visit : Date.now()
+                    },
+                    function(err)
+                    {
+                        if(err)
+                        {
+                            deferred.reject(err);
+                        }
+                        else
+                        {
+                            deferred.resolve(sheet);
+                        }
+                    });
+                }
+            });
+
+            return deferred.promise;
+        },
+
+        /** Get sheet by ID. */
+        getSheetById: function(sheetId)
+        {
+            var deferred = Q.defer();
+
+            Sheet.findOne({_id: sheetId}).exec(function (err, sheet)
+            {
+                if(err)
+                {
+                    deferred.reject(err);
+                }
+                else
+                {
                     deferred.resolve(sheet);
                 }
             });

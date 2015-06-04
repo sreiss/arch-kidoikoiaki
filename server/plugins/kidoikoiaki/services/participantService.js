@@ -9,7 +9,7 @@ var Q = require('q');
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 
-module.exports = function(Participant, participantService, config) {
+module.exports = function(Participant, participantService, sheetService, config) {
     return {
         /** Save participant. */
         saveParticipant: function(participantData)
@@ -134,50 +134,54 @@ module.exports = function(Participant, participantService, config) {
         /** Send Mail. */
         sendMail: function(participantData)
         {
-            var transporter = nodemailer.createTransport(smtpTransport(
-            {
-                service: "Gmail", // sets automatically host, port and connection security settings
-                auth:
-                {
-                    user: config.get('mail:username'),
-                    pass: config.get('mail:password')
-                },
-                tls: {rejectUnauthorized: false},
-                debug:true
-            }));
+            var deferred = Q.defer();
 
-            var sheetData =
+            sheetService.getSheetById(participantData.prt_sheet).then(function(sheet)
             {
-                she_name : "Nom de la feuille",
-                she_path : "http://www.google.com",
-                she_reference : "nomdelafeuille"
-            }
-
-            var mailOptions =
-            {
-                from: config.get('mail:noreply'),
-                to: participantData.prt_email,
-                subject: "archKidoikoiaki - Vous prenez part à une feuille ✔",
-                html:   'Bonjour <b>' + participantData.prt_fname + ' ' + participantData.prt_lname + '</b>,<br><br>' +
-                "Vous venez d'être ajouté en tant que participant à la feuille <b>" + sheetData.she_name + '</b> avec succés.<br>' +
-                "Vous pouvez la consulter et la partager à n'importer quel moment à l'adresse suivante : <a href='" + sheetData.she_path + "'>" + sheetData.she_reference + "</a>.<br><br>" +
-                "L'équipe vous remercie et vous souhaite une bonne visite.<br>" +
-                '__<br>Ceci est un message automatique, merci de ne pas y répondre.'
-            };
-
-            transporter.sendMail(mailOptions, function(error, info)
-            {
-                if(error)
+                var transporter = nodemailer.createTransport(smtpTransport(
                 {
-                    console.log(error);
-                    console.log("Message automatique d'ajout d'un participant à la feuille " + sheetData.she_reference + " non envoyé.");
-                }
-                else
+                    service: "Gmail", // sets automatically host, port and connection security settings
+                    auth:
+                    {
+                        user: config.get('mail:username'),
+                        pass: config.get('mail:password')
+                    },
+                    tls: {rejectUnauthorized: false},
+                    debug:true
+                }));
+
+                var mailOptions =
                 {
-                    console.log(info);
-                    console.log("Message automatique d'ajout d'un participant à la feuille " + sheetData.she_reference + " envoyé avec succés.");
-                }
-            });
+                    from: config.get('mail:noreply'),
+                    to: participantData.prt_email,
+                    subject: "archKidoikoiaki - Vous prenez part à une feuille ✔",
+                    html:   'Bonjour <b>' + participantData.prt_fname + ' ' + participantData.prt_lname + '</b>,<br><br>' +
+                    "Vous venez d'être ajouté en tant que participant à la feuille <b>" + sheet.she_name + '</b> avec succès.<br>' +
+                    "Vous pouvez la consulter et la partager à n'importer quel moment à l'adresse suivante : <a href='" + participantData.she_path + "'>" + sheet.she_reference + "</a>.<br><br>" +
+                    "L'équipe vous remercie et vous souhaite une bonne visite.<br>" +
+                    '__<br>Ceci est un message automatique, merci de ne pas y répondre.'
+                };
+
+                transporter.sendMail(mailOptions, function(error, info)
+                {
+                    if(error)
+                    {
+                        deferred.reject(error);
+                        console.log("Message automatique d'ajout d'un participant à la feuille " + sheet.she_reference + " non envoyé.");
+                    }
+                    else
+                    {
+                        deferred.resolve(info);
+                        console.log("Message automatique d'ajout d'un participant à la feuille " + sheet.she_reference + " envoyé avec succès.");
+                    }
+                });
+            })
+            .catch(function(err)
+            {
+                deferred.reject(err);
+            })
+
+            return deferred.promise;
         }
     };
 };
