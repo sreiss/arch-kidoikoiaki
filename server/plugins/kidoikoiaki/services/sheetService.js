@@ -174,9 +174,10 @@ module.exports = function(Sheet, sheetService, config)
                 }
                 else
                 {
-                    {
+                    console.log(info);
+                /*    {
                         console.log("Message automatique de création de feuille " + sheetData.she_reference + " envoyé avec succés.");
-                    }
+                    }*/
                 }
             });
         }
