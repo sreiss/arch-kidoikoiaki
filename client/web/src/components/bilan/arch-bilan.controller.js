@@ -7,14 +7,27 @@ angular.module('kid')
 
     archSheetService.getCurrentSheet().then(function(sheet)
     {
-      archBilanService.getDebts(sheet._id).then(function(debts)
+      archBilanService.deleteDebts(sheet._id).then(function()
       {
-        $scope.debts = debts;
+        archBilanService.generateBilan(sheet._id).then(function()
+        {
+          archBilanService.getDebts(sheet._id).then(function(debts)
+          {
+            $scope.debts = debts;
+          })
+          .catch(function()
+          {
+            $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération des dettes.').position('top right').hideDelay(3000));
+          });
+        })
+        .catch(function()
+        {
+          $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la génération du bilan.').position('top right').hideDelay(3000));
+        });
       })
-      .catch(function(err)
+      .catch(function()
       {
-        console.log(err);
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération du bilan.').position('top right').hideDelay(3000));
+        $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la suppression des précédentes dettes.').position('top right').hideDelay(3000));
       });
     })
     .catch(function()

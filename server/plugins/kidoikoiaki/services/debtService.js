@@ -18,10 +18,12 @@ module.exports = function(Debt) {
             {
                 if(err)
                 {
+                    console.log('## Get new debts (fail).');
                     deferred.reject(err);
                 }
                 else
                 {
+                    console.log('## Get new debts (success).');
                     deferred.resolve(debts);
                 }
             });
@@ -38,10 +40,12 @@ module.exports = function(Debt) {
             {
                 if(err)
                 {
+                    console.log('## Delete previous debts (fail).');
                     deferred.reject(err);
                 }
                 else
                 {
+                    console.log('## Delete previous debts (success).');
                     deferred.resolve(debts);
                 }
             });

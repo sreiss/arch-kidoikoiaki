@@ -9,57 +9,12 @@ var Q = require('q');
 
 module.exports = function(Debt, bilanService, debtService, participantsService, transactionsService) {
     return {
-        /** Get bilan. */
-        getBilan: function(sheetId)
-        {
-            var deferred = Q.defer();
-
-            console.log('## Delete previous debts.');
-            debtService.deleteDebts(sheetId)
-                .then(bilanService.generateBilan(sheetId))
-                .then(debtService.getDebts(sheetId))
-                .then(function(debts) {
-                    deferred.resolve(debts);
-                })
-                .catch(function(err) {
-                    deferred.reject(err);
-                });
-            /*
-            debtService.deleteDebts(sheetId).then(function()
-            {
-                console.log('## Start generate bilan.');
-                bilanService.generateBilan(sheetId).then(function()
-                {
-                    console.log('## Stop generate bilan.');
-
-                    console.log('## Get all debts.');
-                    debtService.getDebts(sheetId).then(function(debts)
-                    {
-                        deferred.resolve(debts);
-                    })
-                    .catch(function(err)
-                    {
-                        deferred.reject(err);
-                    });
-                })
-                .catch(function(err)
-                {
-                    deferred.reject(err);
-                });
-            })
-            .catch(function(err)
-            {
-                deferred.reject(err);
-            });
-            */
-
-            return deferred.promise;
-        },
-
         /** Generate bilan. */
         generateBilan: function(sheetId)
         {
             var deferred = Q.defer();
+
+            console.log('## Start generate bilan.');
 
             // Get participants.
             participantsService.getParticipants(sheetId).then(function(participants)
@@ -142,11 +97,21 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         }
                     });
 
+                    console.log(givers);
+                    console.log(takers);
                     bilanService.testEqual(givers, takers, sheetId).then(function()
                     {
                        deferred.resolve(true);
+                    })
+                    .catch(function(err)
+                    {
+                        deferred.reject(err);
                     });
                 })
+                .catch(function(err)
+                {
+                    deferred.reject(err);
+                });
             })
             .catch(function(err)
             {
@@ -156,7 +121,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             return deferred.promise;
         },
 
-        testEqual: function(givers, takers, uri)
+        testEqual: function(givers, takers, sheetId)
         {
             var deferred = Q.defer();
 
@@ -171,7 +136,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                     {
                         var debt = new Debt(
                         {
-                            dbt_sheet: uri,
+                            dbt_sheet: sheetId,
                             dbt_giver: givers[i].participant._id,
                             dbt_taker: takers[u].participant._id,
                             dbt_amount: giverAmountAbs
@@ -183,6 +148,10 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                             {
                                 deferred.reject(err);
                             }
+                            else
+                            {
+                                console.log('New debt saved (' + debt.dbt_amount + '€)');
+                            }
                         });
 
                         givers.splice(i, 1);
@@ -193,7 +162,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
 
             if(givers.length > 0 || takers.length > 0)
             {
-                bilanService.testProvide(givers, takers, uri).then(function()
+                bilanService.testProvide(givers, takers, sheetId).then(function()
                 {
                     deferred.resolve(true);
                 })
@@ -210,7 +179,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             return deferred.promise;
         },
 
-        testProvide: function(givers, takers, uri)
+        testProvide: function(givers, takers, sheetId)
         {
             var deferred = Q.defer();
 
@@ -230,7 +199,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
 
                         if(giverAmountAbs < takerAmountAbs)
                         {
-                            debt.dbt_sheet = uri,
+                            debt.dbt_sheet = sheetId,
                             debt.dbt_giver = givers[i].participant._id,
                             debt.dbt_taker = takers[u].participant._id;
                             debt.dbt_amount = giverAmountAbs;
@@ -240,7 +209,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         }
                         else if(giverAmountAbs > takerAmountAbs)
                         {
-                            debt.dbt_sheet = uri,
+                            debt.dbt_sheet = sheetId,
                             debt.dbt_giver = givers[i].participant._id,
                             debt.dbt_taker = takers[u].participant._id;
                             debt.dbt_amount = takerAmountAbs;
@@ -268,9 +237,11 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                         }
                                         else
                                         {
+                                            console.log('New debt saved (' + debt.dbt_amount + '€)');
+
                                             if(givers.length > 0 || takers.length > 0)
                                             {
-                                                bilanService.testEqual(givers, takers, uri).then(function(result)
+                                                bilanService.testEqual(givers, takers, sheetId).then(function(result)
                                                 {
                                                     deferred.resolve(result);
                                                 })
@@ -294,7 +265,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
 
             if(!status && (givers.length > 0 || takers.length > 0))
             {
-                bilanService.noOptimisation(tmpGivers, tmpTakers, uri).then(function(result)
+                bilanService.noOptimisation(tmpGivers, tmpTakers, sheetId).then(function(result)
                 {
                     deferred.resolve(result);
                 })
@@ -311,7 +282,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             return deferred.promise;
         },
 
-        noOptimisation: function(givers, takers, uri)
+        noOptimisation: function(givers, takers, sheetId)
         {
             var deferred = Q.defer();
 
@@ -328,7 +299,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         {
                             var debt = new Debt(
                             {
-                                dbt_sheet: uri,
+                                dbt_sheet: sheetId,
                                 dbt_giver: givers[i].participant._id,
                                 dbt_taker: takers[u].participant._id,
                                 dbt_amount: giverAmountAbs
@@ -340,6 +311,10 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                 {
                                     deferred.reject(err);
                                 }
+                                else
+                                {
+                                    console.log('New debt saved (' + debt.dbt_amount + '€)');
+                                }
                             });
 
                             takers[u].amount = takerAmountAbs - giverAmountAbs;
@@ -349,7 +324,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         {
                             var newDebt = new Debt(
                             {
-                                dbt_sheet: uri,
+                                dbt_sheet: sheetId,
                                 dbt_giver: givers[i][0]._id,
                                 dbt_taker: takers[u][0]._id,
                                 dbt_amount: takerAmountAbs
@@ -366,7 +341,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
 
                         if(givers.length > 0 || takers.length > 0)
                         {
-                            bilanService.testEqual(givers, takers, uri).then(function(result)
+                            bilanService.testEqual(givers, takers, sheetId).then(function(result)
                             {
                                 deferred.resolve(result);
                             })

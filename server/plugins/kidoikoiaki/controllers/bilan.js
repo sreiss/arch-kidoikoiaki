@@ -11,14 +11,14 @@ var ArchFindError = GLOBAL.ArchFindError;
 module.exports = function(bilanService)
 {
     return {
-        /** Get bilan. */
-        getBilan: function(req, res)
+        /** Generate bilan. */
+        generateBilan: function(req, res)
         {
             // Get sheetReference.
             var sheetId = req.params.sheetId;
 
             // Get bilan.
-            bilanService.getBilan(sheetId).then(function(debts)
+            bilanService.generateBilan(sheetId).then(function(debts)
             {
                 res.status(200).json({"count" : debts.length, "data" : debts});
             },

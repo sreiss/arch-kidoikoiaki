@@ -130,6 +130,13 @@ angular.module('kid')
       }
     });
   })
+  .factory("Debt", function ($resource,httpConstant) {
+    return $resource(httpConstant.apiUrl + '/kidoikoiaki/debt/:id', {}, {
+      query: {
+        isArray: false
+      }
+    });
+  })
   .factory("Bilan", function ($resource,httpConstant) {
     return $resource(httpConstant.apiUrl + '/kidoikoiaki/bilan/:id', {}, {
       query: {
