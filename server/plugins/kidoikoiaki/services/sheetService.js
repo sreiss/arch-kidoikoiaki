@@ -23,9 +23,14 @@ module.exports = function(Sheet, sheetService, config)
                 {
                     sheetService.getLatestSheetByIp(sheetData.she_ip).then(function(latestSheet)
                     {
-                        var timeElapsed = new Date() - (Date.parse(latestSheet.she_creation_date));
+                        var timeElapsedRequired = true;
 
-                        if(timeElapsed > 3000)
+                        if(latestSheet)
+                        {
+                            timeElapsedRequired = (new Date() - (Date.parse(latestSheet.she_creation_date))) > 3000 ? true : false;
+                        }
+
+                        if(timeElapsedRequired)
                         {
                             var sheet = new Sheet();
                             sheet.she_name = sheetData.she_name;

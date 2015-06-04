@@ -5,7 +5,7 @@
  * @copyright ArchTailors 2015
  */
 
-module.exports = function(Types) {
+module.exports = function() {
     return {
         schema:
         {
