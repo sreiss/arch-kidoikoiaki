@@ -23,8 +23,8 @@ module.exports = function() {
             }
 
             // Check transaction amount.
-            var transactionAmount = transactionData.trs_amount || '';
-            if(!validator.isNumeric(transactionAmount) && transactionAmount > 0)
+            var transactionAmount = parseFloat(transactionData.trs_amount || 0).toFixed(2);
+            if(transactionAmount > 0 && !validator.isFloat(transactionAmount))
             {
                 throw new ArchParameterError("Transaction amount must be numeric and greater than 0.")
             }
