@@ -61,7 +61,7 @@ angular.module('kid')
       })
     };
   })
-  .controller('archSheetEditController', function ($scope, Sheet, $state, $stateParams, $mdToast, archSheetService)
+  .controller('archSheetEditController', function ($scope, Sheet, $state, $stateParams, $mdToast, archSheetService, archTranslateService)
   {
     $scope.sheet = new Sheet();
 
