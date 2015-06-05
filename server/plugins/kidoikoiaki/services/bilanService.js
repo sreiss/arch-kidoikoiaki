@@ -97,8 +97,6 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         }
                     });
 
-                    console.log(givers);
-                    console.log(takers);
                     bilanService.testEqual(givers, takers, sheetId).then(function()
                     {
                        deferred.resolve(true);
@@ -292,8 +290,8 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                 {
                     for(var u = 0; u < takers.length; u++)
                     {
-                        var giverAmountAbs = Math.abs(parseFloat(givers[ii].amount).toFixed(2));
-                        var takerAmountAbs = Math.abs(parseFloat(takers[uu].amount).toFixed(2));
+                        var giverAmountAbs = Math.abs(parseFloat(givers[i].amount).toFixed(2));
+                        var takerAmountAbs = Math.abs(parseFloat(takers[u].amount).toFixed(2));
 
                         if(giverAmountAbs < takerAmountAbs)
                         {
