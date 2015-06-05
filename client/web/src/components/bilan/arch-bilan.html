@@ -1,12 +1,12 @@
-<h1>Bilan</h1>
+<h1>{{'BILAN_TITLE' | translate}}</h1>
 
 <div layout="row" class="table-transactions">
-  <p ng-hide="debts.length">Vous n'avez à ce jour aucune dette.</p>
+  <p ng-hide="debts.length">{{'BILAN_EMPTY_LIST' | translate}}</p>
 
   <ul class="collection" ng-show="debts.length">
     <li class="collection-item" ng-repeat="debt in debts">
         <blockquote>
-          <strong>{{debt.dbt_giver.prt_lname }}</strong> doit {{debt.dbt_amount}} € à <strong>{{debt.dbt_taker.prt_lname}}</strong>
+          <strong>{{debt.dbt_giver.prt_lname }}</strong> {{'BILAN_MUST_PAY' | translate}} {{debt.dbt_amount}} {{'BILAN_CURRENCY' | translate}} {{'BILAN_TO' | translate}} <strong>{{debt.dbt_taker.prt_lname}}</strong>
         </blockquote>
     </li>
   </ul>

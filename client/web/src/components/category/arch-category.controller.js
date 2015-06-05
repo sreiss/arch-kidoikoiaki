@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('kid')
-  .controller('archCategoriesController', function ($scope, Categories, Category, Sheet, $stateParams, $state, $mdToast, archSheetService, archCategoryService, archTransactionService)
+  .controller('archCategoriesController', function ($scope, Categories, Category, Sheet, $stateParams, $state, $mdToast, archSheetService, archCategoryService, archTransactionService, archTranslateService)
   {
     $scope.categories = new Array();
 
@@ -15,53 +15,74 @@ angular.module('kid')
       })
       .catch(function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération des catégories.').position('top right').hideDelay(3000));
+        archTranslateService('CATEGORY_ERROR_GET_CATEGORIES').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        });
       });
     })
     .catch(function()
     {
-      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
-      $state.go('sheet.home');
+      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
+      {
+        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        $state.go('sheet.home');
+      });
     });
 
     $scope.deleteCategory = function(id)
     {
-      if(confirm('Souhaitez-vous réellement supprimer cette catégorie ?'))
+      archTranslateService('CATEGORY_DELETE_CONFIRM').then(function(translateValue)
       {
-        var isLinked = false;
-
-        archTransactionService.getTransactions($scope.sheet._id).then(function(transactions)
+        if(confirm(translateValue))
         {
-          transactions.forEach(function(transaction)
-          {
-            if(transaction.trs_category._id == id)
-            {
-              isLinked = true;
-            }
-          });
+          var isLinked = false;
 
-          if(!isLinked)
+          archTransactionService.getTransactions($scope.sheet._id).then(function(transactions)
           {
-            archCategoryService.deleteCategory(id).then(function()
+            transactions.forEach(function(transaction)
             {
-              $mdToast.show($mdToast.simple().content('Catégorie supprimée avec succés.').position('top right').hideDelay(3000));
-              $state.go($state.current, {}, {reload: true});
-            })
-            .catch(function()
-            {
-              $mdToast.show($mdToast.simple().content('Une erreur est survenue à la suppression de la catégorie.').position('top right').hideDelay(3000));
+              if(transaction.trs_category._id == id)
+              {
+                isLinked = true;
+              }
             });
-          }
-          else
+
+            if(!isLinked)
+            {
+              archCategoryService.deleteCategory(id).then(function()
+              {
+                archTranslateService('CATEGORY_DELETE_SUCCESS').then(function(translateValue)
+                {
+                  $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+                  $state.go($state.current, {}, {reload: true});
+                });
+              })
+              .catch(function()
+              {
+                archTranslateService('CATEGORY_DELETE_FAIL').then(function(translateValue)
+                {
+                  $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+                });
+              });
+            }
+            else
+            {
+              archTranslateService('CATEGORY_DELETE_FAIL_LINKED').then(function(translateValue)
+              {
+                $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+              });
+            }
+          })
+          .catch(function()
           {
-            $mdToast.show($mdToast.simple().content('Impossible de supprimer cette catégorie, celle-ci est liée à une dépense.').position('top right').hideDelay(3000));
-          }
-        })
-        .catch(function()
-        {
-          $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la vérification des dépendances.').position('top right').hideDelay(3000));
-        });
-      }
+            archTranslateService('CATEGORY_DELETE_FAIL_CHECK_DEPENDENCIES').then(function(translateValue)
+            {
+              $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+            });
+          });
+        }
+      });
     };
 
     $scope.editCategory = function(id)
@@ -69,7 +90,7 @@ angular.module('kid')
       $state.go('sheet.categoryEdit', {'idCategory' : id});
     };
   })
-  .controller('archCategoryNewController', function ($scope, Category, $location, $mdToast, Sheet, $stateParams, $state, archSheetService)
+  .controller('archCategoryNewController', function ($scope, Category, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTranslateService)
   {
     $scope.category = new Category();
 
@@ -79,24 +100,33 @@ angular.module('kid')
     })
     .catch(function()
     {
-      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
-      $state.go('sheet.home');
+      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
+      {
+        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        $state.go('sheet.home');
+      });
     });
 
     $scope.newCategory = function ()
     {
       $scope.category.$save(function()
       {
-        $mdToast.show($mdToast.simple().content('Catégorie créée avec succés.').position('top right').hideDelay(3000));
-        $state.go('sheet.categories');
+        archTranslateService('CATEGORY_NEW_SUCCESS').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          $state.go('sheet.categories');
+        });
       },
       function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la création de la catégorie.').position('top right').hideDelay(3000));
+        archTranslateService('CATEGORY_NEW_FAIL').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        });
       })
     }
   })
-  .controller('archCategoryEditController', function ($scope, Category, $state, $stateParams, $mdToast, archCategoryService)
+  .controller('archCategoryEditController', function ($scope, Category, $state, $stateParams, $mdToast, archCategoryService, archTranslateService)
   {
     $scope.category = new Category();
 
@@ -106,20 +136,29 @@ angular.module('kid')
     })
     .catch(function()
     {
-      $mdToast.show($mdToast.simple().content('Une erreur est survenue à la récupération de la catégorie.').position('top right').hideDelay(3000));
-      $state.go('sheet.categories');
+      archTranslateService('CATEGORY_ERROR_GET_CATEGORY').then(function(translateValue)
+      {
+        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        $state.go('sheet.categories');
+      });
     });
 
     $scope.editCategory = function ()
     {
       Category.update({category:$scope.category}, function()
       {
-        $mdToast.show($mdToast.simple().content('Catégorie modifiée avec succés.').position('top right').hideDelay(3000));
-        $state.go('sheet.categories');
+        archTranslateService('CATEGORY_EDIT_SUCCESS').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          $state.go('sheet.categories');
+        });
       },
       function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la modification de la catégorie.').position('top right').hideDelay(3000));
+        archTranslateService('CATEGORY_EDIT_FAIL').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        });
       });
     }
   });

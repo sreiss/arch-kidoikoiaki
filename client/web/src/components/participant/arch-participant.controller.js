@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('kid')
-  .controller('archParticipantController', function ($scope, Participants, Transactions, Sheet, $stateParams, Participant,$state,$mdToast, archSheetService, archParticipantService, archTransactionService)
+  .controller('archParticipantController', function ($scope, Participants, Transactions, Sheet, $stateParams, Participant,$state,$mdToast, archSheetService, archParticipantService, archTransactionService, archTranslateService)
   {
     $scope.participants = new Array();
     $scope.sheet = new Sheet();
@@ -16,63 +16,84 @@ angular.module('kid')
       })
       .catch(function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération des participants.').position('top right').hideDelay(3000));
+        archTranslateService('PARTICIPANT_ERROR_GET_PARTICIPANTS').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        });
       });
     })
     .catch(function()
     {
-      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
-      $state.go('sheet.home');
+      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
+      {
+        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        $state.go('sheet.home');
+      });
     });
 
     $scope.deleteParticipant = function(id)
     {
-      if(confirm('Souhaitez-vous réellement supprimer ce participant ?'))
+      archTranslateService('PARTICIPANT_DELETE_CONFIRM').then(function(translateValue)
       {
-        var isLinked = false;
-
-        archTransactionService.getTransactions($scope.sheet._id).then(function(transactions)
+        if(confirm(translateValue))
         {
-          transactions.forEach(function(transaction)
+          var isLinked = false;
+
+          archTransactionService.getTransactions($scope.sheet._id).then(function(transactions)
           {
-            if(transaction.trs_contributor._id == id)
+            transactions.forEach(function(transaction)
             {
-              isLinked = true;
+              if(transaction.trs_contributor._id == id)
+              {
+                isLinked = true;
+              }
+              else
+              {
+                transaction.trs_beneficiaries.forEach(function(beneficiary)
+                {
+                  if(beneficiary.trs_participant._id == id)
+                  {
+                    isLinked = true;
+                  }
+                });
+              }
+            });
+
+            if(!isLinked)
+            {
+              archParticipantService.deleteParticipant(id).then(function()
+              {
+                archTranslateService('PARTICIPANT_DELETE_SUCCESS').then(function(translateValue)
+                {
+                  $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+                  $state.go($state.current, {}, {reload: true});
+                });
+              })
+              .catch(function()
+              {
+                archTranslateService('PARTICIPANT_DELETE_FAIL').then(function(translateValue)
+                {
+                  $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+                });
+              });
             }
             else
             {
-              transaction.trs_beneficiaries.forEach(function(beneficiary)
+              archTranslateService('PARTICIPANT_DELETE_FAIL_LINKED').then(function(translateValue)
               {
-                if(beneficiary.trs_participant._id == id)
-                {
-                  isLinked = true;
-                }
+                $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
               });
             }
-          });
-
-          if(!isLinked)
+          })
+          .catch(function()
           {
-            archParticipantService.deleteParticipant(id).then(function()
+            archTranslateService('PARTICIPANT_DELETE_FAIL_CHECK_DEPENDENCIES').then(function(translateValue)
             {
-              $mdToast.show($mdToast.simple().content('Participant supprimé avec succés.').position('top right').hideDelay(3000));
-              $state.go($state.current, {}, {reload: true});
-            })
-            .catch(function()
-            {
-              $mdToast.show($mdToast.simple().content('Une erreur est survenue à la suppression de ce participant.').position('top right').hideDelay(3000));
+              $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
             });
-          }
-          else
-          {
-            $mdToast.show($mdToast.simple().content('Impossible de supprimer ce participant, celui-ci est lié à une dépense.').position('top right').hideDelay(3000));
-          }
-        })
-        .catch(function()
-        {
-          $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la vérification des dépendances.').position('top right').hideDelay(3000));
-        });
-      }
+          });
+        }
+      });
     };
 
     $scope.editParticipant = function(id)
@@ -80,7 +101,7 @@ angular.module('kid')
       $state.go('sheet.participantEdit', {'idParticipant' : id});
     };
   })
-  .controller('archParticipantNewController', function ($scope, Participant, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archParticipantService)
+  .controller('archParticipantNewController', function ($scope, Participant, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTranslateService)
   {
     $scope.participant = new Participant();
 
@@ -92,24 +113,33 @@ angular.module('kid')
     })
     .catch(function()
     {
-      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
-      $state.go('sheet.home');
+      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
+      {
+        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        $state.go('sheet.home');
+      });
     });
 
     $scope.newParticipant = function ()
     {
       $scope.participant.$save(function()
       {
-        $mdToast.show($mdToast.simple().content('Participant créé avec succés.').position('top right').hideDelay(3000));
-        $state.go('sheet.participants');
+        archTranslateService('PARTICIPANT_NEW_SUCCESS').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          $state.go('sheet.participants');
+        });
       },
       function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la création du participant.').position('top right').hideDelay(3000));
+        archTranslateService('PARTICIPANT_NEW_FAIL').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        });
       })
     }
   })
-  .controller('archParticipantEditController', function ($scope, Participant, $state, $stateParams, $mdToast, archParticipantService)
+  .controller('archParticipantEditController', function ($scope, Participant, $state, $stateParams, $mdToast, archParticipantService, archTranslateService)
   {
     $scope.participant = new Participant();
 
@@ -119,20 +149,29 @@ angular.module('kid')
     })
     .catch(function()
     {
-      $mdToast.show($mdToast.simple().content('Une erreur est survenue à la récupération du participant.').position('top right').hideDelay(3000));
-      $state.go('sheet.participants');
+      archTranslateService('PARTICIPANT_ERROR_GET_PARTICIPANT').then(function(translateValue)
+      {
+        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        $state.go('sheet.participants');
+      });
     });
 
     $scope.editParticipant = function ()
     {
       Participant.update({participant:$scope.participant}, function()
       {
-        $mdToast.show($mdToast.simple().content('Participant modifié avec succés.').position('top right').hideDelay(3000));
-        $state.go('sheet.participants');
+        archTranslateService('PARTICIPANT_EDIT_SUCCESS').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          $state.go('sheet.participants');
+        });
       },
       function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la modification du participant.').position('top right').hideDelay(3000));
+        archTranslateService('PARTICIPANT_EDIT_FAIL').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        });
       });
     }
   });

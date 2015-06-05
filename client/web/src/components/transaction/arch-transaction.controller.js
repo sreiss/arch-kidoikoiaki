@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('kid')
-  .controller('archTransactionsController', function ($scope, Transactions, Sheet, $stateParams, Transaction, $mdToast, $state, archSheetService, archTransactionService)
+  .controller('archTransactionsController', function ($scope, Transactions, Sheet, $stateParams, Transaction, $mdToast, $state, archSheetService, archTransactionService, archTranslateService)
   {
     $scope.transactions = new Array();
 
@@ -13,31 +13,46 @@ angular.module('kid')
       })
       .catch(function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la récupération des dépenses.').position('top right').hideDelay(3000));
+        archTranslateService('TRANSACTION_ERROR_GET_TRANSACTIONS').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        });
       });
 
       $scope.transactions = Transactions.query({id: sheet._id});
     })
     .catch(function()
     {
-      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
-      $state.go('sheet.home');
+      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
+      {
+        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        $state.go('sheet.home');
+      });
     });
 
     $scope.deleteTransaction = function(id)
     {
-      if(confirm('Souhaitez-vous réellement supprimer cette dépense ?'))
+      archTranslateService('TRANSACTION_DELETE_CONFIRM').then(function(translateValue)
       {
-        archTransactionService.deleteTransaction(id).then(function()
+        if(confirm(translateValue))
         {
-          $mdToast.show($mdToast.simple().content('Dépense supprimée avec succés.').position('top right').hideDelay(3000));
-          $state.go($state.current, {}, {reload: true});
-        })
-        .catch(function()
-        {
-          $mdToast.show($mdToast.simple().content('Une erreur est survenue à la suppression de la dépense.').position('top right').hideDelay(3000));
-        });
-      }
+          archTransactionService.deleteTransaction(id).then(function()
+          {
+            archTranslateService('TRANSACTION_DELETE_SUCCESS').then(function(translateValue)
+            {
+              $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+              $state.go($state.current, {}, {reload: true});
+            });
+          })
+          .catch(function()
+          {
+            archTranslateService('TRANSACTION_DELETE_FAIL').then(function(translateValue)
+            {
+              $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+            });
+          });
+        }
+      });
     };
 
     $scope.editTransaction = function(id)
@@ -45,7 +60,7 @@ angular.module('kid')
       $state.go('sheet.transactionEdit', {'idTransaction' : id});
     };
   })
-  .controller('archTransactionNewController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archParticipantService, archCategoryService)
+  .controller('archTransactionNewController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archParticipantService, archCategoryService, archTranslateService)
   {
     $scope.transaction = new Transaction();
 
@@ -57,7 +72,11 @@ angular.module('kid')
       })
       .catch(function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération des catégories.').position('top right').hideDelay(3000));
+        archTranslateService('CATEGORY_ERROR_GET_CATEGORIES').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          $state.go('sheet.transactions');
+        });
       });
 
       $scope.transaction.trs_sheet = sheet._id;
@@ -79,14 +98,20 @@ angular.module('kid')
       })
       .catch(function()
       {
-        $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
-        $state.go('sheet.home');
+        archTranslateService('PARTICIPANT_ERROR_GET_PARTICIPANTS').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          $state.go('sheet.transactions');
+        });
       });
     })
     .catch(function()
     {
-      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
-      $state.go('sheet.home');
+      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
+      {
+        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        $state.go('sheet.home');
+      });
     });
 
     $scope.newTransaction = function()
@@ -108,16 +133,22 @@ angular.module('kid')
 
       $scope.transaction.$save(function()
       {
-        $mdToast.show($mdToast.simple().content('Dépense créée avec succés.').position('top right').hideDelay(3000));
-        $state.go('sheet.transactions');
+        archTranslateService('TRANSACTION_NEW_SUCCESS').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          $state.go('sheet.transactions');
+        });
       },
       function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la création de la dépense.').position('top right').hideDelay(3000));
+        archTranslateService('TRANSACTION_NEW_FAIL').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        });
       })
     }
   })
-  .controller('archTransactionEditController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTransactionService, archCategoryService, archParticipantService)
+  .controller('archTransactionEditController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTransactionService, archCategoryService, archParticipantService, archTranslateService)
   {
     $scope.transaction = new Transaction();
 
@@ -133,7 +164,11 @@ angular.module('kid')
         })
         .catch(function()
         {
-          $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération des catégories.').position('top right').hideDelay(3000));
+          archTranslateService('CATEGORY_ERROR_GET_CATEGORIES').then(function(translateValue)
+          {
+            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+            $state.go('sheet.transactions');
+          });
         });
 
         archParticipantService.getParticipants(sheet._id).then(function(participants)
@@ -155,18 +190,32 @@ angular.module('kid')
             $scope.beneficiaries[beneficiary.trs_participant._id].isActive = true;
             $scope.weights[beneficiary.trs_participant._id] = beneficiary.trs_weight;
           });
+        })
+        .catch(function()
+        {
+          archTranslateService('PARTICIPANT_ERROR_GET_PARTICIPANTS').then(function(translateValue)
+          {
+            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+            $state.go('sheet.transactions');
+          });
         });
       })
       .catch(function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la récupération de la dépense.').position('top right').hideDelay(3000));
-        $state.go('sheet.transactions');
+        archTranslateService('TRANSACTION_ERROR_GET_TRANSACTION').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          $state.go('sheet.transactions');
+        });
       });
     })
     .catch(function()
     {
-      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
-      $state.go('sheet.home');
+      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
+      {
+        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        $state.go('sheet.home');
+      });
     });
 
     $scope.editTransaction = function ()
@@ -188,12 +237,18 @@ angular.module('kid')
 
       Transaction.update({transaction:$scope.transaction}, function()
       {
-        $mdToast.show($mdToast.simple().content('Dépense modifiée avec succés.').position('top right').hideDelay(3000));
-        $state.go('sheet.transactions');
+        archTranslateService('TRANSACTION_EDIT_SUCCESS').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          $state.go('sheet.transactions');
+        });
       },
       function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la modification de la dépense.').position('top right').hideDelay(3000));
+        archTranslateService('TRANSACTION_EDIT_FAIL').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        });
       });
     }
   });

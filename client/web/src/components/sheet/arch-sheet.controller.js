@@ -13,7 +13,7 @@ angular.module('kid')
       $state.go('sheet.sheetEdit', {'idSheet' : id});
     };
   })
-  .controller('archSheetNewController', function($scope, $location, $mdToast, Sheet, $stateParams, $state, archSheetService)
+  .controller('archSheetNewController', function($scope, $location, $mdToast, Sheet, $stateParams, $state, archTranslateService)
   {
     $scope.sheet = new Sheet();
 
@@ -28,23 +28,35 @@ angular.module('kid')
 
       $scope.sheet.$save(function(result)
       {
-        $mdToast.show($mdToast.simple().content('Feuille créée avec succés.').position('top right').hideDelay(3000));
-        $state.transitionTo('sheet.home', {'idSheet' : result.data.she_reference})
+        archTranslateService('SHEET_NEW_SUCCESS').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          $state.transitionTo('sheet.home', {'idSheet' : result.data.she_reference})
+        });
       },
       function(err)
       {
         var errMessage = err.data.error.message || '';
         if(errMessage == 'SHE_REFERENCE_ALREADY_USED')
         {
-          $mdToast.show($mdToast.simple().content('Une feuille utilisant cette référence existe déjà.').position('top right').hideDelay(3000));
+          archTranslateService('SHEET_NEW_FAIL_ALREADY_USED').then(function(translateValue)
+          {
+            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          });
         }
         else if(errMessage == 'SHE_CREATION_DATE_TO_SOON')
         {
-          $mdToast.show($mdToast.simple().content("Une feuille vient d'être créée, veuillez patienter 5 secondes avant une nouvelle tentative.").position('top right').hideDelay(3000));
+          archTranslateService('SHEET_NEW_FAIL_SPAM').then(function(translateValue)
+          {
+            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          });
         }
         else
         {
-          $mdToast.show($mdToast.simple().content('Une erreur est survenue à la création de la feuille.').position('top right').hideDelay(3000));
+          archTranslateService('SHEET_NEW_SUCCESS').then(function(translateValue)
+          {
+            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          });
         }
       })
     };
@@ -59,20 +71,29 @@ angular.module('kid')
     })
     .catch(function()
     {
-      $mdToast.show($mdToast.simple().content('Une erreur est survenue à la récupération de la feuille.').position('top right').hideDelay(3000));
-      $state.go('sheet.home');
+      archTranslateService('SHEET_ERROR_GET_SHEET').then(function(translateValue)
+      {
+        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        $state.go('sheet.home');
+      });
     });
 
     $scope.editSheet = function ()
     {
       Sheet.update({sheet:$scope.sheet}, function()
       {
-        $mdToast.show($mdToast.simple().content('Feuille modifiée avec succés.').position('top right').hideDelay(3000));
-        $state.go('sheet.home');
+        archTranslateService('SHEET_EDIT_SUCCESS').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          $state.go('sheet.home');
+        });
       },
       function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue à la modification de la feuille.').position('top right').hideDelay(3000));
+        archTranslateService('SHEET_EDIT_FAIL').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        });
       });
     }
   });

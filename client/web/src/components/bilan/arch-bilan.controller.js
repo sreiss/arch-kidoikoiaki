@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('kid')
-  .controller('archBilanController', function ($scope, Sheet ,$stateParams, $mdToast, $state, archSheetService, archBilanService)
+  .controller('archBilanController', function ($scope, Sheet ,$stateParams, $mdToast, $state, archTranslateService, archSheetService, archBilanService)
   {
     $scope.debts = new Array();
 
@@ -17,23 +17,35 @@ angular.module('kid')
           })
           .catch(function()
           {
-            $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la récupération des dettes.').position('top right').hideDelay(3000));
+            archTranslateService('BILAN_ERROR_GET_DEBTS').then(function(translateValue)
+            {
+              $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+            });
           });
         })
         .catch(function()
         {
-          $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la génération du bilan.').position('top right').hideDelay(3000));
+          archTranslateService('BILAN_ERROR_GENERATE_BILAN').then(function(translateValue)
+          {
+            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          });
         });
       })
       .catch(function()
       {
-        $mdToast.show($mdToast.simple().content('Une erreur est survenue lors de la suppression des précédentes dettes.').position('top right').hideDelay(3000));
+        archTranslateService('BILAN_ERROR_DELETE_PREVIOUS_DEBTS').then(function(translateValue)
+        {
+          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        });
       });
     })
     .catch(function()
     {
-      $mdToast.show($mdToast.simple().content('Veuillez au préalable créer une nouvelle feuille.').position('top right').hideDelay(3000));
-      $state.go('sheet.home');
+      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
+      {
+        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+        $state.go('sheet.home');
+      });
     });
   });
 
