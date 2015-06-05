@@ -2,6 +2,7 @@
 angular.module('kid')
   .constant('i18nenUSConstant', {
     APP_TITLE : "ArchKidoikoiaki",
+    NAVBAR_MENU : "Menu",
 
     SIDEBAR_HOME : "Home",
     SIDEBAR_PARTICIPANTS : "Participants",
