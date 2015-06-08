@@ -11,6 +11,7 @@ exports.attach = function(opts)
 {
     var app = this;
     var expressApp = app.arch.expressApp = express();
+    var config = app.arch.config;
 
     expressApp.set('views', path.join(__dirname, '..', 'views'));
     expressApp.set('view engine', 'jade');
@@ -22,18 +23,17 @@ exports.attach = function(opts)
     //expressApp.use(express.static(path.join(__dirname, '..', 'public')));
     expressApp.use('/', express.static(path.join(__dirname, '..', '..', 'public')));
 
-    expressApp.options('*', function(req, res)
-    {
-        var headers = {};
+    var allowedOrigins = config.get('http:allowedOrigins');
+    expressApp.use(function(req, res, next) {
+        var origin = req.headers.origin;
+        if (allowedOrigins.indexOf(origin) > -1) {
+            res.header('Access-Control-Allow-Origin', origin);
+            res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+            res.header('Access-Control-Allow-Headers', 'Content-Type');
+            res.header('Access-Control-Allow-Credentials', true);
+        }
 
-        headers["Access-Control-Allow-Origin"] = "*";
-        headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, DELETE";
-        headers["Access-Control-Allow-Credentials"] = false;
-        headers["Access-Control-Max-Age"] = '86400';
-        headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization";
-
-        res.writeHead(200, headers);
-        res.end();
+        return next();
     });
 };
 
