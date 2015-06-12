@@ -171,6 +171,7 @@ angular.module('kid')
   })
   .controller('archTransactionEditController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTransactionService, archCategoryService, archParticipantService, archTranslateService)
   {
+    $scope.allBeneficiaries = false;
     $scope.transaction = new Transaction();
 
     archSheetService.getCurrentSheet().then(function(sheet)
@@ -256,20 +257,40 @@ angular.module('kid')
         }
       });
 
-      Transaction.update({transaction:$scope.transaction}, function()
+      if($scope.transaction.trs_beneficiaries.length > 0)
       {
-        archTranslateService('TRANSACTION_EDIT_SUCCESS').then(function(translateValue)
+        Transaction.update({transaction:$scope.transaction}, function()
+        {
+          archTranslateService('TRANSACTION_EDIT_SUCCESS').then(function(translateValue)
+          {
+            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+            $state.go('sheet.transactions');
+          });
+        },
+        function()
+        {
+          archTranslateService('TRANSACTION_EDIT_FAIL').then(function(translateValue)
+          {
+            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          });
+        });
+      }
+      else
+      {
+        archTranslateService('TRANSACTION_NEW_FAIL_NO_BENEFICIARIES').then(function(translateValue)
         {
           $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          $state.go('sheet.transactions');
         });
-      },
-      function()
+      }
+    }
+
+    $scope.selectAllBeneficiaries = function()
+    {
+      $scope.allBeneficiaries = !$scope.allBeneficiaries;
+
+      angular.forEach($scope.beneficiaries, function(beneficiary)
       {
-        archTranslateService('TRANSACTION_EDIT_FAIL').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        });
+        beneficiary.isActive = $scope.allBeneficiaries;
       });
     }
   });
