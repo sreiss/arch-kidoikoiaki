@@ -69,6 +69,7 @@ angular.module('kid')
     TRANSACTION_HOW_MUCH : "How much ?",
     TRANSACTION_CATEGORY : "Catégory ?",
     TRANSACTION_WEIGHTS : "Weights ?",
+    TRANSACTION_SELECT_ALL_BENEFICIARIES : "Select all beneficiaries",
     TRANSACTION_SAVE : "Save",
     TRANSACTION_BACK : "Back",
     TRANSACTION_ERROR_GET_TRANSACTION : "An error occured while retrieving expense.",

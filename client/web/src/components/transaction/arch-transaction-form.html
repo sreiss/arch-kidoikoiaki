@@ -28,6 +28,18 @@
 </div>
 
 <div layout="column" class="margin-bottom-20" >
+  <div flex="50">
+    <md-card>
+      <div layout="row" >
+        <div>
+          <md-switch class="margin-top-25" ng-model="allBeneficiaries" ng-change="selectAllBeneficiaries()" ng-false-value="false" ng-true-value="true">
+            {{'TRANSACTION_SELECT_ALL_BENEFICIARIES' | translate}}
+          </md-switch>
+        </div>
+      </div>
+    </md-card>
+  </div>
+
   <div flex="50" ng-repeat="participant in participants">
     <md-card>
       <div layout="row" >

@@ -62,6 +62,7 @@ angular.module('kid')
   })
   .controller('archTransactionNewController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archParticipantService, archCategoryService, archTranslateService)
   {
+    $scope.allBeneficiaries = false;
     $scope.transaction = new Transaction();
 
     archSheetService.getCurrentSheet().then(function(sheet)
@@ -156,6 +157,16 @@ angular.module('kid')
           $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
         });
       }
+    }
+
+    $scope.selectAllBeneficiaries = function()
+    {
+      $scope.allBeneficiaries = !$scope.allBeneficiaries;
+
+      angular.forEach($scope.beneficiaries, function(beneficiary)
+      {
+        beneficiary.isActive = $scope.allBeneficiaries;
+      });
     }
   })
   .controller('archTransactionEditController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTransactionService, archCategoryService, archParticipantService, archTranslateService)

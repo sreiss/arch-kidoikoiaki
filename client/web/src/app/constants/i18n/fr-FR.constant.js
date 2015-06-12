@@ -69,6 +69,7 @@ angular.module('kid')
     TRANSACTION_HOW_MUCH : "Combien ?",
     TRANSACTION_CATEGORY : "Catégorie ?",
     TRANSACTION_WEIGHTS : "Parts ?",
+    TRANSACTION_SELECT_ALL_BENEFICIARIES : "Séléctionner tout les bénéficiaires",
     TRANSACTION_SAVE : "Valider",
     TRANSACTION_BACK : "Retour",
     TRANSACTION_ERROR_GET_TRANSACTION : "Une erreur est survenue à la récupération de la dépense.",
