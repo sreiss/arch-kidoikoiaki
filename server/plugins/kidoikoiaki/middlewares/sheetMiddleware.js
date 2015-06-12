@@ -34,20 +34,6 @@ module.exports = function() {
                 throw new ArchParameterError("Sheet name can't be empty.")
             }
 
-            // Sheet reference not empty.
-            var sheetReference = sheet.she_reference || '';
-            if(!validator.isLength(sheetReference, 5))
-            {
-                throw new ArchParameterError("Sheet reference must contain at least 5 chars.")
-            }
-
-            // Sheet email must valid.
-            var sheetEmail = sheet.she_email || '';
-            if(!validator.isEmail(sheetEmail))
-            {
-                throw new ArchParameterError("Sheet contact email isn't a valid mail address.")
-            }
-
             // Define sheet ip.
             req.body.she_ip = req.connection.remoteAddress;
 
@@ -64,20 +50,6 @@ module.exports = function() {
             if(!validator.isLength(sheetName, 1))
             {
                 throw new ArchParameterError("Sheet name can't be empty.")
-            }
-
-            // Sheet reference not empty.
-            var sheetReference = sheet.she_reference || '';
-            if(!validator.isLength(sheetReference, 5))
-            {
-                throw new ArchParameterError("Sheet reference must contain at least 5 chars.")
-            }
-
-            // Sheet email must valid.
-            var sheetEmail = sheet.she_email || '';
-            if(!validator.isEmail(sheetEmail))
-            {
-                throw new ArchParameterError("Sheet contact email isn't a valid mail address.")
             }
 
             next();

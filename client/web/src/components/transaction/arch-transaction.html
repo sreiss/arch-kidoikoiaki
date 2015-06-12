@@ -12,7 +12,7 @@
       <div>
         <div layout="row">
           <div flex="70">
-            <strong>{{transaction.trs_contributor.prt_lname}}</strong> {{'TRANSACTION_PAID' | translate}} {{transaction.trs_amount}} {{'TRANSACTION_CURRENCY' | translate}}
+            <strong>{{transaction.trs_contributor.prt_lname}}</strong> {{'TRANSACTION_PAID' | translate}} {{transaction.trs_amount | number:2}} {{'TRANSACTION_CURRENCY' | translate}}
           </div>
           <div flex>
             <span class="pull-right">{{transaction.trs_creation_date | date:'dd/MM/yyyy'}}</span>

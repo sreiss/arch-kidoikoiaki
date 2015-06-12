@@ -33,11 +33,7 @@ angular.module('kid')
 
         var sheetId = $stateParams.idSheet || '';
 
-        if(sheetId.length === 0)
-        {
-          deferred.reject(new Error());
-        }
-        else
+        if(sheetId.length > 0)
         {
           Sheet.get({id: sheetId}, function(result)
           {
@@ -54,6 +50,10 @@ angular.module('kid')
           {
             deferred.reject(responseError);
           });
+        }
+        else
+        {
+          deferred.reject(new Error());
         }
 
         return deferred.promise;

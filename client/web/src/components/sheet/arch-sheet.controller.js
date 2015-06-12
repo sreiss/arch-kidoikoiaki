@@ -13,9 +13,14 @@ angular.module('kid')
       $state.go('sheet.sheetEdit', {'idSheet' : id});
     };
   })
-  .controller('archSheetNewController', function($scope, $location, $mdToast, Sheet, $stateParams, $state, archTranslateService)
+  .controller('archSheetNewController', function($scope, $location, $mdToast, Sheet, $stateParams, $state, archTranslateService, httpConstant)
   {
     $scope.sheet = new Sheet();
+
+    $scope.updateReference = function()
+    {
+      $scope.sheet.she_reference = $scope.sheet.she_name.replace(/[^\w]/gi, '');
+    }
 
     $scope.sanitizeReference = function()
     {
@@ -24,7 +29,7 @@ angular.module('kid')
 
     $scope.newSheet = function()
     {
-      $scope.sheet.she_path = $state.href('home', {}, {absolute: true}) + 'sheet/' + $scope.sheet.she_reference + '/';
+      $scope.sheet.she_path = httpConstant.clientUrl;
 
       $scope.sheet.$save(function(result)
       {

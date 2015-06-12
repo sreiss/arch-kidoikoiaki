@@ -70,10 +70,8 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                             }
                         }
 
-                        results.push({participant :currentPersonne, amount : parseFloat(take - give).toFixed(2)});
+                        results.push({participant :currentPersonne, amount : parseFloat(take - give)});
                     }
-
-                    // Algo #2
 
                     // Useless to sort ?
                     results = results.sort(function(a,b)
@@ -127,8 +125,8 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             {
                 for(var u = 0; u < takers.length; u++)
                 {
-                    var giverAmountAbs = Math.abs(parseFloat(givers[i].amount).toFixed(2));
-                    var takerAmountAbs = Math.abs(parseFloat(takers[u].amount).toFixed(2));
+                    var giverAmountAbs = Math.abs(parseFloat(givers[i].amount));
+                    var takerAmountAbs = Math.abs(parseFloat(takers[u].amount));
 
                     if(giverAmountAbs == takerAmountAbs)
                     {
@@ -158,7 +156,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                 }
             }
 
-            if(givers.length > 0 || takers.length > 0)
+            if(givers.length > 0 && takers.length > 0)
             {
                 bilanService.testProvide(givers, takers, sheetId).then(function()
                 {
@@ -192,8 +190,8 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                     for(var u = 0; u < takers.length; u++)
                     {
                         var debt = new Debt();
-                        var giverAmountAbs = Math.abs(parseFloat(givers[i].amount).toFixed(2));
-                        var takerAmountAbs = Math.abs(parseFloat(takers[u].amount).toFixed(2));
+                        var giverAmountAbs = Math.abs(parseFloat(givers[i].amount));
+                        var takerAmountAbs = Math.abs(parseFloat(takers[u].amount));
 
                         if(giverAmountAbs < takerAmountAbs)
                         {
@@ -212,7 +210,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                             debt.dbt_taker = takers[u].participant._id;
                             debt.dbt_amount = takerAmountAbs;
 
-                            givers[u].amount = giverAmountAbs - takerAmountAbs;
+                            givers[i].amount = giverAmountAbs - takerAmountAbs;
                             takers.splice(u, 1);
                         }
 
@@ -220,8 +218,8 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         {
                             for(var uu = 0; uu < takers.length; uu++)
                             {
-                                var giverAmountAbs = Math.abs(parseFloat(givers[ii].amount).toFixed(2));
-                                var takerAmountAbs = Math.abs(parseFloat(takers[uu].amount).toFixed(2));
+                                var giverAmountAbs = Math.abs(parseFloat(givers[ii].amount));
+                                var takerAmountAbs = Math.abs(parseFloat(takers[uu].amount));
 
                                 if(giverAmountAbs == takerAmountAbs)
                                 {
@@ -232,25 +230,28 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                         if(err)
                                         {
                                             deferred.reject(err);
+                                            return;
                                         }
                                         else
                                         {
                                             console.log('New debt saved (' + debt.dbt_amount + '€)');
 
-                                            if(givers.length > 0 || takers.length > 0)
+                                            if(givers.length > 0 && takers.length > 0)
                                             {
                                                 bilanService.testEqual(givers, takers, sheetId).then(function(result)
                                                 {
                                                     deferred.resolve(result);
+                                                    return;
                                                 })
                                                 .catch(function(err)
                                                 {
                                                     deferred.reject(err);
+                                                    return;
                                                 });
                                             }
                                             else
                                             {
-                                                return;
+                                              return;
                                             }
                                         }
                                     });
@@ -261,7 +262,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                 }
             })();
 
-            if(!status && (givers.length > 0 || takers.length > 0))
+            if(!status && (givers.length > 0 && takers.length > 0))
             {
                 bilanService.noOptimisation(tmpGivers, tmpTakers, sheetId).then(function(result)
                 {
@@ -290,8 +291,8 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                 {
                     for(var u = 0; u < takers.length; u++)
                     {
-                        var giverAmountAbs = Math.abs(parseFloat(givers[i].amount).toFixed(2));
-                        var takerAmountAbs = Math.abs(parseFloat(takers[u].amount).toFixed(2));
+                        var giverAmountAbs = Math.abs(parseFloat(givers[i].amount));
+                        var takerAmountAbs = Math.abs(parseFloat(takers[u].amount));
 
                         if(giverAmountAbs < takerAmountAbs)
                         {
@@ -320,42 +321,48 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         }
                         else if(giverAmountAbs > takerAmountAbs)
                         {
-                            var newDebt = new Debt(
+                            var debt = new Debt(
                             {
                                 dbt_sheet: sheetId,
-                                dbt_giver: givers[i][0]._id,
-                                dbt_taker: takers[u][0]._id,
+                                dbt_giver: givers[i].participant._id,
+                                dbt_taker: takers[u].participant._id,
                                 dbt_amount: takerAmountAbs
                             });
 
-                            newDebt.save(function(err)
+                            debt.save(function(err)
                             {
-                                deferred.reject(err);
+                                if(err)
+                                {
+                                    deferred.reject(err);
+                                }
+                                else
+                                {
+                                    console.log('New debt saved (' + debt.dbt_amount + '€)');
+                                }
                             });
 
                             givers[i].amount = giverAmountAbs - takerAmountAbs;
                             takers.splice(u, 1);
                         }
-
-                        if(givers.length > 0 || takers.length > 0)
-                        {
-                            bilanService.testEqual(givers, takers, sheetId).then(function(result)
-                            {
-                                deferred.resolve(result);
-                            })
-                            .catch(function(err)
-                            {
-                                deferred.reject(err);
-                            });
-                        }
-                        else
-                        {
-                            deferred.resolve(true);
-                            return;
-                        }
                     }
                 }
             })();
+
+            if(givers.length > 0 && takers.length > 0)
+            {
+                bilanService.testEqual(givers, takers, sheetId).then(function(result)
+                {
+                    deferred.resolve(result);
+                })
+                .catch(function(err)
+                {
+                    deferred.reject(err);
+                });
+            }
+            else
+            {
+                deferred.resolve(true);
+            }
 
             return deferred.promise;
         }

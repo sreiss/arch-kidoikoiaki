@@ -7,7 +7,7 @@
       </md-button>
     </a>
   </md-item>
-  <md-item>
+  <md-item ng-show="sheetExists">
     <a ui-sref="sheet.participants">
       <md-button class="side-list">
         <i class="fa fa-users"></i>
@@ -15,7 +15,7 @@
       </md-button>
     </a>
   </md-item>
-  <md-item>
+  <md-item ng-show="sheetExists">
     <a ui-sref="sheet.transactions">
       <md-button class="side-list">
         <i class="fa fa-exchange"></i>
@@ -23,7 +23,7 @@
       </md-button>
     </a>
   </md-item>
-  <md-item>
+  <md-item ng-show="sheetExists">
     <a ui-sref="sheet.categories" uis>
       <md-button class="side-list">
         <i class="fa fa-folder"></i>
@@ -31,7 +31,7 @@
       </md-button>
     </a>
   </md-item>
-  <md-item>
+  <md-item ng-show="sheetExists">
     <a ui-sref="sheet.bilan">
       <md-button class="side-list">
         <i class="fa fa-pie-chart"></i>

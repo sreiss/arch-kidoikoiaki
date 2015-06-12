@@ -5,9 +5,10 @@
  * @copyright ArchTailors 2015
  */
     
-var Q = require('q');
-var nodemailer = require('nodemailer');
-var smtpTransport = require('nodemailer-smtp-transport');
+var Q = require('q'),
+    nodemailer = require('nodemailer'),
+    smtpTransport = require('nodemailer-smtp-transport'),
+    uuid = require('uuid-v4');
 
 module.exports = function(Sheet, sheetService, config)
 {
@@ -16,6 +17,11 @@ module.exports = function(Sheet, sheetService, config)
         saveSheet: function(sheetData)
         {
             var deferred = Q.defer();
+
+            if(sheetData.she_reference.length == 0)
+            {
+                sheetData.she_reference = uuid() + '_' + new Date().getTime();
+            }
 
             sheetService.getSheet(sheetData.she_reference).then(function(sheet)
             {
@@ -195,7 +201,7 @@ module.exports = function(Sheet, sheetService, config)
                 subject: "archKidoikoiaki - Création d'une nouvelle feuille ✔",
                 html:   'Bonjour,<br><br>' +
                 'Votre nouvelle feuille <b>' + sheetData.she_name + '</b> a été créée avec succés.<br>' +
-                "Vous pouvez la consulter et la partager à n'importer quel moment à l'adresse suivante : <a href='" + sheetData.she_path + "'>" + sheetData.she_reference + "</a>.<br><br>" +
+                "Vous pouvez la consulter et la partager à n'importer quel moment à l'adresse suivante : <a href='" + sheetData.she_path + '/#/sheet/' + sheetData.she_reference + '/' +  "'>" + sheetData.she_reference + "</a>.<br><br>" +
                 "L'équipe vous remercie et vous souhaite une bonne visite.<br>" +
                 '__<br>Ceci est un message automatique, merci de ne pas y répondre.'
             };

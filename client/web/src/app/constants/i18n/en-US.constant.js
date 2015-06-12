@@ -16,7 +16,7 @@ angular.module('kid')
     SHEET_NEW_BUTTON : "New sheet",
     SHEET_NEW_TITLE : "Add new sheet",
     SHEET_TITLE : "Name",
-    SHEET_REFERENCE : "Reference",
+    SHEET_REFERENCE : "Reference (optional)",
     SHEET_MAIL_ADDRESS : "Mail address",
     SHEET_SAVE : "Save",
     SHEET_EDIT_TITLE : "Edit existing sheet",

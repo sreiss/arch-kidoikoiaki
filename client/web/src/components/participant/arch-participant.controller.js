@@ -101,7 +101,7 @@ angular.module('kid')
       $state.go('sheet.participantEdit', {'idParticipant' : id});
     };
   })
-  .controller('archParticipantNewController', function ($scope, Participant, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTranslateService)
+  .controller('archParticipantNewController', function ($scope, Participant, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTranslateService, httpConstant)
   {
     $scope.participant = new Participant();
 
@@ -109,7 +109,7 @@ angular.module('kid')
     {
       $scope.participant.prt_sheet = sheet._id;
       $scope.participant.prt_notified = false;
-      $scope.participant.she_path = $state.href('home', {}, {absolute: true}) + 'sheet/' + sheet.she_reference + '/';
+      $scope.participant.she_path = httpConstant.clientUrl;
     })
     .catch(function()
     {

@@ -36,13 +36,6 @@ module.exports = function() {
                 throw new ArchParameterError("Participant last name must contain at least 3 chars.")
             }
 
-            // Check participant email.
-            var participantEmail = participantData.prt_email || '';
-            if(!validator.isEmail(participantEmail))
-            {
-                throw new ArchParameterError("Participant email isn't a valid mail address.")
-            }
-
             // Check participant share.
             var participantShare = participantData.prt_share || '';
             if(!validator.isInt(participantShare) || participantShare <= 0)
@@ -77,13 +70,6 @@ module.exports = function() {
             if(!validator.isLength(participantLastName, 3))
             {
                 throw new ArchParameterError("Participant last name must contain at least 3 chars.")
-            }
-
-            // Check participant email.
-            var participantEmail = participantData.prt_email || '';
-            if(!validator.isEmail(participantEmail))
-            {
-                throw new ArchParameterError("Participant email isn't a valid mail address.")
             }
 
             // Check participant share.
