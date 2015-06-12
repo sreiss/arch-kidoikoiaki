@@ -56,11 +56,9 @@ angular.module('kid')
       {
         var deferred = $q.defer();
 
-        var repartitions = new Array();
-
-        var chart = {
-          option:
-          {
+        var chart =
+        {
+          options: {
             chart: {
               type: 'column'
             }
@@ -75,7 +73,6 @@ angular.module('kid')
             enabled: false
           },
           series: [{
-            name: 'Balance',
             data: [45, -35, -15, 5]
           }]
         }
