@@ -69,7 +69,7 @@ angular.module('kid')
       showDeleteDialog: function(transactionId)
       {
         return $mdDialog.show({
-          templateUrl: 'components/category/arch-transaction-delete-dialog.html',
+          templateUrl: 'components/transaction/arch-transaction-delete-dialog.html',
           controller: function ($scope, archTransactionService, archTranslateService)
           {
             $scope.transactionId = transactionId;
