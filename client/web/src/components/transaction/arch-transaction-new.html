@@ -2,6 +2,6 @@
 
 <md-button class="md-raised" ui-sref="sheet.transactions">{{'TRANSACTION_BACK' | translate}}</md-button>
 
-<form  role="form" ng-submit="newTransaction()">
+<form name="transactionForm" role="form" ng-submit="newTransaction()">
   <div ng-include="'components/transaction/arch-transaction-form.html'"></div>
 </form>

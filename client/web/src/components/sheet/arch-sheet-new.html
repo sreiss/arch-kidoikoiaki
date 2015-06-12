@@ -1,7 +1,7 @@
 <h1>{{'SHEET_NEW_TITLE' | translate}}</h1>
 <md-button class="md-raised" ui-sref="sheet.home">{{'SHEET_BACK' | translate}}</md-button>
 
-<form  role="form" ng-submit="newSheet()">
+<form name="sheetForm" role="form" ng-submit="newSheet()">
   <div layout="column">
     <div layout="row">
       <md-icon class="fa fa-folder"></md-icon>
@@ -26,6 +26,6 @@
     </div>
   </div>
   <div class="md-actions" layout="row">
-    <md-button class="md-raised md-accent" type="submit">{{'SHEET_SAVE' | translate}}</md-button>
+    <md-button class="md-raised md-accent" type="submit" ng-disabled="sheetForm.$invalid">{{'SHEET_SAVE' | translate}}</md-button>
   </div>
 </form>

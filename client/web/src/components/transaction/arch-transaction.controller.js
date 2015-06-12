@@ -131,21 +131,31 @@ angular.module('kid')
         }
       });
 
-      $scope.transaction.$save(function()
+      if($scope.transaction.trs_beneficiaries.length > 0)
       {
-        archTranslateService('TRANSACTION_NEW_SUCCESS').then(function(translateValue)
+        $scope.transaction.$save(function()
+        {
+          archTranslateService('TRANSACTION_NEW_SUCCESS').then(function(translateValue)
+          {
+            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+            $state.go('sheet.transactions');
+          });
+        },
+        function()
+        {
+          archTranslateService('TRANSACTION_NEW_FAIL').then(function(translateValue)
+          {
+            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+          });
+        })
+      }
+      else
+      {
+        archTranslateService('TRANSACTION_NEW_FAIL_NO_BENEFICIARIES').then(function(translateValue)
         {
           $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          $state.go('sheet.transactions');
         });
-      },
-      function()
-      {
-        archTranslateService('TRANSACTION_NEW_FAIL').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        });
-      })
+      }
     }
   })
   .controller('archTransactionEditController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTransactionService, archCategoryService, archParticipantService, archTranslateService)

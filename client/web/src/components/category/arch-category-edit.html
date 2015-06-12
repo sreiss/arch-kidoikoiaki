@@ -1,6 +1,6 @@
 <h1>{{'CATEGORY_EDIT_TITLE' | translate}}</h1>
 <md-button class="md-raised" ui-sref="sheet.categories">{{'CATEGORY_BACK' | translate}}</md-button>
 
-<form  role="form" ng-submit="editCategory()">
+<form name="categoryForm" role="form" ng-submit="editCategory()">
   <div ng-include="'components/category/arch-category-form.html'"></div>
 </form>
