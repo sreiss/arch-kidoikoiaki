@@ -1,0 +1,18 @@
+<md-dialog>
+  <md-content>
+    <md-subheader class="md-sticky-no-effect">{{'TRANSACTION_DELETE_MODAL_TITLE' | translate}}</md-subheader>
+
+    <ng-form name="deleteTransactionForm">
+      <p class="contentDeleteModal">{{'TRANSACTION_DELETE_MODAL_ASK' | translate}}</p>
+    </ng-form>
+  </md-content>
+
+  <div class="md-actions" layout="row">
+    <md-button ng-click="cancel()">
+      {{'TRANSACTION_BACK' | translate}}
+    </md-button>
+    <md-button ng-click="deleteTransaction()" class="md-primary">
+      {{'TRANSACTION_SAVE' | translate}}
+    </md-button>
+  </div>
+</md-dialog>

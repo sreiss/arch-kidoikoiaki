@@ -30,29 +30,9 @@ angular.module('kid')
       });
     });
 
-    $scope.deleteTransaction = function(id)
+    $scope.deleteTransaction = function(transactionId)
     {
-      archTranslateService('TRANSACTION_DELETE_CONFIRM').then(function(translateValue)
-      {
-        if(confirm(translateValue))
-        {
-          archTransactionService.deleteTransaction(id).then(function()
-          {
-            archTranslateService('TRANSACTION_DELETE_SUCCESS').then(function(translateValue)
-            {
-              $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-              $state.go($state.current, {}, {reload: true});
-            });
-          })
-          .catch(function()
-          {
-            archTranslateService('TRANSACTION_DELETE_FAIL').then(function(translateValue)
-            {
-              $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-            });
-          });
-        }
-      });
+      archTransactionService.showDeleteDialog(transactionId);
     };
 
     $scope.editTransaction = function(id)

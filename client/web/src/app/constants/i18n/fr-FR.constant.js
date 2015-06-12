@@ -80,9 +80,10 @@ angular.module('kid')
     TRANSACTION_EDIT_SUCCESS : "Dépense modifiée avec succès.",
     TRANSACTION_EDIT_FAIL : "Une erreur est survenue à la modification de la dépense.",
     TRANSACTION_EDIT_FAIL_NO_BENEFICIARIES : "Veuillez séléctionner au moins un bénéficiaire.",
-    TRANSACTION_DELETE_CONFIRM : "Souhaitez-vous réellement supprimer cette dépense ?",
     TRANSACTION_DELETE_SUCCESS : "Dépense supprimée avec succès.",
     TRANSACTION_DELETE_FAIL : "Une erreur est survenue à la suppression de la dépense.",
+    TRANSACTION_DELETE_MODAL_TITLE : "Suppression d'une dépense",
+    TRANSACTION_DELETE_MODAL_ASK : "Souhaitez-vous réellement supprimer cette dépense ?",
 
     CATEGORY_TITLE : "Catégories",
     CATEGORY_NEW_BUTTON : "Nouvelle catégorie",

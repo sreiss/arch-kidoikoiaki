@@ -47,8 +47,6 @@ angular.module('kid')
       {
         var deferred = $q.defer();
 
-        console.log(id);
-
         Category.delete({id: id}, function(result)
         {
           if(result.count > 0)
@@ -97,8 +95,8 @@ angular.module('kid')
                    {
                      archTranslateService('CATEGORY_DELETE_SUCCESS').then(function(translateValue)
                      {
-                        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                        $state.go($state.current, {}, {reload: true});
+                       $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
+                       $state.go($state.current, {}, {reload: true});
                      });
                    })
                    .catch(function()
@@ -124,6 +122,8 @@ angular.module('kid')
                    $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
                  });
                });
+
+              $mdDialog.cancel();
             };
 
             $scope.cancel = function()

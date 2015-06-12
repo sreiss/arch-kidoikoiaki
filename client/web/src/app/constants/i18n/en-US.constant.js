@@ -80,9 +80,10 @@ angular.module('kid')
     TRANSACTION_EDIT_SUCCESS : "Expense successfully edited.",
     TRANSACTION_EDIT_FAIL : "An error occured while editing existing expense.",
     TRANSACTION_EDIT_FAIL_NO_BENEFICIARIES : "Please select at least one beneficiary.",
-    TRANSACTION_DELETE_CONFIRM : "Do you really want to delete this expense ?",
     TRANSACTION_DELETE_SUCCESS : "Exense successfully deleted.",
     TRANSACTION_DELETE_FAIL : "An error occured while deleting expense.",
+    TRANSACTION_DELETE_MODAL_TITLE : "Delete an expense",
+    TRANSACTION_DELETE_MODAL_ASK : "Do you really want to delete this expense ?",
 
     CATEGORY_TITLE : "Categories",
     CATEGORY_NEW_BUTTON : "New category",
