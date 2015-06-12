@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('kid')
-  .factory('archCategoryService', function(Category, Categories, archHttpService, $q)
+  .factory('archCategoryService', function(Category, Categories, archHttpService, $q, $state, $mdToast, $mdDialog)
   {
     return {
       getCategory: function(id)
@@ -72,7 +72,7 @@ angular.module('kid')
       {
         return $mdDialog.show({
           templateUrl: 'components/category/arch-category-delete-dialog.html',
-          controller: function($scope, $state, archCategoryService, $mdToast, $mdDialog, archTransactionService, archTranslateService)
+          controller: function($scope, archCategoryService, archTransactionService, archTranslateService)
           {
             $scope.sheetId = sheetId;
             $scope.categoryId = categoryId;
