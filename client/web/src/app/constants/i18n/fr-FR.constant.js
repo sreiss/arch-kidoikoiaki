@@ -48,11 +48,12 @@ angular.module('kid')
     PARTICIPANT_NEW_FAIL : "Une erreur est survenue à la création du participant.",
     PARTICIPANT_EDIT_SUCCESS : "Participant modifié avec succès.",
     PARTICIPANT_EDIT_FAIL : "Une erreur est survenue à la modification du participant.",
-    PARTICIPANT_DELETE_CONFIRM : "Souhaitez-vous réellement supprimer ce participant ?",
     PARTICIPANT_DELETE_SUCCESS : "Participant supprimé avec succès.",
     PARTICIPANT_DELETE_FAIL : "Une erreur est survenue à la suppression de ce participant.",
     PARTICIPANT_DELETE_FAIL_LINKED : "Impossible de supprimer ce participant, celui-ci est lié à une dépense.",
     PARTICIPANT_DELETE_FAIL_CHECK_DEPENDENCIES : "Une erreur est survenue lors de la vérification des dépendances.",
+    PARTICIPANT_DELETE_MODAL_TITLE : "Suppression d'un participant",
+    PARTICIPANT_DELETE_MODAL_ASK : "Souhaitez-vous réellement supprimer ce participant ?",
 
     TRANSACTION_TITLE : "Dépenses",
     TRANSACTION_NEW_BUTTON : "Nouvelle dépense",

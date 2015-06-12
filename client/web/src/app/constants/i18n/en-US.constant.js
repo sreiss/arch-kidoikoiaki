@@ -48,11 +48,12 @@ angular.module('kid')
     PARTICIPANT_NEW_FAIL : "An error occured while creating new participant.",
     PARTICIPANT_EDIT_SUCCESS : "Participant successfully edited.",
     PARTICIPANT_EDIT_FAIL : "An error occured while editing existing participant.",
-    PARTICIPANT_DELETE_CONFIRM : "Do you really want to delete this participant ?",
     PARTICIPANT_DELETE_SUCCESS : "Participant successfully deleted.",
     PARTICIPANT_DELETE_FAIL : "An error occured while deleting participant.",
     PARTICIPANT_DELETE_FAIL_LINKED : "Unable to delete this participant, he's linked to an expense.",
     PARTICIPANT_DELETE_FAIL_CHECK_DEPENDENCIES : "An error occurred while checking dependencies.",
+    PARTICIPANT_DELETE_MODAL_TITLE : "Delete a participant",
+    PARTICIPANT_DELETE_MODAL_ASK : "Do you really want to delete this participant ?",
 
     TRANSACTION_TITLE : "Expenses",
     TRANSACTION_NEW_BUTTON : "New expense",
