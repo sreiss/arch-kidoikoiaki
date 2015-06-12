@@ -73,6 +73,7 @@ angular.module('kid')
             enabled: false
           },
           series: [{
+            name: ''
             data: [45, -35, -15, 5]
           }]
         }
