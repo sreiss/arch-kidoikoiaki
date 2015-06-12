@@ -364,3 +364,9 @@ blockquote {
   left:40px;
   top:16px;
 }
+
+.contentDeleteModal
+{
+  padding-left: 50px;
+  padding-right: 50px;
+}

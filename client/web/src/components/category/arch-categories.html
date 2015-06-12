@@ -19,7 +19,7 @@
       <td>{{category.ctg_description}}</td>
       <td class="text-right" ng-hide="!category.ctg_sheet">
         <a href="#"><md-icon class="fa fa-pencil-square-o" ng-click="editCategory(category._id)"></md-icon></a>
-        <a href="#"><md-icon class="fa fa-trash" ng-click="deleteCategory(category._id)"></md-icon></a>
+        <a href="#"><md-icon class="fa fa-trash" ng-click="deleteCategory(sheet._id, category._id)"></md-icon></a>
       </td>
       <td class="text-right" ng-show="!category.ctg_sheet">
         <b>G</b>

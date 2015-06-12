@@ -99,11 +99,12 @@ angular.module('kid')
     CATEGORY_NEW_FAIL : "An error occured while creating new category.",
     CATEGORY_EDIT_SUCCESS : "Category successfully edited.",
     CATEGORY_EDIT_FAIL : "An error occured while editing existing category.",
-    CATEGORY_DELETE_CONFIRM : "Do you really want to delete this category ?",
     CATEGORY_DELETE_SUCCESS : "Category successfully deleted.",
     CATEGORY_DELETE_FAIL : "An error occured while deleting category.",
     CATEGORY_DELETE_FAIL_LINKED : "Unable to delete this category, he's linked to an expense.",
     CATEGORY_DELETE_FAIL_CHECK_DEPENDENCIES : "An error occurred while checking dependencies.",
+    CATEGORY_DELETE_MODAL_TITLE : "Delete a category",
+    CATEGORY_DELETE_MODAL_ASK : "Do you really want to delete this category ?",
 
     BILAN_TITLE : "Balance",
     BILAN_EMPTY_LIST : "You have no expense yet.",

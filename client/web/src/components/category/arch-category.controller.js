@@ -30,59 +30,9 @@ angular.module('kid')
       });
     });
 
-    $scope.deleteCategory = function(id)
+    $scope.deleteCategory = function(sheetId, categoryId)
     {
-      archTranslateService('CATEGORY_DELETE_CONFIRM').then(function(translateValue)
-      {
-        if(confirm(translateValue))
-        {
-          var isLinked = false;
-
-          archTransactionService.getTransactions($scope.sheet._id).then(function(transactions)
-          {
-            transactions.forEach(function(transaction)
-            {
-              if(transaction.trs_category._id == id)
-              {
-                isLinked = true;
-              }
-            });
-
-            if(!isLinked)
-            {
-              archCategoryService.deleteCategory(id).then(function()
-              {
-                archTranslateService('CATEGORY_DELETE_SUCCESS').then(function(translateValue)
-                {
-                  $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                  $state.go($state.current, {}, {reload: true});
-                });
-              })
-              .catch(function()
-              {
-                archTranslateService('CATEGORY_DELETE_FAIL').then(function(translateValue)
-                {
-                  $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                });
-              });
-            }
-            else
-            {
-              archTranslateService('CATEGORY_DELETE_FAIL_LINKED').then(function(translateValue)
-              {
-                $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-              });
-            }
-          })
-          .catch(function()
-          {
-            archTranslateService('CATEGORY_DELETE_FAIL_CHECK_DEPENDENCIES').then(function(translateValue)
-            {
-              $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-            });
-          });
-        }
-      });
+      archCategoryService.showDeleteDialog(sheetId, categoryId);
     };
 
     $scope.editCategory = function(id)

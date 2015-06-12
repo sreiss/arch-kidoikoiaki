@@ -99,11 +99,12 @@ angular.module('kid')
     CATEGORY_NEW_FAIL : "Une erreur est survenue à la création de la catégorie.",
     CATEGORY_EDIT_SUCCESS : "Catégorie modifiée avec succès.",
     CATEGORY_EDIT_FAIL : "Une erreur est survenue à la modification de la catégorie.",
-    CATEGORY_DELETE_CONFIRM : "Souhaitez-vous réellement supprimer cette catégorie ?",
     CATEGORY_DELETE_SUCCESS : "Catégorie supprimée avec succès.",
     CATEGORY_DELETE_FAIL : "Une erreur est survenue à la suppression de la catégorie.",
     CATEGORY_DELETE_FAIL_LINKED : "Impossible de supprimer cette catégorie, celle-ci est liée à une dépense.",
     CATEGORY_DELETE_FAIL_CHECK_DEPENDENCIES : "Une erreur est survenue lors de la vérification des dépendances.",
+    CATEGORY_DELETE_MODAL_TITLE : "Suppression d'une catégorie",
+    CATEGORY_DELETE_MODAL_ASK : "Souhaitez-vous réellement supprimer cette catégorie ?",
 
     BILAN_TITLE : "Bilan",
     BILAN_EMPTY_LIST : "Vous n'avez à ce jour aucune dette.",
