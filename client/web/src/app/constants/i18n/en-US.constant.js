@@ -60,6 +60,8 @@ angular.module('kid')
     TRANSACTION_NEW_TITLE : "Add new expense",
     TRANSACTION_EDIT_TITLE : "Edit existing expense",
     TRANSACTION_EMPTY_LIST : "You have no expense yet.",
+    TRANSACTION_LIST : "List",
+    TRANSACTION_REPARTITION : "Repartition",
     TRANSACTION_PAID : "paid",
     TRANSACTION_CURRENCY : "$",
     TRANSACTION_IN : "in",
@@ -109,6 +111,8 @@ angular.module('kid')
     CATEGORY_DELETE_MODAL_ASK : "Do you really want to delete this category ?",
 
     BILAN_TITLE : "Balance",
+    BILAN_LIST : "List",
+    BILAN_BALANCE : "Balance",
     BILAN_EMPTY_LIST : "You have no expense yet.",
     BILAN_MUST_PAY : "must paid",
     BILAN_CURRENCY : "$",

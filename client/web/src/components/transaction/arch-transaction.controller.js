@@ -10,6 +10,11 @@ angular.module('kid')
       archTransactionService.getTransactions(sheet._id).then(function(transactions)
       {
         $scope.transactions = transactions;
+
+        archTransactionService.getRepartitionChart(sheet._id, transactions).then(function(chart)
+        {
+          $scope.repartitionChart = chart;
+        })
       })
       .catch(function()
       {

@@ -1,13 +1,26 @@
 <h1>{{'BILAN_TITLE' | translate}}</h1>
 
-<div layout="row" class="table-transactions">
-  <p ng-hide="debts.length">{{'BILAN_EMPTY_LIST' | translate}}</p>
+<div layout="row" class="table-bilan">
+  <md-tabs md-dynamic-height md-border-bottom class="width-100-PC">
+    <md-tab label="{{'BILAN_LIST' | translate}}" >
+      <md-content class="md-padding">
+        <p ng-hide="debts.length">{{'BILAN_EMPTY_LIST' | translate}}</p>
 
-  <ul class="collection" ng-show="debts.length">
-    <li class="collection-item" ng-repeat="debt in debts">
-        <blockquote>
-          <strong>{{debt.dbt_giver.prt_lname }}</strong> {{'BILAN_MUST_PAY' | translate}} {{debt.dbt_amount | number:2}} {{'BILAN_CURRENCY' | translate}} {{'BILAN_TO' | translate}} <strong>{{debt.dbt_taker.prt_lname}}</strong>
-        </blockquote>
-    </li>
-  </ul>
+        <ul class="collection" ng-show="debts.length">
+          <li class="collection-item" ng-repeat="debt in debts">
+            <blockquote>
+              <strong>{{debt.dbt_giver.prt_lname }}</strong> {{'BILAN_MUST_PAY' | translate}} {{debt.dbt_amount | number:2}} {{'BILAN_CURRENCY' | translate}} {{'BILAN_TO' | translate}} <strong>{{debt.dbt_taker.prt_lname}}</strong>
+            </blockquote>
+          </li>
+        </ul>
+      </md-content>
+    </md-tab>
+
+    <md-tab label="{{'BILAN_BALANCE' | translate}}">
+      <md-content class="md-padding">
+        <p ng-hide="debts.length">{{'BILAN_EMPTY_LIST' | translate}}</p>
+        <highchart ng-show="debts.length" id="balanceChart" config="balanceChart"></highchart>
+      </md-content>
+    </md-tab>
+  </md-tabs>
 </div>

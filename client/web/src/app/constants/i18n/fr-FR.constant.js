@@ -59,6 +59,8 @@ angular.module('kid')
     TRANSACTION_NEW_BUTTON : "Nouvelle dépense",
     TRANSACTION_NEW_TITLE : "Ajout d'une dépense",
     TRANSACTION_EDIT_TITLE : "Modification d'une dépense",
+    TRANSACTION_LIST : "Liste",
+    TRANSACTION_REPARTITION : "Répartition",
     TRANSACTION_EMPTY_LIST : "Vous n'avez à ce jour ajouté aucune dépense.",
     TRANSACTION_PAID : "a dépensé",
     TRANSACTION_CURRENCY : "€",
@@ -109,6 +111,8 @@ angular.module('kid')
     CATEGORY_DELETE_MODAL_ASK : "Souhaitez-vous réellement supprimer cette catégorie ?",
 
     BILAN_TITLE : "Bilan",
+    BILAN_LIST : "Liste",
+    BILAN_BALANCE : "Balance",
     BILAN_EMPTY_LIST : "Vous n'avez à ce jour aucune dette.",
     BILAN_MUST_PAY : "doit",
     BILAN_CURRENCY : "€",

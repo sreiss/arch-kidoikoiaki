@@ -50,6 +50,36 @@ angular.module('kid')
         });
 
         return deferred.promise;
+      },
+
+      getBalanceChart: function(sheetId)
+      {
+        var deferred = $q.defer();
+
+        var repartitions = new Array();
+
+        var chart = {
+          chart: {
+            type: 'column'
+          },
+          title: {
+            text: 'Balance des participants'
+          },
+          xAxis: {
+            categories: ['Pierre', 'Cédric', 'Benoît', 'Pascal']
+          },
+          credits: {
+            enabled: false
+          },
+          series: [{
+            name: 'Balance',
+            data: [45, -35, -15, 5]
+          }]
+        }
+
+        deferred.resolve(chart);
+
+        return deferred.promise;
       }
     };
   });

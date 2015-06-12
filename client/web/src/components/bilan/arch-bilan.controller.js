@@ -14,6 +14,11 @@ angular.module('kid')
           archBilanService.getDebts(sheet._id).then(function(debts)
           {
             $scope.debts = debts;
+
+            archTransactionService.getRepartitionChart(sheet._id, debts).then(function(chart)
+            {
+              $scope.balanceChart = chart;
+            })
           })
           .catch(function()
           {
