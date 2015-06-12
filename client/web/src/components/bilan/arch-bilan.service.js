@@ -59,11 +59,14 @@ angular.module('kid')
         var repartitions = new Array();
 
         var chart = {
-          chart: {
-            type: 'column'
+          option:
+          {
+            chart: {
+              type: 'column'
+            }
           },
           title: {
-            text: 'Balance des participants'
+            text: ''
           },
           xAxis: {
             categories: ['Pierre', 'Cédric', 'Benoît', 'Pascal']
