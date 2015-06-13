@@ -73,12 +73,6 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         results.push({participant :currentPersonne, amount : parseFloat(take - give)});
                     }
 
-                    // Useless to sort ?
-                    results = results.sort(function(a,b)
-                    {
-                        return a.amount - b.amount;
-                    });
-
                     // Distinct giver & taker.
                     var givers = new Array();
                     var takers = new Array();
@@ -94,6 +88,9 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                             takers.push(result);
                         }
                     });
+
+                    console.log(givers);
+                    console.log(takers);
 
                     bilanService.testEqual(givers, takers, sheetId).then(function()
                     {

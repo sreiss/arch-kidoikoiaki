@@ -2,7 +2,7 @@
   <div layout="row">
       <md-icon class="fa fa-user"></md-icon>
       <md-select ng-model="transaction.trs_contributor._id" placeholder="{{'TRANSACTION_WHO' | translate}}" class="select-add" flex required="true">
-        <md-option ng-repeat="participant in participants" value="{{participant._id}}">{{participant.prt_lname}}</md-option>
+        <md-option ng-repeat="participant in participants" value="{{participant._id}}">{{participant.prt_fname}}</md-option>
       </md-select>
     </div>
     <div layout="row">
@@ -45,7 +45,7 @@
       <div layout="row" >
         <div>
           <md-switch class="margin-top-25" ng-model="beneficiaries[participant._id].isActive" ng-false-value="false" ng-true-value="true">
-            {{participant.prt_lname}}
+            {{participant.prt_fname}}
           </md-switch>
         </div>
         <div layout="row" class="padding-right-15">
