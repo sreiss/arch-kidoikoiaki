@@ -142,7 +142,7 @@ angular.module('kid')
           data = JSON.stringify(data);
           console.log(data);
           data = data.replace(',"', ',');
-          data = data.replace('"]', '');
+          data = data.replace('"]', ']');
           console.log(data);
 
           var chart = {
