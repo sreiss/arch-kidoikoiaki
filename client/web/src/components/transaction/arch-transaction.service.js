@@ -136,16 +136,11 @@ angular.module('kid')
 
           for(var categoryId in repartitions)
           {
-            data.push(new Array(repartitions[categoryId].name, parseFloat((repartitions[categoryId].amount/amount)*100).toFixed(2)));
+            data.push(new Array(repartitions[categoryId].name, parseFloat((repartitions[categoryId].amount/amount)*100)));
           }
 
-          data = JSON.stringify(data);
-          console.log(data);
-          data = data.replace(',"', ',');
-          data = data.replace('"]', ']');
-          console.log(data);
-
-          var chart = {
+          var chart =
+          {
             chart:
             {
               plotBackgroundColor: null,
@@ -176,7 +171,7 @@ angular.module('kid')
             series:
             [{
               type: 'pie',
-              name: 'Browser share',
+              name: 'Répartition',
               data: data
             }]
           }

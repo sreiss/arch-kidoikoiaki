@@ -52,29 +52,72 @@ angular.module('kid')
         return deferred.promise;
       },
 
-      getBalanceChart: function(sheetId)
+      getBalanceChart: function(sheetId, debts)
       {
         var deferred = $q.defer();
 
+        var repartitions = new Array();
+        var categories = new Array();
+        var balance = new Array();
+
+        debts.forEach(function(debt)
+        {
+          if(repartitions[debt.dbt_giver._id] === undefined)
+          {
+            repartitions[debt.dbt_giver._id] = {name : debt.dbt_giver.prt_fname + ' ' + debt.dbt_giver.prt_lname, amount : 0};
+          }
+          repartitions[debt.dbt_giver._id].amount += debt.dbt_amount;
+
+          if(repartitions[debt.dbt_taker._id] === undefined)
+          {
+            repartitions[debt.dbt_taker._id] = {name : debt.dbt_taker.prt_fname + ' ' + debt.dbt_taker.prt_lname, amount : 0};
+          }
+          repartitions[debt.dbt_taker._id].amount -= debt.dbt_amount;
+        });
+
+        for(var participantId in repartitions)
+        {
+          categories.push(repartitions[participantId].name);
+          balance.push(parseFloat(repartitions[participantId].amount));
+        }
+
         var chart =
         {
-          options: {
-            chart: {
+          options:
+          {
+            chart:
+            {
               type: 'column'
             }
           },
-          title: {
+          title:
+          {
             text: ''
           },
-          xAxis: {
-            categories: ['Pierre', 'Cédric', 'Benoît', 'Pascal']
+          xAxis:
+          {
+            categories: categories
           },
-          credits: {
+          yAxis:
+          {
+            title:
+            {
+              text: 'Montant en euro (€)'
+            }
+          },
+          legend:
+          {
             enabled: false
           },
-          series: [{
-            name: '',
-            data: [45, -35, -15, 5]
+          tooltip:
+          {
+            pointFormat: '{series.name}: <b>{point.y:.1f}€</b>'
+          },
+          series: [
+          {
+            name: 'Balance',
+            colorByPoint: true,
+            data: balance
           }]
         }
 
