@@ -139,9 +139,9 @@ angular.module('kid')
             data.push(new Array(repartitions[categoryId].name, parseFloat((repartitions[categoryId].amount/amount)*100).toFixed(2)));
           }
 
-          console.log(data);
           data = JSON.stringify(data);
-          data = data.replace(', "', '');
+          console.log(data);
+          data = data.replace(',"', '');
           data = data.replace('"]', '');
           console.log(data);
 
