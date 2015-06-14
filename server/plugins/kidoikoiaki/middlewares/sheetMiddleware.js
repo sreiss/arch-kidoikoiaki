@@ -14,9 +14,9 @@ module.exports = function() {
         {
             // Get sheet reference.
             var sheetReference = req.params.sheetReference || '';
-            if(!validator.isLength(sheetReference, 5))
+            if(!validator.isLength(sheetReference, 1))
             {
-                throw new ArchParameterError("Sheet reference must contain at least 5 chars.")
+                throw new ArchParameterError("Sheet reference can't be empty.")
             }
 
             next();
