@@ -24,77 +24,62 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                 // Get transactions.
                 transactionsService.getTransactions(sheetId).then(function(transactions)
                 {
-                    // Algo #1
                     console.log("Transactions found : " + transactions.length);
 
-                    var results = new Array();
+                    var givers = new Array();
+                    var takers = new Array();
 
                     for(var pIncr = 0; pIncr < participants.length; pIncr++)
                     {
-                        var currentPersonne = participants[pIncr];
                         var give = 0;
                         var take = 0;
 
                         for(var tIncr = 0; tIncr < transactions.length; tIncr++)
                         {
-                            var currentTransaction = transactions[tIncr];
-
                             // currentPersonne == currentContributor -> sum amount.
-                            if(currentTransaction.trs_contributor._id.equals(currentPersonne._id))
+                            if(transactions[tIncr].trs_contributor._id.equals(participants[pIncr]._id))
                             {
-                                give = parseFloat(give) + parseFloat(currentTransaction.trs_amount);
+                                give = parseFloat(give) + parseFloat(transactions[tIncr].trs_amount);
                             }
 
                             var totalTransactionWeight = 0;
                             var currentPersonneWeight = 0;
                             var isAbenef = false;
 
-                            for(var bIncr = 0; bIncr < currentTransaction.trs_beneficiaries.length; bIncr++)
+                            for(var bIncr = 0; bIncr < transactions[tIncr].trs_beneficiaries.length; bIncr++)
                             {
-                                var currentBenef = currentTransaction.trs_beneficiaries[bIncr];
-
-                                // currentPersonne == currentBeneficiary -> sum amount.
-                                if(currentBenef.trs_participant._id.equals(currentPersonne._id))
+                                // currentPersonne == currentBeneficiary.
+                                if(transactions[tIncr].trs_beneficiaries[bIncr].trs_participant._id.equals(participants[pIncr]._id))
                                 {
                                     isAbenef = true;
-                                    currentPersonneWeight = parseFloat(currentBenef.trs_weight);
+                                    currentPersonneWeight = parseInt(transactions[tIncr].trs_beneficiaries[bIncr].trs_weight);
                                 }
 
-                                // Keep current weight (calc. weight average).
-                                totalTransactionWeight = parseFloat(totalTransactionWeight) + parseFloat(currentBenef.trs_weight);
+                                // Sum beneficiaries weights.
+                                totalTransactionWeight = parseInt(totalTransactionWeight) + parseInt(transactions[tIncr].trs_beneficiaries[bIncr].trs_weight);
                             }
 
                             if(isAbenef)
                             {
-                                take = parseFloat(take) + parseFloat((currentTransaction.trs_amount / totalTransactionWeight) * currentPersonneWeight);
+                                take = parseFloat(take) + parseFloat((transactions[tIncr].trs_amount / totalTransactionWeight) * currentPersonneWeight);
                             }
                         }
 
-                        results.push({participant :currentPersonne, amount : parseFloat(take - give)});
+                        var amount = parseFloat(take - give);
+
+                        if(amount > 0)
+                        {
+                            givers.push({participant : participants[pIncr], amount : amount, consumed : false})
+                        }
+                        else if(amount < 0)
+                        {
+                            takers.push({participant : participants[pIncr], amount : amount, consumed : false})
+                        }
                     }
-
-                    // Distinct giver & taker.
-                    var givers = new Array();
-                    var takers = new Array();
-
-                    results.forEach(function(result)
-                    {
-                        if(result.amount > 0)
-                        {
-                            givers.push(result);
-                        }
-                        else if(result.amount < 0)
-                        {
-                            takers.push(result);
-                        }
-                    });
-
-                    console.log(givers);
-                    console.log(takers);
 
                     bilanService.testEqual(givers, takers, sheetId).then(function()
                     {
-                       deferred.resolve(true);
+                       deferred.resolve('END_TEST_EQUAL');
                     })
                     .catch(function(err)
                     {
@@ -120,44 +105,50 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
 
             for(var i = 0; i < givers.length; i++)
             {
-                for(var u = 0; u < takers.length; u++)
+                if(givers[i].consumed === false)
                 {
-                    var giverAmountAbs = Math.abs(parseFloat(givers[i].amount));
-                    var takerAmountAbs = Math.abs(parseFloat(takers[u].amount));
-
-                    if(giverAmountAbs == takerAmountAbs)
+                    for(var u = 0; u < takers.length; u++)
                     {
-                        var debt = new Debt(
+                        if(takers[u].consumed === false)
                         {
-                            dbt_sheet: sheetId,
-                            dbt_giver: givers[i].participant._id,
-                            dbt_taker: takers[u].participant._id,
-                            dbt_amount: giverAmountAbs
-                        });
+                            var giverAmountAbs = Math.abs(parseFloat(givers[i].amount));
+                            var takerAmountAbs = Math.abs(parseFloat(takers[u].amount));
 
-                        debt.save(function(err)
-                        {
-                            if(err)
+                            if(giverAmountAbs == takerAmountAbs)
                             {
-                                deferred.reject(err);
-                            }
-                            else
-                            {
-                                console.log('New debt saved (' + debt.dbt_amount + '€)');
-                            }
-                        });
+                                var debt = new Debt(
+                                {
+                                    dbt_sheet: sheetId,
+                                    dbt_giver: givers[i].participant._id,
+                                    dbt_taker: takers[u].participant._id,
+                                    dbt_amount: giverAmountAbs
+                                });
 
-                        givers.splice(i, 1);
-                        takers.splice(u, 1);
+                                debt.save(function(err)
+                                {
+                                    if(err)
+                                    {
+                                        deferred.reject(err);
+                                    }
+                                    else
+                                    {
+                                        console.log('New debt saved (' + debt.dbt_amount + '€) - TEST_EQUAL');
+                                    }
+                                });
+
+                                givers[i].consumed = true;
+                                takers[u].consumed = true;
+                            }
+                        }
                     }
                 }
             }
 
-            if(givers.length > 0 && takers.length > 0)
+            if(this.notConsumedLeft(givers) && this.notConsumedLeft(takers))
             {
                 bilanService.testProvide(givers, takers, sheetId).then(function()
                 {
-                    deferred.resolve(true);
+                    deferred.resolve('END_TEST_PROVIDE');
                 })
                 .catch(function(err)
                 {
@@ -166,7 +157,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             }
             else
             {
-                deferred.resolve(true);
+                deferred.resolve('END_TEST_EQUAL');
             }
 
             return deferred.promise;
@@ -177,81 +168,76 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             var deferred = Q.defer();
 
             var status = false;
-            var tmpGivers = givers;
-            var tmpTakers = takers;
+            var tmpGivers = JSON.parse(JSON.stringify(givers));
+            var tmpTakers = JSON.parse(JSON.stringify(takers));
 
             (function()
             {
                 for(var i = 0; i < givers.length; i++)
                 {
-                    for(var u = 0; u < takers.length; u++)
+                    if(givers[i].consumed === false)
                     {
-                        var debt = new Debt();
-                        var giverAmountAbs = Math.abs(parseFloat(givers[i].amount));
-                        var takerAmountAbs = Math.abs(parseFloat(takers[u].amount));
-
-                        if(giverAmountAbs < takerAmountAbs)
+                        for(var u = 0; u < takers.length; u++)
                         {
-                            debt.dbt_sheet = sheetId,
-                            debt.dbt_giver = givers[i].participant._id,
-                            debt.dbt_taker = takers[u].participant._id;
-                            debt.dbt_amount = giverAmountAbs;
-
-                            takers[u].amount = takerAmountAbs - giverAmountAbs;
-                            givers.splice(i, 1);
-                        }
-                        else if(giverAmountAbs > takerAmountAbs)
-                        {
-                            debt.dbt_sheet = sheetId,
-                            debt.dbt_giver = givers[i].participant._id,
-                            debt.dbt_taker = takers[u].participant._id;
-                            debt.dbt_amount = takerAmountAbs;
-
-                            givers[i].amount = giverAmountAbs - takerAmountAbs;
-                            takers.splice(u, 1);
-                        }
-
-                        for(var ii = 0; ii < givers.length; ii++)
-                        {
-                            for(var uu = 0; uu < takers.length; uu++)
+                            if(takers[u].consumed === false)
                             {
-                                var giverAmountAbs = Math.abs(parseFloat(givers[ii].amount));
-                                var takerAmountAbs = Math.abs(parseFloat(takers[uu].amount));
+                                var debt = new Debt();
+                                var giverAmountAbs = Math.abs(parseFloat(givers[i].amount));
+                                var takerAmountAbs = Math.abs(parseFloat(takers[u].amount));
 
-                                if(giverAmountAbs == takerAmountAbs)
+                                if(giverAmountAbs < takerAmountAbs)
                                 {
-                                    status = true;
+                                    debt.dbt_sheet = sheetId,
+                                    debt.dbt_giver = givers[i].participant._id,
+                                    debt.dbt_taker = takers[u].participant._id;
+                                    debt.dbt_amount = giverAmountAbs;
 
-                                    debt.save(function(err)
+                                    takers[u].amount = takerAmountAbs - giverAmountAbs;
+                                }
+                                else if(giverAmountAbs > takerAmountAbs)
+                                {
+                                    debt.dbt_sheet = sheetId,
+                                    debt.dbt_giver = givers[i].participant._id,
+                                    debt.dbt_taker = takers[u].participant._id;
+                                    debt.dbt_amount = takerAmountAbs;
+
+                                    givers[i].amount = giverAmountAbs - takerAmountAbs;
+                                }
+
+                                for(var ii = 0; ii < givers.length; ii++)
+                                {
+                                    if(givers[ii].consumed === false)
                                     {
-                                        if(err)
+                                        for(var uu = 0; uu < takers.length; uu++)
                                         {
-                                            deferred.reject(err);
-                                            return;
-                                        }
-                                        else
-                                        {
-                                            console.log('New debt saved (' + debt.dbt_amount + '€)');
+                                            if(takers[uu].consumed === false)
+                                            {
+                                                var giverAmountAbs = Math.abs(parseFloat(givers[ii].amount));
+                                                var takerAmountAbs = Math.abs(parseFloat(takers[uu].amount));
 
-                                            if(givers.length > 0 && takers.length > 0)
-                                            {
-                                                bilanService.testEqual(givers, takers, sheetId).then(function(result)
+                                                if(giverAmountAbs == takerAmountAbs)
                                                 {
-                                                    deferred.resolve(result);
-                                                    return;
-                                                })
-                                                .catch(function(err)
-                                                {
-                                                    deferred.reject(err);
-                                                    return;
-                                                });
-                                            }
-                                            else
-                                            {
-                                              return;
+                                                    status = true;
+
+                                                    debt.save(function(err)
+                                                    {
+                                                        if(err)
+                                                        {
+                                                            deferred.reject(err);
+                                                            return;
+                                                        }
+                                                        else
+                                                        {
+                                                            console.log('New debt saved (' + debt.dbt_amount + '€) - TEST_PROVIDE');
+                                                        }
+                                                    });
+
+                                                    givers[ii].consumed = true;
+                                                    takers[uu].consumed = true;
+                                                }
                                             }
                                         }
-                                    });
+                                    }
                                 }
                             }
                         }
@@ -259,20 +245,35 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                 }
             })();
 
-            if(!status && (givers.length > 0 && takers.length > 0))
+
+            if(this.notConsumedLeft(givers) && this.notConsumedLeft(takers))
             {
-                bilanService.noOptimisation(tmpGivers, tmpTakers, sheetId).then(function(result)
+                if(status === false)
                 {
-                    deferred.resolve(result);
-                })
-                .catch(function(err)
+                    bilanService.noOptimisation(tmpGivers, tmpTakers, sheetId).then(function(result)
+                    {
+                        deferred.resolve(result);
+                    })
+                    .catch(function(err)
+                    {
+                        deferred.reject(err);
+                    });
+                }
+                else
                 {
-                    deferred.reject(err);
-                });
+                    bilanService.testEqual(givers, takers, sheetId).then(function(result)
+                    {
+                        deferred.resolve(result);
+                    })
+                    .catch(function(err)
+                    {
+                        deferred.reject(err);
+                    });
+                }
             }
             else
             {
-                deferred.resolve(true);
+                deferred.resolve('END_TEST_PROVIDE');
             }
 
             return deferred.promise;
@@ -286,66 +287,72 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             {
                 for(var i = 0; i < givers.length; i++)
                 {
-                    for(var u = 0; u < takers.length; u++)
+                    if(givers[i].consumed === false)
                     {
-                        var giverAmountAbs = Math.abs(parseFloat(givers[i].amount));
-                        var takerAmountAbs = Math.abs(parseFloat(takers[u].amount));
-
-                        if(giverAmountAbs < takerAmountAbs)
+                        for(var u = 0; u < takers.length; u++)
                         {
-                            var debt = new Debt(
+                            if(takers[u].consumed === false)
                             {
-                                dbt_sheet: sheetId,
-                                dbt_giver: givers[i].participant._id,
-                                dbt_taker: takers[u].participant._id,
-                                dbt_amount: giverAmountAbs
-                            });
+                                var giverAmountAbs = Math.abs(parseFloat(givers[i].amount));
+                                var takerAmountAbs = Math.abs(parseFloat(takers[u].amount));
 
-                            debt.save(function(err)
-                            {
-                                if(err)
+                                if(giverAmountAbs < takerAmountAbs)
                                 {
-                                    deferred.reject(err);
-                                }
-                                else
-                                {
-                                    console.log('New debt saved (' + debt.dbt_amount + '€)');
-                                }
-                            });
+                                    var debt = new Debt(
+                                    {
+                                        dbt_sheet: sheetId,
+                                        dbt_giver: givers[i].participant._id,
+                                        dbt_taker: takers[u].participant._id,
+                                        dbt_amount: giverAmountAbs
+                                    });
 
-                            takers[u].amount = takerAmountAbs - giverAmountAbs;
-                            givers.splice(i, 1);
-                        }
-                        else if(giverAmountAbs > takerAmountAbs)
-                        {
-                            var debt = new Debt(
-                            {
-                                dbt_sheet: sheetId,
-                                dbt_giver: givers[i].participant._id,
-                                dbt_taker: takers[u].participant._id,
-                                dbt_amount: takerAmountAbs
-                            });
+                                    debt.save(function(err)
+                                    {
+                                        if(err)
+                                        {
+                                            deferred.reject(err);
+                                        }
+                                        else
+                                        {
+                                            console.log('New debt saved (' + debt.dbt_amount + '€) - NO_OPTIMISATION');
+                                        }
+                                    });
 
-                            debt.save(function(err)
-                            {
-                                if(err)
-                                {
-                                    deferred.reject(err);
+                                    takers[u].amount = takerAmountAbs - giverAmountAbs;
+                                    givers[i].consumed = true;
                                 }
-                                else
+                                else if(giverAmountAbs > takerAmountAbs)
                                 {
-                                    console.log('New debt saved (' + debt.dbt_amount + '€)');
-                                }
-                            });
+                                    var debt = new Debt(
+                                    {
+                                        dbt_sheet: sheetId,
+                                        dbt_giver: givers[i].participant._id,
+                                        dbt_taker: takers[u].participant._id,
+                                        dbt_amount: takerAmountAbs
+                                    });
 
-                            givers[i].amount = giverAmountAbs - takerAmountAbs;
-                            takers.splice(u, 1);
+                                    debt.save(function(err)
+                                    {
+                                        if(err)
+                                        {
+                                            deferred.reject(err);
+                                        }
+                                        else
+                                        {
+                                            console.log('New debt saved (' + debt.dbt_amount + '€) - NO_OPTIMISATION');
+                                        }
+                                    });
+
+                                    givers[i].amount = giverAmountAbs - takerAmountAbs;
+                                    takers[u].consumed = true;
+                                }
+                            }
                         }
                     }
                 }
             })();
 
-            if(givers.length > 0 && takers.length > 0)
+            if(this.notConsumedLeft(givers) && this.notConsumedLeft(takers))
             {
                 bilanService.testEqual(givers, takers, sheetId).then(function(result)
                 {
@@ -358,10 +365,23 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
             }
             else
             {
-                deferred.resolve(true);
+                deferred.resolve('END_NO_OPTIMISATION');
             }
 
             return deferred.promise;
+        },
+
+        notConsumedLeft: function(participants)
+        {
+            for(var i = 0; i < participants.length; i++)
+            {
+                if(participants[i].consumed === false)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     };
 };

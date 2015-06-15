@@ -64,21 +64,27 @@ angular.module('kid')
         {
           if(repartitions[debt.dbt_giver._id] === undefined)
           {
-            repartitions[debt.dbt_giver._id] = {name : debt.dbt_giver.prt_fname + ' ' + debt.dbt_giver.prt_lname, amount : 0};
+            repartitions[debt.dbt_giver._id] = {name : debt.dbt_giver.prt_fname + ' ' + debt.dbt_giver.prt_lname, amount : debt.dbt_amount};
           }
-          repartitions[debt.dbt_giver._id].amount += debt.dbt_amount;
+          else
+          {
+            repartitions[debt.dbt_giver._id].amount += debt.dbt_amount;
+          }
 
           if(repartitions[debt.dbt_taker._id] === undefined)
           {
-            repartitions[debt.dbt_taker._id] = {name : debt.dbt_taker.prt_fname + ' ' + debt.dbt_taker.prt_lname, amount : 0};
+            repartitions[debt.dbt_taker._id] = {name : debt.dbt_taker.prt_fname + ' ' + debt.dbt_taker.prt_lname, amount : -debt.dbt_amount};
           }
-          repartitions[debt.dbt_taker._id].amount -= debt.dbt_amount;
+          else
+          {
+            repartitions[debt.dbt_taker._id].amount -= debt.dbt_amount;
+          }
         });
 
         for(var participantId in repartitions)
         {
           categories.push(repartitions[participantId].name);
-          balance.push(parseFloat(repartitions[participantId].amount));
+          balance.push(parseFloat(parseFloat(repartitions[participantId].amount).toFixed(2)));
         }
 
         var chart =

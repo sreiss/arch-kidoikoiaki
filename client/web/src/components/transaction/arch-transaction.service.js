@@ -136,7 +136,7 @@ angular.module('kid')
 
           for(var categoryId in repartitions)
           {
-            data.push(new Array(repartitions[categoryId].name, parseFloat((repartitions[categoryId].amount/amount)*100)));
+            data.push(new Array(repartitions[categoryId].name, parseFloat(parseFloat((repartitions[categoryId].amount/amount)*100).toFixed(2))));
           }
 
           var chart =
