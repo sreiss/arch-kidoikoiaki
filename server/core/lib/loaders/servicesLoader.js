@@ -46,6 +46,7 @@ exports.attach = function(opts) {
                     if(dependencyName == 'config') {
                         serviceArgs.push(config);
                     }
+
                     else if (plugin.models[dependencyName]) {
                         serviceArgs.push(plugin.models[dependencyName]);
                     } else if (plugin.services[dependencyName]) {

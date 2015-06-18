@@ -26,5 +26,8 @@
     "username": "acrobattmailer@gmail.com",
     "password": "iutrs67400",
     "noreply": "archKidoikoiaki <no-reply@archkidoikoiaki.fr>"
+  },
+  "client":{
+    "url": "http://acrobatt-vm11.psi.ad.unistra.fr:3024"
   }
 }
