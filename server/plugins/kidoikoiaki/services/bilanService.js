@@ -181,27 +181,32 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         {
                             if(takers[u].consumed === false)
                             {
-                                var debt = new Debt();
+                                var consumedPersonne = {};
                                 var giverAmountAbs = Math.abs(parseFloat(givers[i].amount));
                                 var takerAmountAbs = Math.abs(parseFloat(takers[u].amount));
 
+                                var debt = new Debt(
+                                {
+                                    dbt_sheet : sheetId,
+                                    dbt_giver : givers[i].participant._id,
+                                    dbt_taker : takers[u].participant._id
+                                });
+
                                 if(giverAmountAbs < takerAmountAbs)
                                 {
-                                    debt.dbt_sheet = sheetId,
-                                    debt.dbt_giver = givers[i].participant._id,
-                                    debt.dbt_taker = takers[u].participant._id;
+                                    consumedPersonne = givers[i];
                                     debt.dbt_amount = giverAmountAbs;
-
                                     takers[u].amount = takerAmountAbs - giverAmountAbs;
                                 }
                                 else if(giverAmountAbs > takerAmountAbs)
                                 {
-                                    debt.dbt_sheet = sheetId,
-                                    debt.dbt_giver = givers[i].participant._id,
-                                    debt.dbt_taker = takers[u].participant._id;
+                                    consumedPersonne = takers[u];
                                     debt.dbt_amount = takerAmountAbs;
-
                                     givers[i].amount = giverAmountAbs - takerAmountAbs;
+                                }
+                                else
+                                {
+                                    continue;
                                 }
 
                                 for(var ii = 0; ii < givers.length; ii++)
@@ -229,11 +234,9 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                                         else
                                                         {
                                                             console.log('New debt saved (' + debt.dbt_amount + '€) - TEST_PROVIDE');
+                                                            consumedPersonne.consumed = true;
                                                         }
                                                     });
-
-                                                    givers[ii].consumed = true;
-                                                    takers[uu].consumed = true;
                                                 }
                                             }
                                         }
@@ -296,56 +299,37 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                 var giverAmountAbs = Math.abs(parseFloat(givers[i].amount));
                                 var takerAmountAbs = Math.abs(parseFloat(takers[u].amount));
 
+                                var debt = new Debt(
+                                {
+                                    dbt_sheet: sheetId,
+                                    dbt_giver: givers[i].participant._id,
+                                    dbt_taker: takers[u].participant._id,
+                                });
+
                                 if(giverAmountAbs < takerAmountAbs)
                                 {
-                                    var debt = new Debt(
-                                    {
-                                        dbt_sheet: sheetId,
-                                        dbt_giver: givers[i].participant._id,
-                                        dbt_taker: takers[u].participant._id,
-                                        dbt_amount: giverAmountAbs
-                                    });
-
-                                    debt.save(function(err)
-                                    {
-                                        if(err)
-                                        {
-                                            deferred.reject(err);
-                                        }
-                                        else
-                                        {
-                                            console.log('New debt saved (' + debt.dbt_amount + '€) - NO_OPTIMISATION');
-                                        }
-                                    });
-
+                                    debt.dbt_amount = giverAmountAbs;
                                     takers[u].amount = takerAmountAbs - giverAmountAbs;
                                     givers[i].consumed = true;
                                 }
                                 else if(giverAmountAbs > takerAmountAbs)
                                 {
-                                    var debt = new Debt(
-                                    {
-                                        dbt_sheet: sheetId,
-                                        dbt_giver: givers[i].participant._id,
-                                        dbt_taker: takers[u].participant._id,
-                                        dbt_amount: takerAmountAbs
-                                    });
-
-                                    debt.save(function(err)
-                                    {
-                                        if(err)
-                                        {
-                                            deferred.reject(err);
-                                        }
-                                        else
-                                        {
-                                            console.log('New debt saved (' + debt.dbt_amount + '€) - NO_OPTIMISATION');
-                                        }
-                                    });
-
+                                    debt.dbt_amount = takerAmountAbs;
                                     givers[i].amount = giverAmountAbs - takerAmountAbs;
                                     takers[u].consumed = true;
                                 }
+
+                                debt.save(function(err)
+                                {
+                                    if(err)
+                                    {
+                                        deferred.reject(err);
+                                    }
+                                    else
+                                    {
+                                        console.log('New debt saved (' + debt.dbt_amount + '€) - NO_OPTIMISATION');
+                                    }
+                                });
                             }
                         }
                     }

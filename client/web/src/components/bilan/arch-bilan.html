@@ -19,7 +19,7 @@
     <md-tab label="{{'BILAN_BALANCE' | translate}}">
       <md-content class="md-padding">
         <p ng-hide="debts.length">{{'BILAN_EMPTY_LIST' | translate}}</p>
-        <highchart ng-show="debts.length" id="balanceChart" config="balanceChart"></highchart>
+        <highchart ng-show="debts.length" id="balanceChart" config="balanceChart" arch-resize-chart></highchart>
       </md-content>
     </md-tab>
   </md-tabs>

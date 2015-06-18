@@ -24,8 +24,8 @@
               <blockquote>
                 <strong>{{transaction.trs_description}}</strong> <span ng-show="transaction.trs_category.ctg_name">{{'TRANSACTION_IN' | translate}}</span> {{transaction.trs_category.ctg_name}}
                 <footer>{{'TRANSACTION_FOR' | translate}} :
-                  <span ng-repeat="beneficary in transaction.trs_beneficiaries">
-                    {{beneficary.trs_participant.prt_fname}} ({{beneficary.trs_weight}} {{'TRANSACTION_WEIGHT' | translate}})<span ng-if="!$last">,&nbsp;</span>
+                  <span ng-repeat="beneficiary in transaction.trs_beneficiaries">
+                    {{beneficiary.trs_participant.prt_fname}} ({{beneficiary.trs_weight}} <span ng-hide="beneficiary.trs_weight > 1">{{'TRANSACTION_WEIGHT_1' | translate}})</span><span ng-show="beneficiary.trs_weight > 1">{{'TRANSACTION_WEIGHT_N' | translate}})</span><span ng-if="!$last">,&nbsp;</span>
                   </span>
                 </footer>
                 <span class="pull-right">

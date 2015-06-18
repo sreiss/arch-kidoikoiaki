@@ -57,6 +57,11 @@ angular.module('kid')
         }
 
         return deferred.promise;
+      },
+
+      sanitizeReference: function(str)
+      {
+        return str.replace(/[^\w]/gi, '').toLowerCase();
       }
     };
   });

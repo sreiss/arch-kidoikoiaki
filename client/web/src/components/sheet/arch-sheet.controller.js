@@ -13,18 +13,18 @@ angular.module('kid')
       $state.go('sheet.sheetEdit', {'idSheet' : id});
     };
   })
-  .controller('archSheetNewController', function($scope, $location, Sheet, $stateParams, $state, archToastService, httpConstant)
+  .controller('archSheetNewController', function($scope, $location, Sheet, $stateParams, $state, archToastService, httpConstant, archSheetService)
   {
     $scope.sheet = new Sheet();
 
     $scope.updateReference = function()
     {
-      $scope.sheet.she_reference = $scope.sheet.she_name.replace(/[^\w]/gi, '');
+      $scope.sheet.she_reference = archSheetService.sanitizeReference($scope.sheet.she_name);
     }
 
     $scope.sanitizeReference = function()
     {
-      $scope.sheet.she_reference = $scope.sheet.she_reference.replace(/[^\w]/gi, '');
+      $scope.sheet.she_reference = archSheetService.sanitizeReference($scope.sheet.she_reference);
     }
 
     $scope.newSheet = function()
