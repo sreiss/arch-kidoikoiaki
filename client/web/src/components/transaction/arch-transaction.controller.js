@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('kid')
-  .controller('archTransactionsController', function ($scope, Transactions, Sheet, $stateParams, Transaction, $mdToast, $state, archSheetService, archTransactionService, archTranslateService)
+  .controller('archTransactionsController', function ($scope, Transactions, Sheet, $stateParams, Transaction, $state, archSheetService, archTransactionService, archToastService)
   {
     $scope.transactions = new Array();
 
@@ -18,21 +18,15 @@ angular.module('kid')
       })
       .catch(function()
       {
-        archTranslateService('TRANSACTION_ERROR_GET_TRANSACTIONS').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        });
+        archToastService.showToast('TRANSACTION_ERROR_GET_TRANSACTIONS', 'error');
       });
 
       $scope.transactions = Transactions.query({id: sheet._id});
     })
     .catch(function()
     {
-      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
-      {
-        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        $state.go('sheet.home');
-      });
+      archToastService.showToast('SHEET_NEW_SHEET_REQUIRED', 'error');
+      $state.go('sheet.home');
     });
 
     $scope.deleteTransaction = function(transactionId)
@@ -45,7 +39,7 @@ angular.module('kid')
       $state.go('sheet.transactionEdit', {'idTransaction' : id});
     };
   })
-  .controller('archTransactionNewController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archParticipantService, archCategoryService, archTranslateService)
+  .controller('archTransactionNewController', function($scope, Participants, Categories, Transaction, $location, Sheet, $stateParams, $state, archSheetService, archParticipantService, archCategoryService, archToastService)
   {
     $scope.allBeneficiaries = false;
     $scope.transaction = new Transaction();
@@ -58,11 +52,8 @@ angular.module('kid')
       })
       .catch(function()
       {
-        archTranslateService('CATEGORY_ERROR_GET_CATEGORIES').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          $state.go('sheet.transactions');
-        });
+        archToastService.showToast('CATEGORY_ERROR_GET_CATEGORIES', 'error');
+        $state.go('sheet.transactions');
       });
 
       $scope.transaction.trs_sheet = sheet._id;
@@ -84,20 +75,14 @@ angular.module('kid')
       })
       .catch(function()
       {
-        archTranslateService('PARTICIPANT_ERROR_GET_PARTICIPANTS').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          $state.go('sheet.transactions');
-        });
+        archToastService.showToast('PARTICIPANT_ERROR_GET_PARTICIPANTS', 'error');
+        $state.go('sheet.transactions');
       });
     })
     .catch(function()
     {
-      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
-      {
-        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        $state.go('sheet.home');
-      });
+      archToastService.showToast('SHEET_NEW_SHEET_REQUIRED', 'error');
+      $state.go('sheet.home');
     });
 
     $scope.newTransaction = function()
@@ -121,26 +106,17 @@ angular.module('kid')
       {
         $scope.transaction.$save(function()
         {
-          archTranslateService('TRANSACTION_NEW_SUCCESS').then(function(translateValue)
-          {
-            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-            $state.go('sheet.transactions');
-          });
+          archToastService.showToast('TRANSACTION_NEW_SUCCESS', 'success');
+          $state.go('sheet.transactions');
         },
         function()
         {
-          archTranslateService('TRANSACTION_NEW_FAIL').then(function(translateValue)
-          {
-            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          });
+          archToastService.showToast('TRANSACTION_NEW_FAIL', 'error');
         })
       }
       else
       {
-        archTranslateService('TRANSACTION_NEW_FAIL_NO_BENEFICIARIES').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        });
+        archToastService.showToast('TRANSACTION_NEW_FAIL_NO_BENEFICIARIES', 'error');
       }
     }
 
@@ -154,7 +130,7 @@ angular.module('kid')
       });
     }
   })
-  .controller('archTransactionEditController', function($scope, Participants, Categories, Transaction, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTransactionService, archCategoryService, archParticipantService, archTranslateService)
+  .controller('archTransactionEditController', function($scope, Participants, Categories, Transaction, $location, Sheet, $stateParams, $state, archSheetService, archTransactionService, archCategoryService, archParticipantService, archToastService)
   {
     $scope.allBeneficiaries = false;
     $scope.transaction = new Transaction();
@@ -171,11 +147,8 @@ angular.module('kid')
         })
         .catch(function()
         {
-          archTranslateService('CATEGORY_ERROR_GET_CATEGORIES').then(function(translateValue)
-          {
-            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-            $state.go('sheet.transactions');
-          });
+          archToastService.showToast('CATEGORY_ERROR_GET_CATEGORIES', 'error');
+          $state.go('sheet.transactions');
         });
 
         archParticipantService.getParticipants(sheet._id).then(function(participants)
@@ -200,29 +173,20 @@ angular.module('kid')
         })
         .catch(function()
         {
-          archTranslateService('PARTICIPANT_ERROR_GET_PARTICIPANTS').then(function(translateValue)
-          {
-            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-            $state.go('sheet.transactions');
-          });
+          archToastService.showToast('PARTICIPANT_ERROR_GET_PARTICIPANTS', 'error');
+          $state.go('sheet.transactions');
         });
       })
       .catch(function()
       {
-        archTranslateService('TRANSACTION_ERROR_GET_TRANSACTION').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          $state.go('sheet.transactions');
-        });
+        archToastService.showToast('TRANSACTION_ERROR_GET_TRANSACTION', 'error');
+        $state.go('sheet.transactions');
       });
     })
     .catch(function()
     {
-      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
-      {
-        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        $state.go('sheet.home');
-      });
+      archToastService.showToast('SHEET_NEW_SHEET_REQUIRED', 'error');
+      $state.go('sheet.home');
     });
 
     $scope.editTransaction = function ()
@@ -246,26 +210,17 @@ angular.module('kid')
       {
         Transaction.update({transaction:$scope.transaction}, function()
         {
-          archTranslateService('TRANSACTION_EDIT_SUCCESS').then(function(translateValue)
-          {
-            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-            $state.go('sheet.transactions');
-          });
+          archToastService.showToast('TRANSACTION_EDIT_SUCCESS', 'success');
+          $state.go('sheet.transactions');
         },
         function()
         {
-          archTranslateService('TRANSACTION_EDIT_FAIL').then(function(translateValue)
-          {
-            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          });
+          archToastService.showToast('TRANSACTION_EDIT_FAIL', 'error');
         });
       }
       else
       {
-        archTranslateService('TRANSACTION_NEW_FAIL_NO_BENEFICIARIES').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        });
+        archToastService.showToast('TRANSACTION_NEW_FAIL_NO_BENEFICIARIES', 'error');
       }
     }
 

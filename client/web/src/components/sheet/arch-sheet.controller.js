@@ -1,6 +1,6 @@
 'use strict';
 angular.module('kid')
-  .controller('archSheetController', function($scope, $location, $mdToast, Sheet, $stateParams, $state, archSheetService)
+  .controller('archSheetController', function($scope, $location, Sheet, $stateParams, $state, archSheetService)
   {
     archSheetService.getCurrentSheet().then(function(sheet)
     {
@@ -13,7 +13,7 @@ angular.module('kid')
       $state.go('sheet.sheetEdit', {'idSheet' : id});
     };
   })
-  .controller('archSheetNewController', function($scope, $location, $mdToast, Sheet, $stateParams, $state, archTranslateService, httpConstant)
+  .controller('archSheetNewController', function($scope, $location, Sheet, $stateParams, $state, archToastService, httpConstant)
   {
     $scope.sheet = new Sheet();
 
@@ -33,40 +33,28 @@ angular.module('kid')
 
       $scope.sheet.$save(function(result)
       {
-        archTranslateService('SHEET_NEW_SUCCESS').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          $state.transitionTo('sheet.home', {'idSheet' : result.data.she_reference})
-        });
+        archToastService.showToast('SHEET_NEW_SUCCESS', 'success');
+        $state.transitionTo('sheet.home', {'idSheet' : result.data.she_reference})
       },
       function(err)
       {
         var errMessage = err.data.error.message || '';
         if(errMessage == 'SHE_REFERENCE_ALREADY_USED')
         {
-          archTranslateService('SHEET_NEW_FAIL_ALREADY_USED').then(function(translateValue)
-          {
-            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          });
+          archToastService.showToast('SHEET_NEW_FAIL_ALREADY_USED', 'error');
         }
         else if(errMessage == 'SHE_CREATION_DATE_TO_SOON')
         {
-          archTranslateService('SHEET_NEW_FAIL_SPAM').then(function(translateValue)
-          {
-            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          });
+          archToastService.showToast('SHEET_NEW_FAIL_SPAM', 'error');
         }
         else
         {
-          archTranslateService('SHEET_NEW_SUCCESS').then(function(translateValue)
-          {
-            $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          });
+          archToastService.showToast('SHEET_NEW_FAIL', 'error');
         }
       })
     };
   })
-  .controller('archSheetEditController', function ($scope, Sheet, $state, $stateParams, $mdToast, archSheetService, archTranslateService)
+  .controller('archSheetEditController', function ($scope, Sheet, $state, $stateParams, archSheetService, archToastService)
   {
     $scope.sheet = new Sheet();
 
@@ -76,29 +64,20 @@ angular.module('kid')
     })
     .catch(function()
     {
-      archTranslateService('SHEET_ERROR_GET_SHEET').then(function(translateValue)
-      {
-        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        $state.go('sheet.home');
-      });
+      archToastService.showToast('SHEET_ERROR_GET_SHEET', 'error');
+      $state.go('sheet.home');
     });
 
     $scope.editSheet = function ()
     {
       Sheet.update({sheet:$scope.sheet}, function()
       {
-        archTranslateService('SHEET_EDIT_SUCCESS').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          $state.go('sheet.home');
-        });
+        archToastService.showToast('SHEET_EDIT_SUCCESS', 'success');
+        $state.go('sheet.home');
       },
       function()
       {
-        archTranslateService('SHEET_EDIT_FAIL').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        });
+        archToastService.showToast('SHEET_EDIT_FAIL', 'error');
       });
     }
   });

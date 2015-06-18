@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('kid')
-  .factory('archTransactionService', function(Transaction, Transactions, archHttpService, archCategoryService, $q, $state, $mdToast, $mdDialog)
+  .factory('archTransactionService', function(Transaction, Transactions, archHttpService, archCategoryService, $q, $state, $mdDialog)
   {
     return {
       getTransaction: function(id)
@@ -70,7 +70,7 @@ angular.module('kid')
       {
         return $mdDialog.show({
           templateUrl: 'components/transaction/arch-transaction-delete-dialog.html',
-          controller: function ($scope, archTransactionService, archTranslateService)
+          controller: function ($scope, archTransactionService, archToastService)
           {
             $scope.transactionId = transactionId;
 
@@ -78,18 +78,12 @@ angular.module('kid')
             {
               archTransactionService.deleteTransaction($scope.transactionId).then(function()
               {
-                archTranslateService('TRANSACTION_DELETE_SUCCESS').then(function(translateValue)
-                {
-                  $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                  $state.go($state.current, {}, {reload: true});
-                });
+                archToastService.showToast('TRANSACTION_DELETE_SUCCESS', 'success');
+                $state.go($state.current, {}, {reload: true});
               })
               .catch(function()
               {
-                archTranslateService('TRANSACTION_DELETE_FAIL').then(function(translateValue)
-                {
-                  $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                });
+                archToastService.showToast('TRANSACTION_DELETE_FAIL', 'error');
               });
 
               $mdDialog.cancel();

@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('kid')
-  .factory('archCategoryService', function(Category, Categories, archHttpService, $q, $state, $mdToast, $mdDialog)
+  .factory('archCategoryService', function(Category, Categories, archHttpService, $q, $state, $mdDialog)
   {
     return {
       getCategory: function(id)
@@ -70,7 +70,7 @@ angular.module('kid')
       {
         return $mdDialog.show({
           templateUrl: 'components/category/arch-category-delete-dialog.html',
-          controller: function($scope, archCategoryService, archTransactionService, archTranslateService)
+          controller: function($scope, archCategoryService, archTransactionService, archToastService)
           {
             $scope.sheetId = sheetId;
             $scope.categoryId = categoryId;
@@ -93,34 +93,22 @@ angular.module('kid')
                  {
                    archCategoryService.deleteCategory($scope.categoryId).then(function()
                    {
-                     archTranslateService('CATEGORY_DELETE_SUCCESS').then(function(translateValue)
-                     {
-                       $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                       $state.go($state.current, {}, {reload: true});
-                     });
+                     archToastService.showToast('CATEGORY_DELETE_SUCCESS', 'success');
+                     $state.go($state.current, {}, {reload: true});
                    })
                    .catch(function()
                    {
-                     archTranslateService('CATEGORY_DELETE_FAIL').then(function(translateValue)
-                     {
-                       $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                     });
+                     archToastService.showToast('CATEGORY_DELETE_FAIL', 'error');
                    });
                  }
                  else
                  {
-                   archTranslateService('CATEGORY_DELETE_FAIL_LINKED').then(function(translateValue)
-                   {
-                     $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                   });
+                   archToastService.showToast('CATEGORY_DELETE_FAIL_LINKED', 'error');
                  }
                })
                .catch(function()
                {
-                 archTranslateService('CATEGORY_DELETE_FAIL_CHECK_DEPENDENCIES').then(function(translateValue)
-                 {
-                   $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                 });
+                 archToastService.showToast('CATEGORY_DELETE_FAIL_CHECK_DEPENDENCIES', 'error');
                });
 
               $mdDialog.cancel();

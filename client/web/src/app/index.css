@@ -375,3 +375,13 @@ blockquote {
 {
   width:100%;
 }
+
+.md-toast.arch-toast-error {
+  background: rgb(244,67,54);
+  color: #ffffff;
+}
+
+.md-toast.arch-toast-success {
+  background: rgb(77,175,81);
+  color: #ffffff;
+}

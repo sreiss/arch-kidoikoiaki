@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('kid')
-  .factory('archParticipantService', function(Participant, Participants, archHttpService, $q, $state, $mdToast, $mdDialog)
+  .factory('archParticipantService', function(Participant, Participants, archHttpService, $q, $state, $mdDialog)
   {
     return {
       getParticipant: function(id)
@@ -70,7 +70,7 @@ angular.module('kid')
       {
         return $mdDialog.show({
           templateUrl: 'components/participant/arch-participant-delete-dialog.html',
-          controller: function ($scope, archTransactionService, archParticipantService, archTranslateService)
+          controller: function ($scope, archTransactionService, archParticipantService, archToastService)
           {
             $scope.sheetId = sheetId;
             $scope.participantId = participantId;
@@ -103,34 +103,22 @@ angular.module('kid')
                 {
                   archParticipantService.deleteParticipant($scope.participantId).then(function()
                   {
-                    archTranslateService('PARTICIPANT_DELETE_SUCCESS').then(function(translateValue)
-                    {
-                      $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                      $state.go($state.current, {}, {reload: true});
-                    });
+                    archToastService.showToast('PARTICIPANT_DELETE_SUCCESS', 'success');
+                    $state.go($state.current, {}, {reload: true});
                   })
                   .catch(function()
                   {
-                    archTranslateService('PARTICIPANT_DELETE_FAIL').then(function(translateValue)
-                    {
-                      $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                    });
+                    archToastService.showToast('PARTICIPANT_DELETE_FAIL', 'error');
                   });
                 }
                 else
                 {
-                  archTranslateService('PARTICIPANT_DELETE_FAIL_LINKED').then(function(translateValue)
-                  {
-                    $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                  });
+                  archToastService.showToast('PARTICIPANT_DELETE_FAIL_LINKED', 'error');
                 }
               })
               .catch(function()
               {
-                archTranslateService('PARTICIPANT_DELETE_FAIL_CHECK_DEPENDENCIES').then(function(translateValue)
-                {
-                  $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-                });
+                archToastService.showToast('PARTICIPANT_DELETE_FAIL_CHECK_DEPENDENCIES', 'error');
               });
 
               $mdDialog.cancel();

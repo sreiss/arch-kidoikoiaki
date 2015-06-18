@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('kid')
-  .controller('archCategoriesController', function ($scope, Categories, Category, Sheet, $stateParams, $state, $mdToast, archSheetService, archCategoryService, archTransactionService, archTranslateService)
+  .controller('archCategoriesController', function ($scope, Categories, Category, Sheet, $stateParams, $state, archSheetService, archCategoryService, archToastService)
   {
     $scope.categories = new Array();
 
@@ -15,19 +15,13 @@ angular.module('kid')
       })
       .catch(function()
       {
-        archTranslateService('CATEGORY_ERROR_GET_CATEGORIES').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        });
+        archToastService.showToast('CATEGORY_ERROR_GET_CATEGORIES', 'error');
       });
     })
     .catch(function()
     {
-      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
-      {
-        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        $state.go('sheet.home');
-      });
+      archToastService.showToast('SHEET_NEW_SHEET_REQUIRED', 'error');
+      $state.go('sheet.home');
     });
 
     $scope.deleteCategory = function(sheetId, categoryId)
@@ -40,7 +34,7 @@ angular.module('kid')
       $state.go('sheet.categoryEdit', {'idCategory' : id});
     };
   })
-  .controller('archCategoryNewController', function ($scope, Category, $location, $mdToast, Sheet, $stateParams, $state, archSheetService, archTranslateService)
+  .controller('archCategoryNewController', function ($scope, Category, $location, Sheet, $stateParams, $state, archSheetService, archToastService)
   {
     $scope.category = new Category();
 
@@ -50,33 +44,24 @@ angular.module('kid')
     })
     .catch(function()
     {
-      archTranslateService('SHEET_NEW_SHEET_REQUIRED').then(function(translateValue)
-      {
-        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        $state.go('sheet.home');
-      });
+      archToastService.showToast('SHEET_NEW_SHEET_REQUIRED', 'error');
+      $state.go('sheet.home');
     });
 
     $scope.newCategory = function ()
     {
       $scope.category.$save(function()
       {
-        archTranslateService('CATEGORY_NEW_SUCCESS').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          $state.go('sheet.categories');
-        });
+        archToastService.showToast('CATEGORY_NEW_SUCCESS', 'success');
+        $state.go('sheet.categories');
       },
       function()
       {
-        archTranslateService('CATEGORY_NEW_FAIL').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        });
+        archToastService.showToast('CATEGORY_NEW_FAIL', 'error');
       })
     }
   })
-  .controller('archCategoryEditController', function ($scope, Category, $state, $stateParams, $mdToast, archCategoryService, archTranslateService)
+  .controller('archCategoryEditController', function ($scope, Category, $state, $stateParams, archCategoryService, archToastService)
   {
     $scope.category = new Category();
 
@@ -86,29 +71,20 @@ angular.module('kid')
     })
     .catch(function()
     {
-      archTranslateService('CATEGORY_ERROR_GET_CATEGORY').then(function(translateValue)
-      {
-        $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        $state.go('sheet.categories');
-      });
+      archToastService.showToast('CATEGORY_ERROR_GET_CATEGORY', 'error');
+      $state.go('sheet.categories');
     });
 
     $scope.editCategory = function ()
     {
       Category.update({category:$scope.category}, function()
       {
-        archTranslateService('CATEGORY_EDIT_SUCCESS').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-          $state.go('sheet.categories');
-        });
+        archToastService.showToast('CATEGORY_EDIT_SUCCESS', 'success');
+        $state.go('sheet.categories');
       },
       function()
       {
-        archTranslateService('CATEGORY_EDIT_FAIL').then(function(translateValue)
-        {
-          $mdToast.show($mdToast.simple().content(translateValue).position('top right').hideDelay(3000));
-        });
+        archToastService.showToast('CATEGORY_EDIT_FAIL', 'error');
       });
     }
   });
