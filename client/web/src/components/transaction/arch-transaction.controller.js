@@ -7,6 +7,8 @@ angular.module('kid')
 
     archSheetService.getCurrentSheet().then(function(sheet)
     {
+      $scope.sheet = sheet;
+
       archTransactionService.getTransactions(sheet._id).then(function(transactions)
       {
         $scope.transactions = transactions;

@@ -8,7 +8,8 @@
 var Q = require('q'),
     nodemailer = require('nodemailer'),
     smtpTransport = require('nodemailer-smtp-transport'),
-    uuid = require('uuid-v4');
+    uuid = require('uuid-v4'),
+    crypto = require('crypto');
 
 module.exports = function(Sheet, sheetService, config)
 {
@@ -18,12 +19,12 @@ module.exports = function(Sheet, sheetService, config)
         {
             var deferred = Q.defer();
 
-            if(sheetData.she_reference.length == 0)
+            if(sheetData.she_reference_private.length == 0)
             {
-                sheetData.she_reference = uuid() + '_' + new Date().getTime();
+                sheetData.she_reference_private = uuid() + '_' + new Date().getTime();
             }
 
-            sheetService.getSheet(sheetData.she_reference).then(function(sheet)
+            sheetService.getSheet(sheetData.she_reference_private).then(function(sheet)
             {
                 if(!sheet)
                 {
@@ -40,7 +41,8 @@ module.exports = function(Sheet, sheetService, config)
                         {
                             var sheet = new Sheet();
                             sheet.she_name = sheetData.she_name;
-                            sheet.she_reference = sheetData.she_reference;
+                            sheet.she_reference_private = sheetData.she_reference_private;
+                            sheet.she_reference_public = crypto.createHash('md5').update(sheetData.she_reference_private).digest("hex");
                             sheet.she_email = sheetData.she_email;
                             sheet.she_ip = sheetData.she_ip;
 
@@ -86,7 +88,7 @@ module.exports = function(Sheet, sheetService, config)
         {
             var deferred = Q.defer();
 
-            Sheet.update({she_reference: sheetData.she_reference},
+            Sheet.update({she_reference_private: sheetData.she_reference_private},
             {
                 she_name : sheetData.she_name
             },
@@ -110,7 +112,56 @@ module.exports = function(Sheet, sheetService, config)
         {
             var deferred = Q.defer();
 
-            Sheet.findOne({she_reference: sheetReference}).exec(function (err, sheet)
+            var self = this;
+
+            self.getSheetByPrivateReference(sheetReference).then(function(sheet)
+            {
+                if(sheet)
+                {
+                    return sheet;
+                }
+                else
+                {
+                    return self.getSheetByPublicReference(sheetReference).then(function(sheet)
+                    {
+                        if(sheet)
+                        {
+                            return sheet;
+                        }
+                        else
+                        {
+                            deferred.reject(new Error('SHEET_DONT_EXISTS'));
+                        }
+                    })
+                }
+            })
+            .then(function(sheet)
+            {
+                Sheet.update({she_reference_private: sheet.she_reference_private},
+                {
+                    she_last_visit : Date.now()
+                },
+                function(err)
+                {
+                    if(err)
+                    {
+                        deferred.reject(err);
+                    }
+                    else
+                    {
+                        deferred.resolve(sheet);
+                    }
+                });
+            });
+
+            return deferred.promise;
+        },
+
+        getSheetByPrivateReference: function(privateReference)
+        {
+            var deferred = Q.defer();
+
+            Sheet.findOne({she_reference_private: privateReference}).exec(function (err, sheet)
             {
                 if(err)
                 {
@@ -118,23 +169,28 @@ module.exports = function(Sheet, sheetService, config)
                 }
                 else
                 {
-                    Sheet.update({she_reference: sheetReference},
-                    {
-                        she_last_visit : Date.now()
-                    },
-                    function(err)
-                    {
-                        if(err)
-                        {
-                            deferred.reject(err);
-                        }
-                        else
-                        {
-                            deferred.resolve(sheet);
-                        }
-                    });
+                    deferred.resolve(sheet);
                 }
-            });
+            })
+
+            return deferred.promise;
+        },
+
+        getSheetByPublicReference: function(publicReference)
+        {
+            var deferred = Q.defer();
+
+            Sheet.findOne({she_reference_public: publicReference}).exec(function (err, sheet)
+            {
+                if(err)
+                {
+                    deferred.reject(err);
+                }
+                else
+                {
+                    deferred.resolve(sheet);
+                }
+            })
 
             return deferred.promise;
         },
@@ -201,7 +257,7 @@ module.exports = function(Sheet, sheetService, config)
                 subject: "archKidoikoiaki - Création d'une nouvelle feuille ✔",
                 html:   'Bonjour,<br><br>' +
                 'Votre nouvelle feuille <b>' + sheetData.she_name + '</b> a été créée avec succés.<br>' +
-                "Vous pouvez la consulter et la partager à n'importer quel moment à l'adresse suivante : <a href='" + sheetData.she_path + '/#/sheet/' + sheetData.she_reference + '/' +  "'>" + sheetData.she_reference + "</a>.<br><br>" +
+                "Vous pouvez la consulter et la partager à n'importer quel moment à l'adresse suivante : <a href='" + sheetData.she_path + '/#/sheet/' + sheetData.she_reference_private + '/' +  "'>" + sheetData.she_reference_private + "</a>.<br><br>" +
                 "L'équipe vous remercie et vous souhaite une bonne visite.<br>" +
                 '__<br>Ceci est un message automatique, merci de ne pas y répondre.'
             };
@@ -210,11 +266,11 @@ module.exports = function(Sheet, sheetService, config)
             {
                 if(error)
                 {
-                    console.log("Message automatique de création de feuille " + sheetData.she_reference + " non envoyé.");
+                    console.log("Message automatique de création de feuille " + sheetData.she_reference_private + " non envoyé.");
                 }
                 else
                 {
-                    console.log("Message automatique de création de feuille " + sheetData.she_reference + " envoyé avec succés.");
+                    console.log("Message automatique de création de feuille " + sheetData.she_reference_private + " envoyé avec succés.");
                 }
             });
         }

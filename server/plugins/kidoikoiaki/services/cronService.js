@@ -49,7 +49,7 @@ module.exports = function(Sheet, Category, Participant, Transaction, Debt, confi
                                     subject: "archKidoikoiaki - L'une de vos feuilles risque d'être archivée !",
                                     html:   'Bonjour,<br><br>' +
                                             "Votre feuille <b>" + sheets[i].she_name + "</b> risque d'être archivée le mois prochain si vous ne la consultez pas.<br>" +
-                                            "Vous pouvez la consulter et la partager à n'importer quel moment à l'adresse suivante : <a href='" + config.get('client:url') + '/#/sheet/' + sheets[i].she_reference + '/' +  "'>" + sheets[i].she_reference + "</a>.<br><br>" +
+                                            "Vous pouvez la consulter et la partager à n'importer quel moment à l'adresse suivante : <a href='" + config.get('client:url') + '/#/sheet/' + sheets[i].she_reference_private + '/' +  "'>" + sheets[i].she_reference_private + "</a>.<br><br>" +
                                             "L'équipe vous remercie et vous souhaite une bonne visite.<br>" +
                                             '__<br>Ceci est un message automatique, merci de ne pas y répondre.'
                                 };

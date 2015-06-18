@@ -14,10 +14,12 @@ angular.module('kid').directive('archSidebar', function(archSheetService)
           if(sheet)
           {
             $scope.sheetExists = true;
+            $scope.sheetIsPrivate = sheet.isPrivate;
           }
           else
           {
             $scope.sheetExists = false;
+            $scope.sheetIsPrivate = false;
           }
         })
         .catch(function(eer)

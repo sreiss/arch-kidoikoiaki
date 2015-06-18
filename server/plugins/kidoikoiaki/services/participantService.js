@@ -157,7 +157,7 @@ module.exports = function(Participant, participantService, sheetService, config)
                     subject: "archKidoikoiaki - Vous prenez part à une feuille ✔",
                     html:   'Bonjour <b>' + participantData.prt_fname + ' ' + participantData.prt_lname + '</b>,<br><br>' +
                     "Vous venez d'être ajouté en tant que participant à la feuille <b>" + sheet.she_name + '</b> avec succès.<br>' +
-                    "Vous pouvez la consulter et la partager à n'importer quel moment à l'adresse suivante : <a href='" + participantData.she_path + '/#/sheet/' + participantData.she_reference + '/' + "'>" + sheet.she_reference + "</a>.<br><br>" +
+                    "Vous pouvez la consulter et la partager à n'importer quel moment à l'adresse suivante : <a href='" + participantData.she_path + '/#/sheet/' + participantData.she_reference_private + '/' + "'>" + sheet.she_reference_private + "</a>.<br><br>" +
                     "L'équipe vous remercie et vous souhaite une bonne visite.<br>" +
                     '__<br>Ceci est un message automatique, merci de ne pas y répondre.'
                 };
@@ -167,12 +167,12 @@ module.exports = function(Participant, participantService, sheetService, config)
                     if(error)
                     {
                         deferred.reject(error);
-                        console.log("Message automatique d'ajout d'un participant à la feuille " + sheet.she_reference + " non envoyé.");
+                        console.log("Message automatique d'ajout d'un participant à la feuille " + sheet.she_reference_private + " non envoyé.");
                     }
                     else
                     {
                         deferred.resolve(info);
-                        console.log("Message automatique d'ajout d'un participant à la feuille " + sheet.she_reference + " envoyé avec succès.");
+                        console.log("Message automatique d'ajout d'un participant à la feuille " + sheet.she_reference_private + " envoyé avec succès.");
                     }
                 });
             })

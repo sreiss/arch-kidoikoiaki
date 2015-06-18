@@ -1,11 +1,12 @@
 'use strict';
 angular.module('kid')
-  .controller('archSheetController', function($scope, $location, Sheet, $stateParams, $state, archSheetService)
+  .controller('archSheetController', function($scope, $location, Sheet, $stateParams, $state, archSheetService, httpConstant)
   {
     archSheetService.getCurrentSheet().then(function(sheet)
     {
       $scope.sheet = sheet;
-      $scope.sheet.she_path = $state.href($state.current.name, $state.params, {absolute: true})
+      $scope.sheet.she_path_public = httpConstant.clientUrl + '/#/sheet/' + sheet.she_reference_public + '/';
+      $scope.sheet.she_path_private = httpConstant.clientUrl + '/#/sheet/' + sheet.she_reference_private + '/';
     });
 
     $scope.editSheet = function(id)
@@ -19,12 +20,12 @@ angular.module('kid')
 
     $scope.updateReference = function()
     {
-      $scope.sheet.she_reference = archSheetService.sanitizeReference($scope.sheet.she_name);
+      $scope.sheet.she_reference_private = archSheetService.sanitizeReference($scope.sheet.she_name);
     }
 
     $scope.sanitizeReference = function()
     {
-      $scope.sheet.she_reference = archSheetService.sanitizeReference($scope.sheet.she_reference);
+      $scope.sheet.she_reference_private = archSheetService.sanitizeReference($scope.sheet.she_reference_private);
     }
 
     $scope.newSheet = function()
@@ -34,7 +35,7 @@ angular.module('kid')
       $scope.sheet.$save(function(result)
       {
         archToastService.showToast('SHEET_NEW_SUCCESS', 'success');
-        $state.transitionTo('sheet.home', {'idSheet' : result.data.she_reference})
+        $state.transitionTo('sheet.home', {'idSheet' : result.data.she_reference_private})
       },
       function(err)
       {

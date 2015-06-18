@@ -17,6 +17,8 @@ angular.module('kid')
     SHEET_NEW_TITLE : "Ajout d'une feuille",
     SHEET_TITLE : "Nom de la feuille",
     SHEET_REFERENCE : "Réference de la feuille (facultatif)",
+    SHEET_REFERENCE_PUBLIC : "Réference publique de la feuille",
+    SHEET_REFERENCE_PRIVATE : "Réference privée de la feuille",
     SHEET_MAIL_ADDRESS : "E-mail de contact",
     SHEET_SAVE : "Valider",
     SHEET_EDIT_TITLE : "Modification d'une feuille",

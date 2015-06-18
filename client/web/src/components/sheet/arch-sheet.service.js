@@ -33,12 +33,22 @@ angular.module('kid')
 
         var sheetId = $stateParams.idSheet || '';
 
+
         if(sheetId.length > 0)
         {
           Sheet.get({id: sheetId}, function(result)
           {
             if(result.count > 0)
             {
+              if(result.data.she_reference_private == sheetId)
+              {
+                result.data.isPrivate = true;
+              }
+              else
+              {
+                result.data.isPrivate = false;
+              }
+
               deferred.resolve(result.data);
             }
             else
