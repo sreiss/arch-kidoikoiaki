@@ -22,7 +22,7 @@ module.exports = function(Sheet, Category, Participant, Transaction, Debt) {
                     cronTime: '00 30 11 * * 1-5',
                     onTick: function()
                     {
-                        Sheet.find({'she_last_visit' : {$gte : moment().subtract(1, 'year').toDate()}}).then(function(sheets)
+                        Sheet.find({'she_last_visit' : {$lt : moment().subtract(1, 'year').toDate()}}).then(function(sheets)
                         {
                             console.log('CRON[removeOutdatedSheet] : ' + sheets.length + ' sheets to delete');
 
@@ -36,14 +36,12 @@ module.exports = function(Sheet, Category, Participant, Transaction, Debt) {
                                 .then(Debt.find({'sheet_id' : sheets[i]._id}).remove())
                                 .catch(function(err)
                                 {
-                                    console.log(err);
                                     console.log('Error occured while deleting outdated sheets.');
                                 });
                             }
                         })
                         .catch(function(err)
                         {
-                            console.log(err);
                             console.log('Error occured while retrieving outdated sheets.');
                         })
                     },
