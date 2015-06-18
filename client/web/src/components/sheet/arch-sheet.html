@@ -8,17 +8,16 @@
   {{'SHEET_P2' | translate}}
 </p>
 
-<p ng-show="sheet">
-  <div ng-hide="sheet.isPrivate" class="text-justify">
-    La référence publique de votre feuille <b>{{sheet.she_name}}</b> est <a href="{{sheet.she_path_public}}">{{sheet.she_reference_public}}</a>
-  </div>
-
-  <div ng-show="sheet.isPrivate" class="text-justify">
-    La référence publique de votre feuille <b>{{sheet.she_name}}</b> est <a href="{{sheet.she_path_public}}">{{sheet.she_reference_public}}</a>
-    et sa référence privée est <a href="{{sheet.she_path_private}}">{{sheet.she_reference_private}}</a>
-    <a href="#"><md-icon class="fa fa-pencil-square-o" ng-click="editSheet(sheet.she_reference_private)"></md-icon></a>
-  </div>
+<p ng-if="sheet" ng-hide="sheet.isPrivate" class="text-justify">
+  {{'SHEET_INFO_1' | translate}}<b>{{sheet.she_name}}</b>{{'SHEET_INFO_2' | translate}}<a href="{{sheet.she_path_public}}">{{sheet.she_reference_public}}</a>
 </p>
+
+<p ng-if="sheet" ng-show="sheet.isPrivate" class="text-justify">
+  {{'SHEET_INFO_1' | translate}}<b>{{sheet.she_name}}</b>{{'SHEET_INFO_2' | translate}}<a href="{{sheet.she_path_public}}">{{sheet.she_reference_public}}</a>
+  {{'SHEET_INFO_3' | translate}}<a href="{{sheet.she_path_private}}">{{sheet.she_reference_private}}</a>
+  <a href="#"><md-icon class="fa fa-pencil-square-o" ng-click="editSheet(sheet.she_reference_private)"></md-icon></a>
+</p>
+
 
 <md-button class="md-accent md-raised" ui-sref="sheetNew">
   {{'SHEET_NEW_BUTTON' | translate}}

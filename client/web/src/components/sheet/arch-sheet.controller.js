@@ -4,9 +4,9 @@ angular.module('kid')
   {
     archSheetService.getCurrentSheet().then(function(sheet)
     {
-      $scope.sheet = sheet;
-      $scope.sheet.she_path_public = httpConstant.clientUrl + '/#/sheet/' + sheet.she_reference_public + '/';
-      $scope.sheet.she_path_private = httpConstant.clientUrl + '/#/sheet/' + sheet.she_reference_private + '/';
+        $scope.sheet = sheet;
+        $scope.sheet.she_path_public = httpConstant.clientUrl + '/#/sheet/' + sheet.she_reference_public + '/';
+        $scope.sheet.she_path_private = httpConstant.clientUrl + '/#/sheet/' + sheet.she_reference_private + '/';
     });
 
     $scope.editSheet = function(id)

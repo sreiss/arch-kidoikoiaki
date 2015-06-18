@@ -30,9 +30,7 @@ angular.module('kid')
       getCurrentSheet: function()
       {
         var deferred = $q.defer();
-
         var sheetId = $stateParams.idSheet || '';
-
 
         if(sheetId.length > 0)
         {

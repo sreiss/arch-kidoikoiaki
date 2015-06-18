@@ -112,9 +112,7 @@ module.exports = function(Sheet, sheetService, config)
         {
             var deferred = Q.defer();
 
-            var self = this;
-
-            self.getSheetByPrivateReference(sheetReference).then(function(sheet)
+            sheetService.getSheetByPrivateReference(sheetReference).then(function(sheet)
             {
                 if(sheet)
                 {
@@ -122,7 +120,7 @@ module.exports = function(Sheet, sheetService, config)
                 }
                 else
                 {
-                    return self.getSheetByPublicReference(sheetReference).then(function(sheet)
+                    return sheetService.getSheetByPublicReference(sheetReference).then(function(sheet)
                     {
                         if(sheet)
                         {
@@ -130,28 +128,35 @@ module.exports = function(Sheet, sheetService, config)
                         }
                         else
                         {
-                            deferred.reject(new Error('SHEET_DONT_EXISTS'));
+                            return null;
                         }
                     })
                 }
             })
             .then(function(sheet)
             {
-                Sheet.update({she_reference_private: sheet.she_reference_private},
+                if(sheet)
                 {
-                    she_last_visit : Date.now()
-                },
-                function(err)
+                    Sheet.update({she_reference_private: sheet.she_reference_private},
+                    {
+                        she_last_visit: Date.now()
+                    },
+                    function (err)
+                    {
+                        if(err)
+                        {
+                            deferred.reject(err);
+                        }
+                        else
+                        {
+                            deferred.resolve(sheet);
+                        }
+                    });
+                }
+                else
                 {
-                    if(err)
-                    {
-                        deferred.reject(err);
-                    }
-                    else
-                    {
-                        deferred.resolve(sheet);
-                    }
-                });
+                    deferred.resolve(sheet);
+                }
             });
 
             return deferred.promise;
