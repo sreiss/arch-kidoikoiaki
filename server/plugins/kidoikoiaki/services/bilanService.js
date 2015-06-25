@@ -80,7 +80,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                         {
                             givers.push(moneyers[i]);
                         }
-                        else if(amount < 0)
+                        else if(moneyers[i].amount < 0)
                         {
                             takers.push(moneyers[i]);
                         }
@@ -312,7 +312,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                 {
                                     dbt_sheet: sheetId,
                                     dbt_giver: givers[i].participant._id,
-                                    dbt_taker: takers[u].participant._id,
+                                    dbt_taker: takers[u].participant._id
                                 });
 
                                 if(giverAmountAbs < takerAmountAbs)
