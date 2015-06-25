@@ -26,6 +26,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                 {
                     console.log("Transactions found : " + transactions.length);
 
+                    var moneyers = new Array();
                     var givers = new Array();
                     var takers = new Array();
 
@@ -65,15 +66,23 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                             }
                         }
 
-                        var amount = parseFloat(take - give);
+                        moneyers.push({participant : participants[pIncr], amount : parseFloat(take - give), consumed : false});
+                    }
 
-                        if(amount > 0)
+                    moneyers.sort(function(a, b)
+                    {
+                       return b.amount - a.amount;
+                    });
+
+                    for(var i = 0; i < moneyers.length; i++)
+                    {
+                        if(moneyers[i].amount > 0)
                         {
-                            givers.push({participant : participants[pIncr], amount : amount, consumed : false})
+                            givers.push(moneyers[i]);
                         }
                         else if(amount < 0)
                         {
-                            takers.push({participant : participants[pIncr], amount : amount, consumed : false})
+                            takers.push(moneyers[i]);
                         }
                     }
 
