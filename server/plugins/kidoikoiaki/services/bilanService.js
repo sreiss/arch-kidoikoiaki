@@ -26,7 +26,6 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                 {
                     console.log("Transactions found : " + transactions.length);
 
-                    var moneyers = new Array();
                     var givers = new Array();
                     var takers = new Array();
 
@@ -66,25 +65,27 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                             }
                         }
 
-                        moneyers.push({participant : participants[pIncr], amount : parseFloat(take - give), consumed : false});
+                        var amount = parseFloat(take - give);
+
+                        if(amount > 0)
+                        {
+                            givers.push({participant : participants[pIncr], amount : amount, consumed : false})
+                        }
+                        else if(amount < 0)
+                        {
+                            takers.push({participant : participants[pIncr], amount : amount, consumed : false})
+                        }
                     }
 
-                    moneyers.sort(function(a, b)
+                    givers.sort(function(a, b)
+                    {
+                        return b.amount - a.amount;
+                    });
+
+                    takers.sort(function(a, b)
                     {
                        return b.amount - a.amount;
                     });
-
-                    for(var i = 0; i < moneyers.length; i++)
-                    {
-                        if(moneyers[i].amount > 0)
-                        {
-                            givers.push(moneyers[i]);
-                        }
-                        else if(moneyers[i].amount < 0)
-                        {
-                            takers.push(moneyers[i]);
-                        }
-                    }
 
                     bilanService.testEqual(givers, takers, sheetId).then(function()
                     {
@@ -229,7 +230,7 @@ module.exports = function(Debt, bilanService, debtService, participantsService, 
                                                 var giverAmountAbs = Math.abs(parseFloat(givers[ii].amount));
                                                 var takerAmountAbs = Math.abs(parseFloat(takers[uu].amount));
 
-                                                if(giverAmountAbs == takerAmountAbs)
+                                                if(debt.dbt_amount > 0 && (giverAmountAbs == takerAmountAbs))
                                                 {
                                                     status = true;
 
