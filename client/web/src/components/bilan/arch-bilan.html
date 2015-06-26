@@ -9,7 +9,7 @@
         <ul class="collection" ng-show="debts.length">
           <li class="collection-item" ng-repeat="debt in debts">
             <blockquote>
-              <strong>{{debt.dbt_giver.prt_fname }}</strong> {{'BILAN_MUST_PAY' | translate}} {{debt.dbt_amount | number:2}} {{'BILAN_CURRENCY' | translate}} {{'BILAN_TO' | translate}} <strong>{{debt.dbt_taker.prt_fname}}</strong>
+              <strong>{{debt.dbt_giver.prt_fname }} {{debt.dbt_giver.prt_lname }}</strong> {{'BILAN_MUST_PAY' | translate}} {{debt.dbt_amount | number:2}} {{'BILAN_CURRENCY' | translate}} {{'BILAN_TO' | translate}} <strong>{{debt.dbt_taker.prt_fname}} {{debt.dbt_taker.prt_lname}}</strong>
             </blockquote>
           </li>
         </ul>
